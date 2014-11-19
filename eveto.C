@@ -193,6 +193,11 @@ int main( int argc, char *argv[] )
 
       case 'e':
         gps_end_time = atof( optarg );
+        if ( gps_end_time < 800000000 ) 
+	{
+		fprintf( stderr, "bad start time\n" );
+		exit( 1 );
+	}
         break;
 
       case 't':
