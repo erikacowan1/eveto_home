@@ -97,10 +97,11 @@ ent_id = coinc_event_map.coinc_event_id and coinc_event_map.event_id = sngl_insp
 
     return tree;
   }
-int eveto_main( int gps_start_time, int gps_end_time, Double_t cbc_trigger_snr_threshold, char* detector, char* output_path )
+
+int eveto_main( int gps_start_time, int gps_end_time, Double_t cbc_trigger_snr_threshold, char* detector, char* output_path, char* sql_db )
 {
   //Read in Triggers
-  TTree* clustered_cbc_trigs = get_triggers_from_database( 1, "sqlite://l1-lock-clustered.sqlite" );
+  TTree* clustered_cbc_trigs = get_triggers_from_database( 1, sql_db );
   Int_t n_bins = 50;
   Int_t x_low = 0;
   Int_t x_high = 20;
@@ -155,9 +156,11 @@ int main( int argc, char *argv[] )
   Double_t cbc_trigger_snr_threshold = 0;
   size_t outputdir_len = 2048;
   size_t detector_len = 10;
+size_t sql_db_len = 2048;
   char outputdir[outputdir_len];
   char detector[detector_len];
-
+  char sql_db[sql_db_len];
+  memset( sql_db, 0, sql_db_len * sizeof(char) );
   memset( outputdir, 0, outputdir_len * sizeof(char) );
   memset( detector, 0, detector_len * sizeof(char) );
 
@@ -172,11 +175,12 @@ int main( int argc, char *argv[] )
       {"cbc-trigger-snr-threshold", required_argument, 0, 't' },
       {"detector", required_argument, 0, 'd' },      
       {"output-directory", required_argument, 0, 'o' },
+      {"cbc-trigger-database", required_argument, 0, 'q' },
       {0, 0, 0, 0}
     };
     int option_index = 0;
 
-    c = getopt_long( argc, argv, "s:e:t:d:o:", long_options, &option_index );
+    c = getopt_long( argc, argv, "s:e:t:d:o:q:", long_options, &option_index );
 
     if ( c == -1 ) break;
 
@@ -193,11 +197,6 @@ int main( int argc, char *argv[] )
 
       case 'e':
         gps_end_time = atof( optarg );
-        if ( gps_end_time < 800000000 ) 
-	{
-		fprintf( stderr, "bad start time\n" );
-		exit( 1 );
-	}
         break;
 
       case 't':
@@ -224,6 +223,17 @@ int main( int argc, char *argv[] )
 	}
 	break;
 
+       case 'q':
+        if(strlen(optarg) < sql_db_len) {
+                strncpy(sql_db,optarg,sql_db_len*sizeof(char));
+        }
+        else  {
+                printf("length of database name is greater than alotted array length");
+                exit( 1 );
+        } 
+        break;
+
+
       case '?':
         break;
 
@@ -233,13 +243,13 @@ int main( int argc, char *argv[] )
     }
   }
 
-  if ( ! gps_start_time || ! gps_end_time || ! cbc_trigger_snr_threshold || ! outputdir[0] || ! detector[0] )
+  if ( ! gps_start_time || ! gps_end_time || ! cbc_trigger_snr_threshold || ! outputdir[0] || ! detector[0] || ! sql_db[0] )
   {
 	  fprintf( stderr, "you forgot an argument\n" );
 	  exit( 1 );
   }
 
-  eveto_main( gps_start_time, gps_end_time, cbc_trigger_snr_threshold, detector, outputdir );
+  eveto_main( gps_start_time, gps_end_time, cbc_trigger_snr_threshold, detector, outputdir , sql_db );
 
   rootapp->Run();
   return 0;
