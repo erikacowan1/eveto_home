@@ -29,14 +29,7 @@ using namespace std;
     Float_t mass_tot;
 
     // Create strings for the SQL statements                                                           
-    TString select_snr_chisq( "select distinct sngl_inspiral.event_id,sngl_inspiral.snr,sngl_inspiral.\
-chisq,sngl_inspiral.chisq_dof from experiment_summary,experiment_map,coinc_event,coinc_event_map,sng\
-l_inspiral where sngl_inspiral.ifo = 'H1'" );
-    TString zero_lag_clause( " and experiment_summary.datatype = 'all_data'" );
-    TString time_slide_clause( " and experiment_summary.datatype = 'slide'" );
-    TString snr_chisq_join_clause( " and experiment_summary.experiment_summ_id = experiment_map.experi\
-ment_summ_id and experiment_map.coinc_event_id = coinc_event.coinc_event_id and coinc_event.coinc_ev\
-ent_id = coinc_event_map.coinc_event_id and coinc_event_map.event_id = sngl_inspiral.event_id" );
+    TString select_snr_chisq( "select sngl_inspiral.event_id,sngl_inspiral.snr,sngl_inspiral.chisq,sngl_inspiral.chisq_dof, sngl_inspiral.mass1,sngl_inspiral.mass2 from sngl_inspiral where sngl_inspiral.ifo = 'L1'" );
 
     // Create a TTree to store the triggers                                                            
     TTree *tree = new TTree("T","single inspiral triggers");
@@ -44,22 +37,12 @@ ent_id = coinc_event_map.coinc_event_id and coinc_event_map.event_id = sngl_insp
     tree->Branch( "chisq" , &chisq, "chisq/F" );
     tree->Branch( "chisqdof" , &chisqdof, "chisqdof/F" );
     tree->Branch( "newsnr" , &newsnr, "newsnr/F" );
-    tree->Branch( "background", &background, "background/I");
-    tree->Branch( "database" , &db_filename );
     tree->Branch( "mass1", &mass1, "mass1/F" );
     tree->Branch( "mass2", &mass2, "mass2/F" );
     tree->Branch( "mass_tot", &mass_tot, "mass_tot/F" );
 
     // Create a connection to the sqlite database                                                      
     TSQLServer* serv = TSQLServer::Connect( db_filename, "", "" );
-
-    if ( background ) {
-      cout << "loading background triggers" << endl;
-      select_snr_chisq = select_snr_chisq + time_slide_clause + snr_chisq_join_clause;
-    } else {
-      cout << "loading zero lag triggers" << endl;
-      select_snr_chisq = select_snr_chisq + zero_lag_clause + snr_chisq_join_clause;
-    }
 
     // SQL statement to get triggers from the database                                                 
     TSQLStatement* stmt = serv->Statement(select_snr_chisq, 50000);
@@ -74,6 +57,9 @@ ent_id = coinc_event_map.coinc_event_id and coinc_event_map.event_id = sngl_insp
 	snr = stmt->GetDouble(1);
 	chisq = stmt->GetDouble(2);
 	chisqdof = 2.0 * stmt->GetDouble(3) - 2.0;
+        mass1 = stmt->GetDouble(4);
+        mass2 = stmt->GetDouble(5);
+        mass_tot = mass1 + mass2;
 
 	// compute the new SNR                                                                         
 	if ( chisq > chisqdof ) {
@@ -81,8 +67,6 @@ ent_id = coinc_event_map.coinc_event_id and coinc_event_map.event_id = sngl_insp
 	} else {
 	  newsnr = snr;
 	}
-	//compute total mass
-	mass_tot = mass1 + mass2;
 
 	// store the data in the tree and the histograms;                                              
 	tree->Fill();
@@ -107,7 +91,7 @@ int eveto_main( int gps_start_time, int gps_end_time, Double_t cbc_trigger_snr_t
   Int_t x_high = 20;
   //Create Overlay of SNR and newSNR histograms
   TH1F *h1 = new TH1F("h1","Background CBC Triggers",n_bins,x_low,x_high);
-  TH1F *h2 = new TH1F("h1","Background CBC Triggers",n_bins,x_low,x_high);
+  TH1F *h2 = new TH1F("h2","Background CBC Triggers",n_bins,x_low,x_high);
   clustered_cbc_trigs->Draw("snr>>h1");
   clustered_cbc_trigs->Draw("newsnr>>h2");
 
