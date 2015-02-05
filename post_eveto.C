@@ -1,114 +1,28 @@
+//////////////////////////////////
+//				//
+//        post_eveto.C		//
+//        			//
+//    Analysis and Plotting     //
+//    for eveto.C, designed     //
+//    for CBC searches.		//
+//				//
+//////////////////////////////////				
+
 #include <iostream>
 #include <string>
 #include <TApplication.h>
 #include <TCanvas.h>
 #include <TColor.h>
 #include <TH1.h>
+#include <TH2.h>
 #include <TLegend.h>
 #include <TTree.h>
 #include <TSQLServer.h>
 #include <TSQLStatement.h>
+#include <stdio.h>
+#include <string.h>
+#include <THStack.h>
 
-// Return a tree containing either foreground or background triggers from a database
-TTree* get_triggers_from_database( Int_t background, TString db_filename ) {
-
-// Create variables for storing triggers
-
-	Float_t snr;
-	Float_t chisq;
-	Float_t chisqdof;
-	Float_t newsnr;
-	Float_t mass1;
-	Float_t mass2;
-	Float_t mtotal;
-	Float_t mchirp;
-	Float_t ttotal;
-	Float_t eta;
-	Float_t snr_sq;
-
-
-// Create strings for the SQL statements
-
-	TString select_snr_chisq( "select sngl_inspiral.event_id,sngl_inspiral.snr,sngl_inspiral.chisq,sngl_inspiral.chisq_dof, sngl_inspiral.mass1,sngl_inspiral.mass2, sngl_inspiral.mtotal, sngl_inspiral.mchirp, sngl_inspiral.ttotal, sngl_inspiral.eta from experiment_summary,experiment_map,coinc_event,coinc_event_map,sngl_inspiral where sngl_inspiral.ifo = 'H1'" );
-	TString zero_lag_clause( " and experiment_summary.datatype = 'all_data'" );
-	TString time_slide_clause( " and experiment_summary.datatype = 'slide'" );
-	TString snr_chisq_join_clause( " and experiment_summary.experiment_summ_id = experiment_map.experiment_summ_id and experiment_map.coinc_event_id = coinc_event.coinc_event_id and coinc_event.coinc_event_id = coinc_event_map.coinc_event_id and coinc_event_map.event_id = sngl_inspiral.event_id" );
-  
-
-// Create a TTree to store the triggers
-
-	TTree *tree = new TTree("T","single inspiral triggers");
-	
-	tree->Branch( "snr" , &snr, "snr/F" );
-	tree->Branch( "chisq" , &chisq, "chisq/F" );
-	tree->Branch( "chisqdof" , &chisqdof, "chisqdof/F" );
-	tree->Branch( "newsnr" , &newsnr, "newsnr/F" );
-	tree->Branch( "background", &background, "background/I");
-	tree->Branch( "database" , &db_filename );
-	tree->Branch( "mass1", &mass1, "mass1/F" );
-	tree->Branch( "mass2", &mass2, "mass2/F" );
-	tree->Branch( "mtotal", &mtotal, "mtotal/F" );
-	tree->Branch( "mchirp", &mchirp, "mchirp/F" );
-	tree->Branch( "ttotal", &ttotal, "ttotal/F" );
-	tree->Branch( "eta", &eta, "eta/F" );
-	tree->Branch( "snr_sq", &snr_sq, "snr_sq/F" );
-
-
-// Create a connection to the sqlite database
-
-  TSQLServer* serv = TSQLServer::Connect( db_filename, "", "" );
-
-if ( background ) {
-    cout << "loading background triggers" << endl;
-    select_snr_chisq = select_snr_chisq + time_slide_clause + snr_chisq_join_clause;
-} 
-else {
-    cout << "loading zero lag triggers" << endl;
-    select_snr_chisq = select_snr_chisq + zero_lag_clause + snr_chisq_join_clause;
-}
-
-
-// SQL statement to get triggers from the database
-  TSQLStatement* stmt = serv->Statement(select_snr_chisq, 50000);
-
-
-// Process the database query
-
-  if ( stmt->Process() ) {
-
-    // Store the result of the statement in the buffer
-    stmt->StoreResult();
-
-    // process the data returned in the buffer
-
-    while ( stmt->NextResultRow() ) {
-      snr = stmt->GetDouble(1);
-      chisq = stmt->GetDouble(2);
-      chisqdof = 2.0 * stmt->GetDouble(3) - 2.0;
-      mass1 = stmt->GetDouble(4);
-      mass2 = stmt->GetDouble(5);
-      snr_sq = snr*snr; 
-      
-     // compute the new SNR
-      if ( chisq > chisqdof ) {
-        newsnr = snr * pow(((1.0 + pow((chisq/chisqdof), 3.0))/2.0), (-1.0 /6.0));
-      } else {
-        newsnr = snr;
-      }
-
-      // store the data in the tree and the histograms;
-      tree->Fill();
-    }
-  }
-  else {
-     cout << "Error processing SQL" << endl;
-  }
-
-  // Close the database
-  delete serv;
-  
-  return tree;
-}
 
 void post_eveto() {
 
@@ -156,6 +70,15 @@ void post_eveto() {
   leg_hist_1->AddEntry(h2,"Single Stage Gaussian","l");
   leg_hist_1->Draw();
 
+  gSystem->ProcessEvents();
+
+  TImage *img = TImage::Create();
+  img->FromPad(c1);
+  img->WriteImage("newSNR_background_cbc_trigs.png");
+  
+  delete img;
+
+
 
 // Plot Foreground CBC Triggers
   TCanvas* c2 = new TCanvas();
@@ -182,14 +105,25 @@ void post_eveto() {
   leg_hist_2->AddEntry(h4,"Single Stage Gaussian","l");
   leg_hist_2->Draw();
 
+  gSystem->ProcessEvents();
+
+  TImage *img = TImage::Create();
+  img->FromPad(c2);
+  img->WriteImage("newSNR_foreground_cbc_trigs.png");
+  
+  delete img;
+
 // Plot Eta v. MChirp, Background CBC Triggers
   TCanvas* c3 = new TCanvas();
   TH2F *h5 = new TH2F("h5","Eta v. MChirp Background CBC Triggers", n_bins, x_low, x_high);
 
+  gSystem->ProcessEvents();
+
   h5->GetXaxis()->SetTitle("MChirp"); //need to add units
   h5->GetYaxis()->SetTitle("Eta");
   ss_s5_cat4_bg->Draw("eta:mchirp>>h5");
-
+  
+  delete img;
 
 // Plot Mass1 v. Mass2
   TCanvas* c4 = new TCanvas();
@@ -199,7 +133,15 @@ void post_eveto() {
   h6->GetYaxis()->SetTitle("Mass1");
   ss_s5_cat4_bg->Draw("mass1:mass2>>h6");
 
-// Plot Chisq v. SNRsq
+  gSystem->ProcessEvents();
+
+  TImage *img = TImage::Create();
+  img->FromPad(c4);
+  img->WriteImage("mass1_v_mass2.png");
+
+  delete img;
+
+// Plot Chisq v. SNR_sq
   TCanvas* c5 = new TCanvas(); 
   TH2F *h7 = new TH2F("h7","Chisq v. SNR_sq Background CBC Triggers", n_bins, x_low, x_high);
 
@@ -207,6 +149,13 @@ void post_eveto() {
   h7->GetYaxis()->SetTitle("chisq");
   ss_s5_cat4_bg->Draw("chisq:snr_sq>>h7");
 
+  gSystem->ProcessEvents();
+
+  TImage *img = TImage::Create();
+  img->FromPad(c5);
+  img->WriteImage("chisq_v_snrsq.png");
+
+  delete img;
 
   return;
 }
@@ -219,3 +168,120 @@ int main( int argc, char *argv[] )
   return 0;
 }
 
+
+//MISC. CODE TO BE SORTED LATER
+
+
+//int eveto_main( int gps_start_time, int gps_end_time, Double_t cbc_trigger_snr_threshold, char* detector, char* output_path, char* sql_db, int number, int x_low, int x_high, int n_bins )
+//  //Read in Triggers
+//    TTree* clustered_cbc_trigs = get_triggers_from_database( 1, sql_db );
+
+//SNR vs. (Chirp, Total) Mass
+//TCanvas* c2 = new TCanvas("c2");
+//c2->Divide(1,1);
+//c2->cd(1);
+//TH1F *h3 = new TH1F("h3","SNR v. Total Mass",n_bins,x_low,x_high);
+////TH1F *h3a = new TH1F("h3a","SNR v. Chirp Mass",n_bins,x_low,x_high);
+//clustered_cbc_trigs->Draw("snr:mtotal>>h3");
+//h3->SetMarkerColor(kGreen);
+//h3->Draw();
+//gPad->Update();
+//clustered_cbc_trigs->Draw("snr:mchirp", "", "same");
+//
+////SNR vs. (ttotal, eta) 
+//TCanvas* c3 = new TCanvas("c3");
+//c3->Divide(1,1);
+//c3->cd(1);
+//TH1F *h4 = new TH1F("h4","newSNR v. Total Mass",n_bins,x_low,x_high);
+//clustered_cbc_trigs->Draw("snr:ttotal>>h5");
+//h4->SetMarkerColor(kGreen);
+//h4->Draw();
+//gPad->Update();
+//clustered_cbc_trigs->Draw("snr:eta", "", "same");
+//
+////newSNR vs. (Chirp, Total) Mass
+//TCanvas* c4 = new TCanvas("c4");
+//c4->Divide(1,1);
+//c4->cd(1);
+//TH1F *h5 = new TH1F("h5","newSNR v. Total Mass",n_bins,x_low,x_high);
+////TH1F *h3a = new TH1F("h3a","SNR v. Chirp Mass",n_bins,x_low,x_high);
+//clustered_cbc_trigs->Draw("newsnr:mtotal>>h5");
+//h5->SetMarkerColor(kGreen);
+//h5->Draw();
+//gPad->Update();
+//clustered_cbc_trigs->Draw("newsnr:mchirp", "", "same");
+//
+////newSNR vs. (ttotal, eta) 
+//TCanvas* c5 = new TCanvas("c5");
+//c5->Divide(1,1);
+//c5->cd(1);
+//TH1F *h6 = new TH1F("h6","newSNR v. Total Mass",n_bins,x_low,x_high);
+//clustered_cbc_trigs->Draw("newsnr:ttotal>>h6");
+//h6->SetMarkerColor(kGreen);
+//h6->Draw();
+//gPad->Update();
+//clustered_cbc_trigs->Draw("newsnr:eta", "", "same");
+//
+///Make Scatterplot of SNR v. Mass_total and newSNR v. Mass_total
+//  //TCanvas* c2 = new TCanvas("c2");
+//    //  gStyle->SetOptStat(0);
+//      //c2->Divide(2,2);
+//        //c2->cd(1);
+//          //TH1F *h3 = new TH1F("h3","SNR v. Total Mass",n_bins,x_low,x_high);
+//            //clustered_cbc_trigs->Draw("snr:mtotal>>h3");  
+//
+//              //h3->GetXaxis()->SetTitle("mtotal,mchirp");
+//                //h3->GetYaxis()->SetTitle("SNR");
+//                  //h3->SetMarkerColor(kGreen);
+//                    //gPad->Update();                              
+//                      //TH1F *h3a = new TH1F("h3a","SNR v. Chirp Mass",n_bins,x_low,x_high);
+//                        //clustered_cbc_trigs->Draw("snr:mtotal>>h3");  
+//                          //clustered_cbc_trigs->Draw("snr:mchirp", "","same");
+//                            //gPad->Update();
+//                              /*h3->SetLineColor(1);
+//                                h3a->SetLineColor(2);
+//                                  h3->Draw();
+//                                    h3a->Draw("same");
+//                                    */
+//
+//
+//                                    /*
+//                                      TCanvas* c3 = new TCanvas();
+//                                        //c2->cd(3);
+//                                          TH1F *h4 = new TH1F("h4","newSNR v. Total Mass",n_bins,x_low,x_high); 
+//                                            TH1F *h4a = new TH1F("h4a","newSNR v. Chirp Mass",n_bins,x_low,x_high);  
+//                                              clustered_cbc_trigs->Draw("newsnr:mtotal>>h4");
+//                                                clustered_cbc_trigs->Draw("newsnr:mchirp>>h4a");
+//                                                  h4->SetLineColor(1);
+//                                                    h4a->SetLineColor(2);
+//                                                      h4->Draw();
+//                                                        h4a->Draw("same");
+//
+//                                                        TCanvas* c4 = new TCanvas();
+//                                                         // c2->cd(2);
+//                                                           TH1F *h5 = new TH1F("h5","SNR v. Total Time",n_bins,x_low,x_high);
+//                                                             TH1F *h5a = new TH1F("h5a","SNR v. Eta",n_bins,x_low,x_high);  
+//                         clustered_cbc_trigs->Draw("snr:ttotal>>h5");
+//                                                                 clustered_cbc_trigs->Draw("snr:eta>>h5a");
+//
+// h5->SetLineColor(1);
+//   h5a->SetLineColor(2);
+//     h5->Draw();
+//       h5a->Draw("same");
+//
+//
+//       TCanvas* c5 = new TCanvas();
+//        // c2->cd(4);
+//          TH1F *h6 = new TH1F("h6","newSNR v. Total Time",n_bins,x_low,x_high);
+//            TH1F *h6a = new TH1F("h6a","newSNR v. Eta",n_bins,x_low,x_high);
+//              clustered_cbc_trigs->Draw("newsnr:ttotal>>h6");
+//                clustered_cbc_trigs->Draw("newsnr:eta>>h6a");
+//                  h6->SetLineColor(1);
+//                    h6a->SetLineColor(2);
+//                      h6->Draw();
+//                        h6a->Draw("same");
+//                        */
+//
+//                          //h3->SetBit(TH1::kCanRebin);
+//                            //  c2->SetLogy();
+//
