@@ -15,10 +15,117 @@
 #include <THStack.h>
 using namespace std;
 
-int eveto_main( int gps_start_time, int gps_end_time, Double_t cbc_trigger_snr_threshold, char* detector, char* outputdir, char* sql_db, int number, Double_t x_low, Double_t x_high, int n_bins )
+
+//import cbc_triggers from .root file
+
+int import_cbc_trigs(int gps_start_time, int gps_end_time, Double_t cbc_trigger_snr_threshold, char* detector, char* outputdir, char* sql_db, int number, Double_t x_low, Double_t x_high, int n_bins)
 {
-  // Return a tree containing either foreground or background triggers from a database                 
-  TTree* get_triggers_from_database( Int_t background, TString db_filename ) {
+
+ // Return a tree containing triggers from a database 
+  TTree* get_triggers_from_database( TString db_filename ) {
+
+ // Create variables for storing triggers 
+    Float_t snr;
+    Float_t chisq;
+    Float_t chisqdof;    
+    Float_t newsnr;   
+    Float_t mass1;
+    Float_t mass2;
+    Float_t mtotal;
+    Float_t mchirp;
+    Float_t ttotal;
+    Float_t eta;
+    Float_t snr_sq;
+
+   // Create strings for the SQL statements  
+    TString select_snr_chisq( "select sngl_inspiral.event_id,sngl_inspiral.snr,sngl_inspiral.chisq,sngl_inspiral.chisq_dof, sngl_inspiral.mass1,sngl_inspiral.mass2, sngl_inspiral.mtotal, sngl_inspiral.mchirp, sngl_inspiral.ttotal, sngl_inspiral.eta from sngl_inspiral where sngl_inspiral.ifo = detector[] " );
+        TString zero_lag_clause( " and experiment_summary.datatype = 'all_data'" );
+        TString time_slide_clause( " and experiment_summary.datatype = 'slide'" );
+        TString snr_chisq_join_clause( " and experiment_summary.experiment_summ_id = experiment_map.experiment_summ_id and experiment_map.coinc_event_id = coinc_event.coinc_event_id and coinc_event.coinc_event_id = coinc_event_map.coinc_event_id and coinc_event_map.event_id = sngl_inspiral.event_id" );
+
+// Create a TTree to store the triggers 
+    TTree *cbc_trigs_tree = new TTree("T","cbc-trigger-original");
+    cbc_trigs_tree->Branch( "snr" , &snr, "snr/F" );
+    cbc_trigs_tree->Branch( "chisq" , &chisq, "chisq/F" );
+    cbc_trigs_tree->Branch( "chisqdof" , &chisqdof, "chisqdof/F" );
+    cbc_trigs_tree->Branch( "newsnr" , &newsnr, "newsnr/F" );
+    cbc_trigs_tree->Branch( "mass1", &mass1, "mass1/F" );
+    cbc_trigs_tree->Branch( "mass2", &mass2, "mass2/F" );
+    cbc_trigs_tree->Branch( "mtotal", &mtotal, "mtotal/F" );
+    cbc_trigs_tree->Branch( "mchirp", &mchirp, "mchirp/F" );
+    cbc_trigs_tree->Branch( "ttotal", &ttotal, "ttotal/F" );
+    cbc_trigs_tree->Branch( "eta", &eta, "eta/F" );
+    cbc_trigs_tree->Branch( "snr_sq", &snr_sq, "snr_sq/F" );
+    cbc_trigs_tree->Branch( "background", &background, "background/I");
+    cbc_trigs_tree->Branch( "database" , &db_filename );
+
+
+// Create a connection to the sqlite database 
+
+    TSQLServer* serv = TSQLServer::Connect( db_filename, "", "" );
+
+	if ( background ) {
+    		cout << "loading background triggers" << endl;
+    		select_snr_chisq = select_snr_chisq + time_slide_clause + snr_chisq_join_clause;
+	}
+
+	else {
+    		cout << "loading zero lag triggers" << endl;
+
+	}
+
+// SQL statement to get triggers from the database
+
+   TSQLStatement* stmt = serv->Statement(select_snr_chisq, 50000);
+
+ // Process the database query 
+ 	if ( stmt->Process() ) {
+	
+	// Store the result of the statement in the buffer 
+  	stmt->StoreResult();
+
+	// process the data returned in the buffer 
+	while ( stmt->NextResultRow() ) {
+        	snr = stmt->GetDouble(1);
+        	chisq = stmt->GetDouble(2);
+        	chisqdof = 2.0 * stmt->GetDouble(3) - 2.0;
+        	mass1 = stmt->GetDouble(4);
+        	mass2 = stmt->GetDouble(5);
+        	snr_sq = snr*snr;
+	
+
+	// compute the new SNR 
+	if ( chisq > chisqdof ) {
+        	newsnr = snr * pow(((1.0 + pow((chisq/chisqdof), 3.0))/2.0), (-1.0 /6.0));
+	} 
+	
+	else {
+         	newsnr = snr;
+        }
+
+ 	// store the data in the tree and the histograms;    
+
+	cbc_trigs_tree->Fill();
+	}
+	}
+
+	else {
+		cout << "Error processing SQL" << endl;
+	}
+
+
+	// Close the database 
+	delete serv;
+
+    return cbc_trigs_tree;
+  }
+
+
+//import omicron triggers from database
+
+int import_omicron_trigs(int gps_start_time, int gps_end_time, Double_t cbc_trigger_snr_threshold, char* detector, char* outputdir, char* sql_db, int number, Double_t x_low, Double_t x_high, int n_bins) {
+ // Return a tree containing either foreground or background triggers from a database                 
+  TTree* get_triggers_from_database( Int_t background, TString db_filename ) 
 
     // Create variables for storing triggers                                                           
     Float_t snr;
@@ -33,47 +140,21 @@ int eveto_main( int gps_start_time, int gps_end_time, Double_t cbc_trigger_snr_t
     Float_t eta;
     Float_t snr_sq;
  
-   // Create strings for the SQL statements                                                           
-    	TString select_snr_chisq( "select sngl_inspiral.event_id,sngl_inspiral.snr,sngl_inspiral.chisq,sngl_inspiral.chisq_dof, sngl_inspiral.mass1,sngl_inspiral.mass2, sngl_inspiral.mtotal, sngl_inspiral.mchirp, sngl_inspiral.ttotal, sngl_inspiral.eta from sngl_inspiral where sngl_inspiral.ifo = detector[] " );
-	TString zero_lag_clause( " and experiment_summary.datatype = 'all_data'" );
-        TString time_slide_clause( " and experiment_summary.datatype = 'slide'" );
-        TString snr_chisq_join_clause( " and experiment_summary.experiment_summ_id = experiment_map.experiment_summ_id and experiment_map.coinc_event_id = coinc_event.coinc_event_id and coinc_event.coinc_event_id = coinc_event_map.coinc_event_id and coinc_event_map.event_id = sngl_inspiral.event_id" );
-
     // Create a TTree to store the triggers                                                            
-    TTree *tree = new TTree("T","single inspiral triggers");
-    tree->Branch( "snr" , &snr, "snr/F" );
-    tree->Branch( "chisq" , &chisq, "chisq/F" );
-    tree->Branch( "chisqdof" , &chisqdof, "chisqdof/F" );
-    tree->Branch( "newsnr" , &newsnr, "newsnr/F" );
-    tree->Branch( "mass1", &mass1, "mass1/F" );
-    tree->Branch( "mass2", &mass2, "mass2/F" );
-    tree->Branch( "mtotal", &mtotal, "mtotal/F" );
-    tree->Branch( "mchirp", &mchirp, "mchirp/F" );
-    tree->Branch( "ttotal", &ttotal, "ttotal/F" );
-    tree->Branch( "eta", &eta, "eta/F" );
-    tree->Branch( "snr_sq", &snr_sq, "snr_sq/F" );       
-    tree->Branch( "background", &background, "background/I");
-    tree->Branch( "database" , &db_filename );
-
-    // Create a connection to the sqlite database                                                      
-    TSQLServer* serv = TSQLServer::Connect( db_filename, "", "" );
-
-if ( background ) {
-    cout << "loading background triggers" << endl;
-    select_snr_chisq = select_snr_chisq + time_slide_clause + snr_chisq_join_clause;
-}
-else {
-    cout << "loading zero lag triggers" << endl;
-    select_snr_chisq = select_snr_chisq + zero_lag_clause + snr_chisq_join_clause;
-}
-
-    // SQL statement to get triggers from the database                                                 
-    TSQLStatement* stmt = serv->Statement(select_snr_chisq, 50000);
-
-    // Process the database query                                                                      
-    if ( stmt->Process() ) {
-      // Store the result of the statement in the buffer                                               
-      stmt->StoreResult();
+    TTree *aux_trigs_tree = new TTree("T","single inspiral triggers");
+    aux_trigs_tree->Branch( "snr" , &snr, "snr/F" );
+    aux_trigs_tree->Branch( "chisq" , &chisq, "chisq/F" );
+    aux_trigs_tree->Branch( "chisqdof" , &chisqdof, "chisqdof/F" );
+    aux_trigs_tree->Branch( "newsnr" , &newsnr, "newsnr/F" );
+    aux_trigs_tree->Branch( "mass1", &mass1, "mass1/F" );
+    aux_trigs_tree->Branch( "mass2", &mass2, "mass2/F" );
+    aux_trigs_tree->Branch( "mtotal", &mtotal, "mtotal/F" );
+    aux_trigs_tree->Branch( "mchirp", &mchirp, "mchirp/F" );
+    aux_trigs_tree->Branch( "ttotal", &ttotal, "ttotal/F" );
+    aux_trigs_tree->Branch( "eta", &eta, "eta/F" );
+    aux_trigs_tree->Branch( "snr_sq", &snr_sq, "snr_sq/F" );       
+    aux_trigs_tree->Branch( "background", &background, "background/I");
+    aux_trigs_tree->Branch( "database" , &db_filename );
 
       // process the data returned in the buffer                                                       
       while ( stmt->NextResultRow() ) {
@@ -92,18 +173,74 @@ else {
 	}
 
 	// store the data in the tree and the histograms;                                              
-	tree->Fill();
-      }
-    }
-    else {
-      cout << "Error processing SQL" << endl;
-    }
-
-    // Close the database                                                                              
-    delete serv;
-
-    return tree;
+	aux_trigs_tree->Fill();
+    return aux_trigs_tree;
   }
+}
+
+
+//MAIN Hierarchical Veto function
+
+int eveto_main( int gps_start_time, int gps_end_time, Double_t cbc_trigger_snr_threshold, char* detector, char* outputdir, char* sql_db, int number, Double_t x_low, Double_t x_high, int n_bins )
+{
+  gROOT->Reset();
+
+// Open ROOT file for triggers
+  TFile f("cbc-trigger-original.root");
+
+//Create histogram
+  TH1F *trigger = new TH1F("trigger", "Histogram of triggers", nbins, x_low, x_high);
+
+
+//state variables
+    Float_t snr;
+    Float_t chisq;
+    Float_t chisqdof;
+    Float_t newsnr;
+    Float_t mass1;
+    Float_t mass2;
+    Float_t mtotal;
+    Float_t mchirp;
+    Float_t ttotal;
+    Float_t eta;
+    Float_t snr_sq;
+
+//read triggers (CBC or omicron)
+
+
+//run core hveto algorithm
+
+
+//Make TTree with vetoed triggers and times
+	//import vetoed trigs from ascii to TTree
+	TString dir = "/home/erika.cowan/src/eveto/";//eventually make this a less specific directory, but OK for now
+	dir.ReplaceAll("vetoed_trigs.dat","");
+	dir.ReplaceAll("/./","/");	
+
+	TFile *f = new TFile("vetoed_trigs.root","RECREATE");
+	TH1F *h1 = new TH1F("h1", "x distribution",100,-4,4);
+	TTree *T1 = new TTree("ntuple", "data from ascii file");
+	Long64_t nlines = T1->ReadFile(Form("%svetoed_trigs.dat",dir.Data()),"snr:start_time:end_time");
+	printf("found %11d points\n", nlines);
+	T1->Draw("snr");
+	T1->Write();
+
+//call vetoed trigger histogram into variable or TCut
+
+
+	//established *algorithm* for taking a TTree and use the variables to SUBTRACT triggers and times
+
+
+	//TCuts algorithm -> use to cut data, then to export to new .root file/histogram
+
+
+
+
+
+}
+
+
+//DON'T TOUCH-command line parsing- to be put in the pre-process eveto.C
 
 int main( int argc, char *argv[] )
 {
