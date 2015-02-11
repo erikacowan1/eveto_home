@@ -21,6 +21,7 @@ int read_omicron_triggers( TString trigger_directory, TString safe_channel_file 
   TFile *f = new TFile("omicron_triggers.root","RECREATE");
 
   std::cout << "Reading safe channel list from " << safe_channel_file << std::endl;
+
   TTree* safe_channel_tree = new TTree( "safe_channel_list", "List of safe channels to process" );
   Long64_t num_veto_channels = safe_channel_tree->ReadFile( safe_channel_file, "channel/C" );
   std::cout << "Read " << num_veto_channels << " channel names" << std::endl;
@@ -29,13 +30,17 @@ int read_omicron_triggers( TString trigger_directory, TString safe_channel_file 
   Long64_t num_safe_channels = safe_channel_tree->GetEntries();
   TTree* veto_trigger_tree_array[num_safe_channels];
  
-  std::string *channel_name = NULL;
-  safe_channel_tree->SetBranchAddress("channel", &channel_name);
+//  std::string *channel_name = 0;
+//  safe_channel_tree->SetBranchAddress("channel", &channel_name);
 
   std::cout << "number of channels = " << num_safe_channels << std::endl;
 
   for( Long64_t i = 0; i < num_safe_channels; i++ )
   {
+   TTree * new_tree = (TTree*)f->Get("channel");
+   std::string * channel_name = new std::string(); 
+   // std::string *channel_name = 0;
+    safe_channel_tree->SetBranchAddress("channel", &channel_name); 
     std::cout << "i = " << i << std::endl;
     safe_channel_tree->GetEntry(i);
     std::cout << "Reading channel " << channel_name <<  std::endl;
