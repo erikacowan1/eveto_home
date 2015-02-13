@@ -31,6 +31,11 @@ TChain* read_omicron_channel( TString trigger_directory, const char* channel_nam
   return veto_trigger_chain;
 }
 
+TTree* simple_time_veto_cluster( TChain* unclustered_trigger_tree )
+{
+  return NULL;
+}
+
 int read_omicron_triggers( TString trigger_directory, TString safe_channel_file ) {
 
   TFile *f = new TFile("omicron_triggers.root","RECREATE");
@@ -46,6 +51,7 @@ int read_omicron_triggers( TString trigger_directory, TString safe_channel_file 
   std::cout << "Reading triggers from directory " << trigger_directory << std::endl;
   Long64_t num_safe_channels = safe_channel_tree->GetEntries();
   TChain* veto_trigger_tree_array[num_safe_channels];
+  TTree* clustered_veto_trigger_tree_array[num_safe_channels];
  
   char *channel_name = new char[256];
   safe_channel_tree->SetBranchAddress("channel", channel_name);
@@ -57,6 +63,9 @@ int read_omicron_triggers( TString trigger_directory, TString safe_channel_file 
     safe_channel_tree->GetEntry(i);
     std::cout << "Reading channel " << channel_name <<  std::endl;
     veto_trigger_tree_array[i] = read_omicron_channel( trigger_directory, channel_name );
+
+    clustered_veto_trigger_tree_array[i] = simple_time_veto_cluster( veto_trigger_tree_array[i] );
+
     veto_trigger_tree_array[i]->Print();
   }
 
