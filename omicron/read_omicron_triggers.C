@@ -26,22 +26,30 @@ TChain* read_omicron_channel( TString trigger_directory, const char* channel_nam
   snprintf( veto_file_pattern, 512, "%s/%s/*.root", trigger_directory.Data(), channel_name );
 
   std::cout << "Adding files " << veto_file_pattern << std::endl;
-  veto_trigger_chain->Add(veto_file_pattern);
+  veto_trigger_chain->Add(veto_file_pattern);//grabs florent's data and puts in veto_trigger_chain
 
   return veto_trigger_chain;
 }
 
-TTree* simple_time_veto_cluster( TChain* unclustered_trigger_tree )
+void simple_time_veto_cluster( TTree* clustered_tree, TChain* unclustered_tree )
 {
-  return NULL;
+  // duncan's fake cloning just copies the tree
+  clustered_tree = unclustered_tree->CloneTree();
+
+  // erika's proper clustering
+  // create the relevant branches in the clustered_tree
+  // cluster the triggers and stick the data in the clustered_tree
+  return;
 }
 
 int read_omicron_triggers( TString trigger_directory, TString safe_channel_file ) {
 
-  TFile *f = new TFile("omicron_triggers.root","RECREATE");
+  //create ROOT file that will store omicron triggers
+  TFile* f = new TFile("omicron_triggers.root","RECREATE");
 
   std::cout << "Reading safe channel list from " << safe_channel_file << std::endl;
 
+  //create TTree that will store the safe channel list, and reads in safe channels 
   TTree* safe_channel_tree = new TTree( "safe_channel_list", "List of safe channels to process" );
   Long64_t num_veto_channels = safe_channel_tree->ReadFile( safe_channel_file, "channel/C" );
   std::cout << "Read " << num_veto_channels << " channel names" << std::endl;
@@ -49,24 +57,26 @@ int read_omicron_triggers( TString trigger_directory, TString safe_channel_file 
   safe_channel_tree->Print();
 
   std::cout << "Reading triggers from directory " << trigger_directory << std::endl;
-  Long64_t num_safe_channels = safe_channel_tree->GetEntries();
-  TChain* veto_trigger_tree_array[num_safe_channels];
-  TTree* clustered_veto_trigger_tree_array[num_safe_channels];
+
+  //create array of pointers to TChain, of size num_safe_channels
+  TChain* veto_trigger_tree_array[num_veto_channels]; //already alive from Florent
+  TTree* clustered_veto_trigger_tree_array[num_veto_channels]; //we create this
  
   char *channel_name = new char[256];
-  safe_channel_tree->SetBranchAddress("channel", channel_name);
+  safe_channel_tree->SetBranchAddress("channel", channel_name); //creates association btwn channel TTree and string channel_name
 
-  std::cout << "number of channels = " << num_safe_channels << std::endl;
-  for( Long64_t i = 0; i < num_safe_channels; i++ )
+  std::cout << "number of channels = " << num_veto_channels << std::endl;
+  for( Long64_t i = 0; i < num_veto_channels; i++ )
   {
     std::cout << "i = " << i << std::endl;
-    safe_channel_tree->GetEntry(i);
+    safe_channel_tree->GetEntry(i); //sets channel name to ith leaf
     std::cout << "Reading channel " << channel_name <<  std::endl;
     veto_trigger_tree_array[i] = read_omicron_channel( trigger_directory, channel_name );
 
-    clustered_veto_trigger_tree_array[i] = simple_time_veto_cluster( veto_trigger_tree_array[i] );
+    // create a tree to store clustered triggers and store its address in the tree array
+    clustered_veto_trigger_tree_array[i] = new TTree( channel_name, channel_name );
 
-    veto_trigger_tree_array[i]->Print();
+    simple_time_veto_cluster( clustered_veto_trigger_tree_array[i], veto_trigger_tree_array[i] );
   }
 
   new TBrowser;
@@ -74,15 +84,18 @@ int read_omicron_triggers( TString trigger_directory, TString safe_channel_file 
 }
 
 
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
+  // Create arrays to store command line arguments
   char path[512];
   char safe_file[512];
 
+  // print and store command line arguments
   fprintf( stderr, "%s %s %s\n", argv[0], argv[1], argv[2] );
   snprintf( path, 512, argv[1] );
   snprintf( safe_file, 512, argv[2] );
 
+  // create ROOT application and execute trigger read in function
   TApplication* rootapp = new TApplication("read_omicron_triggers", &argc, argv);
   read_omicron_triggers( path, safe_file );
   rootapp->Run();
