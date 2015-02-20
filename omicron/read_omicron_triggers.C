@@ -33,6 +33,7 @@ TChain* read_omicron_channel( TString trigger_directory, const char* channel_nam
 
 bool simple_time_veto_cluster( TTree* clustered_tree, TChain* unclustered_tree )
 {
+  std::cout << "simple_time_veto_cluster: "<< unclustered_tree->GetEntries() << " unclustered triggers" << std::endl;
 
   double Ttime, Ttstart, Ttend, Tfreq, Tfstart, Tfend, Tsnr, Tamp, Tq;
 
@@ -138,7 +139,9 @@ bool simple_time_veto_cluster( TTree* clustered_tree, TChain* unclustered_tree )
     clustered_tree->Fill();
     Cmeandur+=(Ctend-Ctstart);
   }
+
   if(clustered_tree->GetEntries()) Cmeandur/=(double)(clustered_tree->GetEntries());
+
   std::cout << "simple_time_veto_cluster: "<< clustered_tree->GetEntries() << " clusters were found" << std::endl;
 
   return true;
