@@ -31,15 +31,120 @@ TChain* read_omicron_channel( TString trigger_directory, const char* channel_nam
   return veto_trigger_chain;
 }
 
-void simple_time_veto_cluster( TTree* clustered_tree, TChain* unclustered_tree )
+bool simple_time_veto_cluster( TTree* clustered_tree, TChain* unclustered_tree )
 {
-  // duncan's fake cloning just copies the tree
-  clustered_tree = unclustered_tree->CloneTree();
+  std::cout << "simple_time_veto_cluster: "<< unclustered_tree->GetEntries() << " unclustered triggers" << std::endl;
 
-  // erika's proper clustering
-  // create the relevant branches in the clustered_tree
-  // cluster the triggers and stick the data in the clustered_tree
-  return;
+  double Ttime, Ttstart, Ttend, Tfreq, Tfstart, Tfend, Tsnr, Tamp, Tq;
+
+  if(unclustered_tree->SetBranchAddress("time",&Ttime)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing time branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("frequency",&Tfreq)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing frequency branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("q",&Tq)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing q branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("snr",&Tsnr)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing snr branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("tstart",&Ttstart)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing tstart branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("tend",&Ttend)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing tend branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("fstart",&Tfstart)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing fstart branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("fend",&Tfend)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing fend branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("amplitude", &Tamp)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+
+  double Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
+  Long64_t Cfirstentry, Csize;
+  double Cdelta_t = 1.0; // seconds
+  double cl_snr_thr = 10.0; // SNR threshold for clustering
+  double Cmeandur;
+
+  clustered_tree->Branch("time",       &Ctime,      "time/D");
+  clustered_tree->Branch("tstart",     &Ctstart,    "tstart/D");
+  clustered_tree->Branch("tend",       &Ctend,      "tend/D");
+  clustered_tree->Branch("frequency",  &Cfreq,      "frequency/D");
+  clustered_tree->Branch("fstart",     &Cfstart,    "fstart/D");
+  clustered_tree->Branch("fend",       &Cfend,      "fend/D");
+  clustered_tree->Branch("snr",        &Csnr,       "snr/D");
+  clustered_tree->Branch("amplitude",  &Camp,       "amplitude/D");
+  clustered_tree->Branch("q",          &Cq,         "q/D");
+  clustered_tree->Branch("firstentry", &Cfirstentry,"firstentry/L");
+  clustered_tree->Branch("size",       &Csize,      "size/L");
+
+  Cfirstentry=-1;
+  Ctend=0.0;
+  Cmeandur=0.0;
+
+  // loop over time sorted triggers
+  for(Long64_t t=0; t<unclustered_tree->GetEntries(); t++){
+    unclustered_tree->GetEntry(t);
+
+    // this is the same cluster...
+    if(Ttstart-Ctend<Cdelta_t){
+      Csize++; // one more tile
+      if(Ttend   > Ctend)   Ctend=Ttend;    // update cluster end
+      if(Ttstart < Ctstart) Ctstart=Ttstart;// update cluster tstart
+      if(Tfend   > Cfend)   Cfend=Tfend;    // update cluster end
+      if(Tfstart < Cfstart) Cfstart=Tfstart;// update cluster tstart
+      if(Tsnr>Csnr){  // this tile is louder
+        Csnr  = Tsnr; // update cluster SNR
+        Camp  = Tamp; // update cluster amplitude - FIXME: could be better!
+        Ctime = Ttime;// update cluster time
+        Cfreq = Tfreq;// update cluster frequency
+        Cq    = Tq;   // update cluster Q
+      }
+    }
+    //... or start a new cluster
+    else{
+      if(t&&Csnr>=cl_snr_thr){
+        clustered_tree->Fill();  // fill tree with previous entry
+        Cmeandur+=(Ctend-Ctstart);
+      }
+      Ctend       = Ttend;  // cluster t end
+      Ctstart     = Ttstart;// cluster t start
+      Cfend       = Tfend;  // cluster f end
+      Cfstart     = Tfstart;// cluster f start
+      Csize       = 1;      // cluster size
+      Csnr        = Tsnr;   // cluster SNR
+      Camp        = Tamp;   // cluster amplitude
+      Ctime       = Ttime;  // cluster time
+      Cfreq       = Tfreq;  // cluster frequency
+      Cfirstentry = t;      // cluster first entry
+    }
+  }
+
+  // save last cluster
+  if(unclustered_tree->GetEntries()&&Csnr>=cl_snr_thr){
+    clustered_tree->Fill();
+    Cmeandur+=(Ctend-Ctstart);
+  }
+
+  if(clustered_tree->GetEntries()) Cmeandur/=(double)(clustered_tree->GetEntries());
+
+  std::cout << "simple_time_veto_cluster: "<< clustered_tree->GetEntries() << " clusters were found" << std::endl;
+
+  return true;
 }
 
 int read_omicron_triggers( TString trigger_directory, TString safe_channel_file ) {
