@@ -19,4 +19,4 @@ eveto_read_omicron.o: eveto_read_omicron.cpp cbc_eveto.h
 .PHONY: clean
 
 clean:
-	rm -f *.o cbc_eveto
+	rm -f *.o cbc_eveto cbc_eveto.root
