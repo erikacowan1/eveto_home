@@ -52,5 +52,25 @@ int eveto::cbc_eveto_main(
     return 1;
   }
 
+  //
+  // Read in cbc triggers from database.
+  //
+
+  TTree* cbc_trigger_tree;
+
+  retcode = eveto::read_cbc_triggers(
+      &cbc_trigger_tree, // output
+      cbc_trigger_database, // input
+      gps_start_time, // input
+      gps_end_time, // input
+      detector, // input
+      cbc_snr_threshold, // input
+      verbose );
+
+  if ( retcode ) {
+    std::cerr << "error reading cbc triggers" << std::endl;
+    return 1;
+  }
+
   return 0;
 }

@@ -39,4 +39,14 @@ int read_omicron_triggers(
       Double_t omicron_snr_threshold,
       Double_t omicron_cluster_window,
       bool verbose );
+
+int read_cbc_triggers(
+      TTree** cbc_trigger_tree,
+      TString* cbc_trigger_database,
+      Long_t gps_start_time,
+      Long_t gps_end_time,
+      TString* detector,
+      Float_t cbc_snr_threshold,
+      bool verbose );
+
 };
