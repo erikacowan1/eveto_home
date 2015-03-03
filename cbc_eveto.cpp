@@ -119,6 +119,8 @@ int main( int argc, char *argv[] )
   // create a new root application
   TApplication* rootapp = new TApplication("cbc_eveto", &argc, argv);
 
+  TFile* f = new TFile("cbc_eveto.root","RECREATE");
+
   // call the main function that actually does the work
   int retcode = eveto::cbc_eveto_main( 
       gps_start_time, gps_end_time, detector, safe_channel_file,
@@ -133,8 +135,11 @@ int main( int argc, char *argv[] )
     exit( retcode );
   } else {
     // run the app until the user quits
+    new TBrowser;
     rootapp->Run();
   }
+
+  f->Close();
 
   // exit with success
   exit( 0 );
