@@ -16,10 +16,7 @@ eveto_main.o: eveto_main.cpp cbc_eveto.h
 eveto_read_omicron.o: eveto_read_omicron.cpp cbc_eveto.h
 	$(CC) -c $(CFLAGS) $<
 
-.PHONY: clean cleanest
+.PHONY: clean
 
 clean:
-	rm *.o
-
-cleanest: clean
-	cbc_eveto
+	rm -f *.o cbc_eveto
