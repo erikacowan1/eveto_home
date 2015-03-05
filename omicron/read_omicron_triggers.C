@@ -17,26 +17,36 @@
 #include <TFile.h>
 #include <TChain.h>
 
+
+//algorithm to read in/chain trigger/segments from omicron .root files
 bool read_omicron_channel( TChain* veto_trigger_chain, TChain* veto_segment_chain, TString trigger_directory, const char* channel_name ) {
 
   std::cout << "Creating triggers chain for " << channel_name << std::endl;
-
+  
+  //declares pointer of veto_file_pattern to array of size 512
   char *veto_file_pattern = new char[512];
+  //connects the list of safe channels to the information stored in Florent's omicron files
   snprintf( veto_file_pattern, 512, "%s/%s/*.root", trigger_directory.Data(), channel_name );
 
   std::cout << "Adding files " << veto_file_pattern << std::endl;
-  veto_trigger_chain->Add(veto_file_pattern); // grabs florent's triggers and puts in veto_trigger_chain
-  veto_segment_chain->Add(veto_file_pattern); // grabs florent's segments and puts in veto_segment_chain
+
+  //gets triggers/segments and stores them in TChain veto_trigger_chain and veto_segement_chain respectively
+  veto_trigger_chain->Add(veto_file_pattern); 
+  veto_segment_chain->Add(veto_file_pattern);
 
   return true;
 }
 
+
+//algorithm for simple time veto clustering, based on Florent's clustering algorithm
 bool simple_time_veto_cluster( TTree* clustered_tree, TChain* unclustered_tree )
 {
   std::cout << "simple_time_veto_cluster: "<< unclustered_tree->GetEntries() << " unclustered triggers" << std::endl;
 
+  //define variables used in unclustered trigger tree
   double Ttime, Ttstart, Ttend, Tfreq, Tfstart, Tfend, Tsnr, Tamp, Tq;
 
+  //set branch addresses for variables in unclustered trigger tree
   if(unclustered_tree->SetBranchAddress("time",&Ttime)<0){
     std::cerr <<"ReadTriggers::GetInputTree: missing time branch"<<std::endl ;
     return false;
@@ -74,11 +84,15 @@ bool simple_time_veto_cluster( TTree* clustered_tree, TChain* unclustered_tree )
     return false;
   }
 
+  //define variables used in clustered trigger tree
   double Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
   Long64_t Cfirstentry, Csize;
+
+  //USE COMMAND LINE ARG-PARSE
   double Cdelta_t = 1.0; // seconds
   double cl_snr_thr = 10.0; // SNR threshold for clustering
 
+  //set branch addresses for variables in clustered trigger tree
   clustered_tree->Branch("time",       &Ctime,      "time/D");
   clustered_tree->Branch("tstart",     &Ctstart,    "tstart/D");
   clustered_tree->Branch("tend",       &Ctend,      "tend/D");
@@ -90,7 +104,8 @@ bool simple_time_veto_cluster( TTree* clustered_tree, TChain* unclustered_tree )
   clustered_tree->Branch("q",          &Cq,         "q/D");
   clustered_tree->Branch("firstentry", &Cfirstentry,"firstentry/L");
   clustered_tree->Branch("size",       &Csize,      "size/L");
-
+ 
+  //initialize two branches
   Cfirstentry=-1;
   Ctend=0.0;
 
@@ -143,7 +158,7 @@ bool simple_time_veto_cluster( TTree* clustered_tree, TChain* unclustered_tree )
 
 int read_omicron_triggers( TString trigger_directory, TString safe_channel_file ) {
 
-  //create ROOT file that will store omicron triggers
+  //create ROOT file that will store omicron triggers- ALL TTrees created in this algorithm will be saved here
   TFile* f = new TFile("omicron_triggers.root","RECREATE");
 
   std::cout << "Reading safe channel list from " << safe_channel_file << std::endl;
@@ -161,10 +176,14 @@ int read_omicron_triggers( TString trigger_directory, TString safe_channel_file 
   TTree* clustered_veto_trigger_tree_array[num_veto_channels]; //we create this
   TTree* veto_segment_tree_array[num_veto_channels]; //already alive from Florent
  
+  //creates pointers to arrays channel_name, and channel_name_segments of size 246 each
   char *channel_name = new char[256];
   char *channel_name_segments = new char[256];
-  safe_channel_tree->SetBranchAddress("channel", channel_name); //creates association btwn channel TTree and string channel_name
 
+  //creates association btwn channel TTree and string channel_name
+  safe_channel_tree->SetBranchAddress("channel", channel_name);
+
+  //reads in TChain of channels(segs/trigs), clusters, saves clusters, and saves TChain
   std::cout << "number of channels = " << num_veto_channels << std::endl;
   for( Long64_t i = 0; i < num_veto_channels; i++ )
   {
@@ -172,17 +191,21 @@ int read_omicron_triggers( TString trigger_directory, TString safe_channel_file 
     safe_channel_tree->GetEntry(i); //sets channel name to ith leaf
     std::cout << "Reading channel " << channel_name <<  std::endl;
 
-    // Create a chain to store the unclustered triggers and read from file
+    // Create a chain to store the unclustered triggers/segments and read from file
     TChain* veto_trigger_chain = new TChain( "triggers", channel_name );
     TChain* veto_segment_chain = new TChain( "segments", channel_name );
 
+    //read in omicron triggers to veto_trigger-chain and veto_segment_chain
     read_omicron_channel( veto_trigger_chain, veto_segment_chain, trigger_directory, channel_name );
 
     // create a tree to store clustered triggers and store its address in the tree array
     clustered_veto_trigger_tree_array[i] = new TTree( channel_name, channel_name );
+    
+    //clusters triggers, and deletes unclustered chain
     simple_time_veto_cluster( clustered_veto_trigger_tree_array[i], veto_trigger_chain );
     delete veto_trigger_chain;
 
+    //clone veto_segment_tree, and renames it to channel_name + segments
     snprintf( channel_name_segments, 256, "%s_segments", channel_name );
     veto_segment_tree_array[num_veto_channels] = veto_segment_chain->CloneTree();
     veto_segment_tree_array[num_veto_channels]->SetObject( channel_name_segments, channel_name );

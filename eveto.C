@@ -415,6 +415,9 @@ int veto(){
   int *trigs;
   int i,j,k;
 
+  int num_line_trig_tree;
+  int num_line_seg_tree;
+
   //currently the segments are stored in omicron_triggers.root/segments. For now
   //assume that all segments are science segments. Grab segments from segment tree
   //and perform veto algorithm. 

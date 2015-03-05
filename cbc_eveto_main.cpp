@@ -72,5 +72,79 @@ int eveto::cbc_eveto_main(
     return 1;
   }
 
-  return 0;
+  //
+  //Veto Algorithm
+  //
+
+
+  float* trigtimes;
+  float* starttimes;
+  float* endtimes;
+  FILE* fptrig;
+  FILE* fpseg;
+  float dummytime;
+  float dummystart;
+  float dummyend;
+  int retcode = 0;
+  int numtriglines = 0;
+  int numseglines = 0;
+  int *trigs;
+  int i,j,k;
+
+  int num_line_trig_tree;
+  int num_line_seg_tree;
+
+  //currently the segments are stored in omicron_triggers.root/segments. For now
+  //assume that all segments are science segments. Grab segments from segment tree
+  //and perform veto algorithm. 
+
+  for ( Long64_t i = 0; i < safe_channels->GetEntries(); i++ )
+  {
+    if ( verbose ) {
+      clustered_veto_trigger_tree[i]->Print();
+      veto_segment_tree[i]->Print();
+    }
+ 
+  //increment number of triggers in TTree
+  int num_line_trig_tree = clustered_veto_trigger_tree[i]->GetEntries();
+
+    for(Long64_t j=0; j<num_line_trig_tree; ++j){
+      clustered_veto_trigger_tree[i]->GetEntry(j);
+
+    //increment number of segments in TTree
+    int num_line_seg_tree = veto_segment_tree[i]->GetEntries();
+
+       for (Long64_t k=0; k<num_line_seg_tree; ++k){
+         segment_tree->GetEntry(k);
+
+         //make r1_clustered_tree
+         r1_clustered_tree->Branch("time",       &Ctime,      "time/D");
+         r1_clustered_tree->Branch("tstart",     &Ctstart,    "tstart/D");
+         r1_clustered_tree->Branch("tend",       &Ctend,      "tend/D");
+         r1_clustered_tree->Branch("frequency",  &Cfreq,      "frequency/D");
+         r1_clustered_tree->Branch("fstart",     &Cfstart,    "fstart/D");
+         r1_clustered_tree->Branch("fend",       &Cfend,      "fend/D");
+         r1_clustered_tree->Branch("snr",        &Csnr,       "snr/D");
+         r1_clustered_tree->Branch("amplitude",  &Camp,       "amplitude/D");
+         r1_clustered_tree->Branch("q",          &Cq,         "q/D");
+
+         //if trigger time j is greater than or equal to the start time k, and less than the 
+         //end time k, clone TTree and save new triggers to file? see how florent did it in the clustering
+         //could also print to ascii file, but would be unnecessary.
+         //this will eventually be done in rounds (10), so there will be 11 different TTrees at the
+         //end of the eveto run.
+      
+         if(tstart[j] >= tstart[k] && time[j] <tend[k]) {
+
+           //print vetoed trigs to TTree
+           r1_clustered_tree->Fill();
+    
+         }
+   
+      }
+
+      return 0;
+   }
+  }
+
 }
