@@ -161,6 +161,7 @@ int eveto::read_omicron_triggers(
 {
   // We iterate over the safe channels, so create storage for the channel name
   char *channel_name = new char[256];
+  char *tree_name = new char[256];
   safe_channels->SetBranchAddress("channel", channel_name);
 
   for( Long64_t i = 0; i < safe_channels->GetEntries(); i++ )
@@ -183,14 +184,14 @@ int eveto::read_omicron_triggers(
     }
 
     // create a tree to store clustered triggers and store its address in the tree array
-    clustered_veto_trigger_tree[i] = new TTree( channel_name, channel_name );
+    snprintf( tree_name, 256, "VETOTRIGS:%s", channel_name );
+    clustered_veto_trigger_tree[i] = new TTree( tree_name, channel_name );
     simple_time_omicron_cluster( clustered_veto_trigger_tree[i], veto_trigger_chain, 
         omicron_snr_threshold, omicron_cluster_window, verbose );
     delete veto_trigger_chain;
 
     // Create a new tree containing the veto segments with the correct name for eveto
-    char *channel_name_segments = new char[256];
-    snprintf( channel_name_segments, 256, "%s_segments", channel_name );
+    snprintf( tree_name, 256, "SEGMENTS:%s", channel_name );
     veto_segment_tree[i] = veto_segment_chain->CloneTree();
     veto_segment_tree[i]->SetObject( channel_name_segments, channel_name );
     delete veto_segment_chain;
