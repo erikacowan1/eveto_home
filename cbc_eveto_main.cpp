@@ -74,26 +74,6 @@ int eveto::cbc_eveto_main(
 
   //
   //Veto Algorithm
-  //
-
-
-  float* trigtimes;
-  float* starttimes;
-  float* endtimes;
-  FILE* fptrig;
-  FILE* fpseg;
-  float dummytime;
-  float dummystart;
-  float dummyend;
-  int retcode = 0;
-  int numtriglines = 0;
-  int numseglines = 0;
-  int *trigs;
-  int i,j,k;
-
-  int num_line_trig_tree;
-  int num_line_seg_tree;
-
   //currently the segments are stored in omicron_triggers.root/segments. For now
   //assume that all segments are science segments. Grab segments from segment tree
   //and perform veto algorithm. 
@@ -115,7 +95,11 @@ int eveto::cbc_eveto_main(
     int num_line_seg_tree = veto_segment_tree[i]->GetEntries();
 
        for (Long64_t k=0; k<num_line_seg_tree; ++k){
-         segment_tree->GetEntry(k);
+         veto_segment_tree[i]->GetEntry(k);
+         std::cout << "Read " << veto_segment_tree[i]->GetEntry(k) << "veto segments from TTree" << std::endl;
+
+         double_t Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
+         TTree* r1_clustered_tree;
 
          //make r1_clustered_tree
          r1_clustered_tree->Branch("time",       &Ctime,      "time/D");
