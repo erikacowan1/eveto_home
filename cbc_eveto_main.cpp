@@ -78,67 +78,56 @@ int eveto::cbc_eveto_main(
 	//assume that all segments are science segments. Grab segments from segment tree
 	//and perform veto algorithm. 
 
-	float_t stop_sig_thresh; //to be put in for command line parsing
-	float_t max_sig = 0;
+	float sig_threshold; //to be put in for command line parsing
+	float dumb_veto_window; //to be put in for command line parsing
+	int max_rounds; //to be put in for ommand line pasring
 
-	//import safe channel list and increment with i
-	for ( Long64_t i = 0; i < safe_channels->GetEntries(); i++ )
-	{
-		if ( verbose ) {
-			clustered_veto_trigger_tree[i]->Print();
-			veto_segment_tree[i]->Print();
-		}
+	int num_safe_channels = safe_channel->GetEntries();
+	float max_sig = 0;
+	int i; //counts over safe channels
+	float sig[num_safe_channels]; //make sure num_safe_channels is defined
+	int max_sig_index; //=winning channel!
+	int r = 1; //round increment
+	int max_rounds;
 
-		//increment number of omicron triggers in TTree with j
-		int num_line_om_trig_tree = clustered_veto_trigger_tree[i]->GetEntries(); //RENAME for clarity
-
-		for(Long64_t j=0; j<num_line_om_trig_tree; ++j){
-			clustered_veto_trigger_tree[i]->GetEntry(j);
-
-
-			//increment cbc triggers in TTree with k
-			int num_line_cbc_trig_tree = cbc_trigs_tree[i]->GetEntries();    
-
-			for(Long64_t k=0; k<num_line_cbc_trig_tree; ++k){
-				cbc_trigs_tree[i]->GetEntry(k);
+	//define TTrees
+	TTree* cbc_trigs_round[max_rounds + 1];
+	TTree* omicron_trigs_round[max_rounds + 1][num_safe_channels];
+	TTree* cbc_segs_round[max_rounds + 1][num_safe_channels]; //doesn't currently exist
+	TTree* omicron_segs_round[max_rounds + 1][num_safe_channels];
+		
+	//initialize arrays
+	cbc_trigs_round[0] = cbc_trigs_tree;
+	cbc_segs_round[0] = cbc_segs_tree;
 
 
-				//increment cbc_segs [currently no TTree containing cbc segments]
-				
+	for (i=0; i<num_safe_channels; ++i) {
+		omicron_trigs_round[0] = omicron_trigs_tree[i]; //check name
 
-				//increment omicron segments in TTree with l
-				int num_line_om_seg_tree = veto_segment_tree[i]->GetEntries(); //RENAME for clarity
+		do {
 
-				for(Long64_t l=0; l<num_line_om_seg_tree; ++l){
-					veto_segment_tree[i]->GetEntry(l);
+			if (omicron_trigs_round[r-1][i] !== NULL) {
 
-					//Calculate dumb significance of each auxilliary channel w.r.t cbc_triggers
-				        float_t	sig[i] = calc_dumb_sig(cbc_trigs_tree[i], omicron_trig_tree[i]);
+				sig[i] = calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window);
 
-					//Pick winning channel with the greatest significance
-					if (sig[i] >= max_sig) {
-						max_sig = sig[i];
-						max_sig_index = i;
-						
-					}
-					
-					//exit if max_sig < stop_sig_thresh
-					else {
-						std::cout << dumb_sig[i] << "is less than" << max_sig << std::endl;
-						exit 0;
-					}
-
-					//Take winning channel, grab times of trigger, remove those times from all other channels (cbc, omicron)
-					Given the winning channel i
-					Triggers to veto are stored in an array (of TTrees?) created calc_dum_sig, in the array trigs_2_veto[index].
-					use TCut function to remove times (in reality, to remove segments) from all other segment channels. 
-					Do NOT modify the trigger database, only narrow the segment windows
-					Rinse and Repeat.  
-					
-
+				if(sig[i]>max_sig) {
+					max_sig = sig[i];
+					max_sig_index = i;
 				}
 			}
+			cbc_trigs_round[r] = remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
+
+			if (i != max_sig_index) {	
+				omicron_trigs_round[r][i] = remove_triggers(omicron_trig_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], omicron_segs_round[r-1][i], omicron_segs_round[r-1][max_sig_index]); //should segments have their own remove triggers function?
+
+			}
+			else{
+				i = NULL;
+			}
+			
+			r += 1;
+			
+			while( max_sig > sig_threshold || round > max_rounds );
+
 		}
 	}
-
-}
