@@ -119,6 +119,7 @@ int eveto::cbc_eveto_main(
 					if (sig[i] >= max_sig) {
 						max_sig = sig[i];
 						max_sig_index = i;
+						
 					}
 					
 					//exit if max_sig < stop_sig_thresh
@@ -128,8 +129,12 @@ int eveto::cbc_eveto_main(
 					}
 
 					//Take winning channel, grab times of trigger, remove those times from all other channels (cbc, omicron)
-
-
+					Given the winning channel i
+					Triggers to veto are stored in an array (of TTrees?) created calc_dum_sig, in the array trigs_2_veto[index].
+					use TCut function to remove times (in reality, to remove segments) from all other segment channels. 
+					Do NOT modify the trigger database, only narrow the segment windows
+					Rinse and Repeat.  
+					
 
 				}
 			}

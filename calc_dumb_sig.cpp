@@ -14,6 +14,8 @@ for channel 0:
 
 if value of j = value of k, 
 then dumb_sig_num = (dumb_sig + 1)
+and store values of trigger times in array trigs_2_veto[index]
+
 else dumb_sig_num = dumb_sig_num
 
 exit loop
