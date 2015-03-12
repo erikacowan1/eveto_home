@@ -193,10 +193,12 @@ int eveto::read_omicron_triggers(
     // Create a new tree containing the veto segments with the correct name for eveto
     snprintf( tree_name, 256, "SEGMENTS:%s", channel_name );
     veto_segment_tree[i] = veto_segment_chain->CloneTree();
-    veto_segment_tree[i]->SetObject( channel_name_segments, channel_name );
-    delete veto_segment_chain;
-    delete channel_name_segments;
+    veto_segment_tree[i]->SetObject( tree_name, channel_name );
+
   }
+
+  delete channel_name;
+  delete tree_name;
 
   return 0;
 }

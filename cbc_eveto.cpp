@@ -147,7 +147,7 @@ int main( int argc, char *argv[] )
       gps_start_time, gps_end_time, detector, safe_channel_file,
       cbc_trigger_database, cbc_snr_threshold,
       omicron_trigger_path, omicron_snr_threshold, omicron_cluster_window,
-      output_directory, verbose
+      output_directory, sig_threshold, dumb_veto_window, max_rounds,  verbose
       );
 
   // check the return code from eveto main function
