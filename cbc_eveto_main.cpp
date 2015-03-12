@@ -13,7 +13,7 @@ int eveto::cbc_eveto_main(
 		TString* output_directory, 
 		Float_t sig_threshold,
 		Float_t dumb_veto_window,
-		int max_rounds,
+		Int_t max_rounds,
 		bool verbose
 		)
 {
@@ -88,26 +88,14 @@ int eveto::cbc_eveto_main(
 	float sig[num_safe_channels]; //make sure num_safe_channels is defined
 	int max_sig_index; //=winning channel!
 	int r = 1; //round increment
-	int max_rounds;
 
 
 	//define TTrees
 	TTree* cbc_trigs_round[max_rounds + 1];
 	TTree* omicron_trigs_round[max_rounds + 1][num_safe_channels];
-	TTree* cbc_segs_round[max_rounds + 1][num_safe_channels]; //doesn't currently exist
-	TTree* omicron_segs_round[max_rounds + 1][num_safe_channels];
+	//TTree* cbc_segs_round[max_rounds + 1][num_safe_channels]; //doesn't currently exist
+	//TTree* omicron_segs_round[max_rounds + 1][num_safe_channels];
 		
-
-	retcode = eveto::calc_dumb_sig(
-			&cbc_trigs_round, //input
-			&omicron_trigs_round, //input
-			dumb_veto_window, //input
-			verbose );
-	if (retcode ) {
-		std:cerr << "error calculating dumb significance" <<std::endl;
-		return 1;
-	}
-
 
 	//initialize arrays
 	cbc_trigs_round[0] = cbc_trigger_tree;
@@ -115,20 +103,22 @@ int eveto::cbc_eveto_main(
 
 
 	for (i=0; i<num_safe_channels; ++i) {
-		omicron_trigs_round[0] = clustered_veto_trigger_tree[i]; //check name
+		omicron_trigs_round[0][i] = clustered_veto_trigger_tree[i]; //check name
+                }
 
 		do {
 
 			if (omicron_trigs_round[r-1][i] != NULL) {
 
-				sig[i] = calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window);
+				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window,verbose);
 
 				if(sig[i]>max_sig) {
 					max_sig = sig[i];
 					max_sig_index = i;
 				}
 			}
-		/*cbc_trigs_round[r] = remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
+#if 0
+		cbc_trigs_round[r] = remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
 
 			if (i != max_sig_index) {	
 				omicron_trigs_round[r][i] = remove_triggers(omicron_trig_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], omicron_segs_round[r-1][i], omicron_segs_round[r-1][max_sig_index]); //should segments have their own remove triggers function?
@@ -137,11 +127,13 @@ int eveto::cbc_eveto_main(
 			else{
 				i = NULL;
 			}
+#endif
 			
 			r += 1;
-			*/
+		
 
 		}
 		while( max_sig > sig_threshold || r > max_rounds );
-	}
+
+                return 0;
 }

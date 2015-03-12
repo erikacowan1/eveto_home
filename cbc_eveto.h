@@ -28,10 +28,13 @@ namespace eveto {
       Double_t omicron_snr_threshold, 
       Double_t omicron_cluster_window,
       TString* output_directory, 
+      Float_t sig_threshold,
+      Float_t dumb_veto_window,      
+      Int_t max_rounds,
       bool verbose
       );
 
-int read_omicron_triggers(
+  int read_omicron_triggers(
       TTree* clustered_veto_trigger_tree[],
       TTree* veto_segment_tree[],
       TTree* safe_channels,
@@ -40,7 +43,7 @@ int read_omicron_triggers(
       Double_t omicron_cluster_window,
       bool verbose );
 
-int read_cbc_triggers(
+  int read_cbc_triggers(
       TTree** cbc_trigger_tree,
       TString* cbc_trigger_database,
       Long_t gps_start_time,
@@ -49,7 +52,7 @@ int read_cbc_triggers(
       Float_t cbc_snr_threshold,
       bool verbose );
 
-int calc_dumb_sig(
+  int calc_dumb_sig(
       TTree* cbc_trigs_round, 
       TTree* omicron_trigs_round, 
       Float_t dumb_veto_window, 
