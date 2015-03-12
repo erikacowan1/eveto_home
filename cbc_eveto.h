@@ -15,6 +15,11 @@
 #include <THStack.h>
 #include <TFile.h>
 #include <TBrowser.h>
+#include <TSystem.h>
+#include <TCut.h>
+#include <TEventList.h>
+#include <TROOT.h>
+
 
 namespace eveto {
   int cbc_eveto_main( 
