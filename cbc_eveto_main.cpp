@@ -78,6 +78,17 @@ int eveto::cbc_eveto_main(
 	//assume that all segments are science segments. Grab segments from segment tree
 	//and perform veto algorithm. 
 
+	retcode = eveto::calc_dumb_sig(
+			cbc_trigs_round, //input
+			omicron_trigs_round, //input
+			dumb_veto_window, //input
+			verbose );
+	if (retcode ) {
+		std:cerr << "error calculating dumb significance" <<std::endl;
+		return 1;
+	}
+
+
 	float sig_threshold; //to be put in for command line parsing
 	float dumb_veto_window; //to be put in for command line parsing
 	int max_rounds; //to be put in for ommand line pasring

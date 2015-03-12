@@ -2,27 +2,47 @@
 
 //function that does a simple significance calculation
 int eveto::calc_dumb_sig(
-	TTree** cbc_trigger_tree_ptr,
-	TTree** omicron_trigger_tree_ptr,
-	bool verbose )
+		TTree* cbc_trigger_tree_ptr,
+		TTree* omicron_trigger_tree_ptr,
+		float dumb_time_seg,
+		bool verbose )
 {
 
-//at this point, all of the trees are loaded up with the proper indices. 
-int dumb_sig;
-int_dumb_sig_num;
-for channel 0:
+	float num_omicron_triggers;
+	float num_coinc_triggers = 0;
+	float num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
+	end_time
 
-if value of j = value of k, 
-then dumb_sig_num = (dumb_sig + 1)
-and store values of trigger times in array trigs_2_veto[index]
+	double Ctime, Omtime;
+	if(cbc_trigger_tree_ptr->SetBranchAddress("time",&Ctime)<0){
+		std::cerr <<"ReadTriggers::GetInputTree: missing time branch"<<std::endl ;
+		return false;
+	}
 
-else dumb_sig_num = dumb_sig_num
+ 	cbc_trigger_tree_ptr->Branch("time",       &Ctime,      "time/D");
+	
+		if(omicron_trigger_tree_ptr->SetBranchAddress("time",&Ctime)<0){
+		std::cerr <<"ReadTriggers::GetInputTree: missing time branch"<<std::endl ;
+		return false;
+	}
 
-exit loop
+ 	 omicron_trigger_tree_ptr->Branch("time",       &Omtime,      "time/D");
 
-dumb_sig = dumb_sig_num/num_line_om_trig_tree
+	for (Long64_t c=0; c<cbc_trigger_tree_ptr->GetEntries(c); ++c) {
+		cbc_trigger_tree_ptr->GetEntry(c);
 
-(store dumb_sig in array)
+		for (Long64_t d=0; d<omicron_trigger_tree_ptr->GetEntries(d); ++d) {
+			omicron_trigger_tree_ptr->GetEntry(d);
+			omicron_trigger_tree_ptr->Draw(">> SigList", "d>c-dumb_time_seg&&d<c+dumb_time_seg", "");
+		}
+	}
+	TEventList *sl= (TEventList *)gROOT->FindObject("SigList");
+	return sl->Print("all")
+	
 
-then find max_sig, and save. 
+		//if (omicron_trigs_round > cbc_trigs_round[c] - dumb_time_seg && omicron_trigs_round < cbc_trigs_round[c] +  dumb_time_seg) {
+			num_coinc_triggers += 1;
+		}
+	}
+	//return  num_coinc_triggers/num_omicron_triggers;
 

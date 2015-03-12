@@ -16,6 +16,10 @@ int main( int argc, char *argv[] )
   Double_t omicron_snr_threshold = 0;
   Double_t omicron_cluster_window = 0;
 
+  Float_t sig_threshold = 0;
+  Float_t dumb_veto_window = 0;
+  int max_rounds = 0;
+
   TString* output_directory = new TString();
   bool verbose;
 
@@ -38,6 +42,11 @@ int main( int argc, char *argv[] )
       {"omicron-snr-threshold", required_argument, 0, 'T' },
       {"omicron-cluster-window", required_argument, 0, 'W' },
 
+      // options that control significance and veto 
+      {"sig-threshold", required_argument, 0, 'S' },
+      {"dumb-veto-window", required_argument, 0, 'D' },
+      {"max-rounds", required_argument, 0, 'm' },
+
       // options that control the output
       {"output-directory", required_argument, 0, 'o' },
       {"verbose", no_argument, 0, 'v'},
@@ -45,7 +54,7 @@ int main( int argc, char *argv[] )
     };
     int option_index = 0;
 
-    getopt_result = getopt_long( argc, argv, "s:e:d:c:i:t:I:T:W:o:v", long_options, &option_index );
+    getopt_result = getopt_long( argc, argv, "s:e:d:c:i:t:I:T:W:o:S:D:m:v:", long_options, &option_index );
 
     if ( getopt_result == -1 ) break;
 
@@ -89,6 +98,18 @@ int main( int argc, char *argv[] )
         
       case 'o':
         output_directory->Append( optarg );
+        break;
+
+      case 'S':
+        sig_threshold->Append( optarg );
+        break;
+
+      case 'D':
+        dumb_veto_window->Append( optarg );
+        break;
+
+      case 'm':
+        max_rounds->Append( optarg );
         break;
 
       case 'v':

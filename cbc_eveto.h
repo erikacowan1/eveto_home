@@ -49,4 +49,10 @@ int read_cbc_triggers(
       Float_t cbc_snr_threshold,
       bool verbose );
 
+int calc_dumb_sig(
+      TTree* cbc_trigs_round, 
+      TTree* omicron_trigs_round, 
+      Float_t dumb_veto_window, 
+      bool verbose );
+
 };
