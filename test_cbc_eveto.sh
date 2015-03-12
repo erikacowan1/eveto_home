@@ -11,4 +11,7 @@
     --omicron-snr-threshold 8.0 \
     --omicron-cluster-window 1.0 \
     --output-directory . \
+    --sig-threshold 5.0 \
+    --dumb-veto-window 3.0 \
+    --max-rounds 1 \
     --verbose

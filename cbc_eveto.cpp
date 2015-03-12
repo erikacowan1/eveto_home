@@ -101,15 +101,15 @@ int main( int argc, char *argv[] )
         break;
 
       case 'S':
-        sig_threshold->Append( optarg );
+        sig_threshold = atof( optarg );
         break;
 
       case 'D':
-        dumb_veto_window->Append( optarg );
+        dumb_veto_window = atof( optarg );
         break;
 
       case 'm':
-        max_rounds->Append( optarg );
+        max_rounds = atof( optarg );
         break;
 
       case 'v':

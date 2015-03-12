@@ -11,6 +11,9 @@ int eveto::cbc_eveto_main(
 		Double_t omicron_snr_threshold, 
 		Double_t omicron_cluster_window,
 		TString* output_directory, 
+		Float_t sig_threshold,
+		Float_t dumb_veto_window,
+		int max_rounds,
 		bool verbose
 		)
 {
@@ -78,9 +81,26 @@ int eveto::cbc_eveto_main(
 	//assume that all segments are science segments. Grab segments from segment tree
 	//and perform veto algorithm. 
 
+
+	int num_safe_channels = safe_channels->GetEntries();
+	float max_sig = 0;
+	int i; //counts over safe channels
+	float sig[num_safe_channels]; //make sure num_safe_channels is defined
+	int max_sig_index; //=winning channel!
+	int r = 1; //round increment
+	int max_rounds;
+
+
+	//define TTrees
+	TTree* cbc_trigs_round[max_rounds + 1];
+	TTree* omicron_trigs_round[max_rounds + 1][num_safe_channels];
+	TTree* cbc_segs_round[max_rounds + 1][num_safe_channels]; //doesn't currently exist
+	TTree* omicron_segs_round[max_rounds + 1][num_safe_channels];
+		
+
 	retcode = eveto::calc_dumb_sig(
-			cbc_trigs_round, //input
-			omicron_trigs_round, //input
+			&cbc_trigs_round, //input
+			&omicron_trigs_round, //input
 			dumb_veto_window, //input
 			verbose );
 	if (retcode ) {
@@ -89,35 +109,17 @@ int eveto::cbc_eveto_main(
 	}
 
 
-	float sig_threshold; //to be put in for command line parsing
-	float dumb_veto_window; //to be put in for command line parsing
-	int max_rounds; //to be put in for ommand line pasring
-
-	int num_safe_channels = safe_channel->GetEntries();
-	float max_sig = 0;
-	int i; //counts over safe channels
-	float sig[num_safe_channels]; //make sure num_safe_channels is defined
-	int max_sig_index; //=winning channel!
-	int r = 1; //round increment
-	int max_rounds;
-
-	//define TTrees
-	TTree* cbc_trigs_round[max_rounds + 1];
-	TTree* omicron_trigs_round[max_rounds + 1][num_safe_channels];
-	TTree* cbc_segs_round[max_rounds + 1][num_safe_channels]; //doesn't currently exist
-	TTree* omicron_segs_round[max_rounds + 1][num_safe_channels];
-		
 	//initialize arrays
-	cbc_trigs_round[0] = cbc_trigs_tree;
-	cbc_segs_round[0] = cbc_segs_tree;
+	cbc_trigs_round[0] = cbc_trigger_tree;
+	//cbc_segs_round[0] = cbc_segs_tree;
 
 
 	for (i=0; i<num_safe_channels; ++i) {
-		omicron_trigs_round[0] = omicron_trigs_tree[i]; //check name
+		omicron_trigs_round[0] = clustered_veto_trigger_tree[i]; //check name
 
 		do {
 
-			if (omicron_trigs_round[r-1][i] !== NULL) {
+			if (omicron_trigs_round[r-1][i] != NULL) {
 
 				sig[i] = calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window);
 
@@ -126,7 +128,7 @@ int eveto::cbc_eveto_main(
 					max_sig_index = i;
 				}
 			}
-			cbc_trigs_round[r] = remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
+		/*cbc_trigs_round[r] = remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
 
 			if (i != max_sig_index) {	
 				omicron_trigs_round[r][i] = remove_triggers(omicron_trig_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], omicron_segs_round[r-1][i], omicron_segs_round[r-1][max_sig_index]); //should segments have their own remove triggers function?
@@ -137,8 +139,9 @@ int eveto::cbc_eveto_main(
 			}
 			
 			r += 1;
-			
-			while( max_sig > sig_threshold || round > max_rounds );
+			*/
 
 		}
+		while( max_sig > sig_threshold || r > max_rounds );
 	}
+}
