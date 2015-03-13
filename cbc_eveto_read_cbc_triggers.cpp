@@ -102,6 +102,7 @@ int eveto::read_cbc_triggers(
   // Close the database 
   delete serv;
 
+  if (verbose) std::cout << "Read " << cbc_trigs_tree->GetEntries() << " cbc triggers" << std::endl;
 
   return 0;
 }
