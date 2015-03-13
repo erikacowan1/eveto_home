@@ -92,25 +92,28 @@ int eveto::cbc_eveto_main(
 
 	//define TTrees
 	TTree* cbc_trigs_round[max_rounds + 1];
-	TTree* omicron_trigs_round[max_rounds + 1][num_safe_channels];
+	//TTree* omicron_trigs_round[max_rounds + 1][num_safe_channels];
 	//TTree* cbc_segs_round[max_rounds + 1][num_safe_channels]; //doesn't currently exist
 	//TTree* omicron_segs_round[max_rounds + 1][num_safe_channels];
-		
 
+ 
 	//initialize arrays
 	cbc_trigs_round[0] = cbc_trigger_tree;
 	//cbc_segs_round[0] = cbc_segs_tree;
 
 
 	for (i=0; i<num_safe_channels; ++i) {
-		omicron_trigs_round[0][i] = clustered_veto_trigger_tree[i]; //check name
+		//omicron_trigs_round[0][i] = clustered_veto_trigger_tree[i]; //check name
                 }
 
 		do {
 
-			if (omicron_trigs_round[r-1][i] != NULL) {
+			if (clustered_veto_trigger_tree[i] != NULL) {
+				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], clustered_veto_trigger_tree[i], dumb_veto_window,verbose);
+	//if (omicron_trigs_round[r-1][i] != NULL) {
 
-				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window,verbose);
+			//	sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window,verbose);
+      if ( verbose ) std::cout << "EERRRROOORRRRRRRR!" << std::endl;
 
 				if(sig[i]>max_sig) {
 					max_sig = sig[i];
@@ -130,7 +133,6 @@ int eveto::cbc_eveto_main(
 #endif
 			
 			r += 1;
-		
 
 		}
 		while( max_sig > sig_threshold || r > max_rounds );

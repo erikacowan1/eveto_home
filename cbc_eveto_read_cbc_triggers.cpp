@@ -45,6 +45,7 @@ int eveto::read_cbc_triggers(
 
   if ( verbose ) std::cout << "Querying cbc triggers with: " << cbc_database_query << std::endl;
 
+ 
   // Connect to the specified database
   TString database_url( "sqlite://" );
   database_url += cbc_trigger_database->Data();
@@ -53,7 +54,6 @@ int eveto::read_cbc_triggers(
     std::cerr << "error opening database " << database_url << std::endl;
     return 1;
   }
-
   // Initialize the SQL statement to get the triggers
   TSQLStatement* stmt = serv->Statement(cbc_database_query, 50000);
   if ( stmt == NULL ) {
@@ -81,7 +81,7 @@ int eveto::read_cbc_triggers(
       mtotal = stmt->GetDouble(8);
       mchirp = stmt->GetDouble(9);
       eta = stmt->GetDouble(10);
-
+ 
       // compute the new SNR 
       if ( chisq > chisqdof ) {
         newsnr = snr * pow(((1.0 + pow((chisq/chisqdof), 3.0))/2.0), (-1.0 /6.0));
@@ -101,6 +101,7 @@ int eveto::read_cbc_triggers(
 
   // Close the database 
   delete serv;
+
 
   return 0;
 }
