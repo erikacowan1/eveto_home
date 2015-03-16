@@ -92,7 +92,7 @@ int eveto::cbc_eveto_main(
 
 	//define TTrees
 	TTree* cbc_trigs_round[max_rounds + 1];
-	//TTree* omicron_trigs_round[max_rounds + 1][num_safe_channels];
+	TTree* omicron_trigs_round[max_rounds + 1][num_safe_channels];
 	//TTree* cbc_segs_round[max_rounds + 1][num_safe_channels]; //doesn't currently exist
 	//TTree* omicron_segs_round[max_rounds + 1][num_safe_channels];
 
@@ -102,18 +102,22 @@ int eveto::cbc_eveto_main(
 	//cbc_segs_round[0] = cbc_segs_tree;
 
 
+        std::cerr << "Number of safe channels = " << num_safe_channels << std::endl;
 	for (i=0; i<num_safe_channels; ++i) {
-		//omicron_trigs_round[0][i] = clustered_veto_trigger_tree[i]; //check name
+                if (verbose) std::cerr << "storing pointers for round 0, channel" << i << std::endl;
+		omicron_trigs_round[0][i] = clustered_veto_trigger_tree[i]; //check name
+                if (verbose) std::cerr << "stored pointer for round 0" << std::endl;
                 }
 
 		do {
+                        if (verbose) std::cerr << "Processing round " << r << " of " << max_rounds << std::endl;
 
-			if (clustered_veto_trigger_tree[i] != NULL) {
-				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], clustered_veto_trigger_tree[i], dumb_veto_window,verbose);
-	//if (omicron_trigs_round[r-1][i] != NULL) {
+                       
+	                if (omicron_trigs_round[r-1][i] != NULL) {
 
-			//	sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window,verbose);
-      if ( verbose ) std::cout << "EERRRROOORRRRRRRR!" << std::endl;
+                                if ( verbose ) std::cerr << "calculating dumb significance for tree at " << omicron_trigs_round[r-1][i] << std::endl;
+				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window,verbose);
+                                if ( verbose ) std::cerr << "signifcance was " << sig[i] << std::endl;
 
 				if(sig[i]>max_sig) {
 					max_sig = sig[i];
@@ -132,10 +136,11 @@ int eveto::cbc_eveto_main(
 			}
 #endif
 			
+                        if (verbose) std::cerr << "Finished round " << r << std::endl;
 			r += 1;
 
 		}
-		while( max_sig > sig_threshold || r > max_rounds );
+		while( max_sig > sig_threshold || r <= max_rounds );
 
                 return 0;
 }
