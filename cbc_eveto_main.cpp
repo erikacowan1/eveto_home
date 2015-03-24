@@ -106,16 +106,16 @@ int eveto::cbc_eveto_main(
 	for (i=0; i<num_safe_channels; ++i) {
                 if (verbose) std::cerr << "storing pointers for round 0, channel" << i << std::endl;
 		omicron_trigs_round[0][i] = clustered_veto_trigger_tree[i]; //check name
-		omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
+		//omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
                 if (verbose) std::cerr << "stored pointer for round 0" << std::endl;
-	}	 
 		//currently seg faults on print() for omicron trigs here. 
-		do {
-                        if (verbose) std::cerr << "Processing round " << r << " of " << max_rounds << std::endl;
-
+		while (max_sig > sig_threshold || r <= max_rounds ) {
+                //omicron_trigs_round[0][i]->Print(); //prints out omicron triggers.  
+		      if (verbose) std::cerr << "Processing round " << r << " of " << max_rounds << std::endl;
+			//omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
                        
 	                if (omicron_trigs_round[r-1][i] != NULL) {
-
+				//omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
                                 if ( verbose ) std::cerr << "calculating dumb significance for tree at " << omicron_trigs_round[r-1][i] << std::endl;
 				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window,verbose);
                                 if ( verbose ) std::cerr << "signifcance was " << sig[i] << std::endl;
@@ -125,6 +125,7 @@ int eveto::cbc_eveto_main(
 					max_sig_index = i;
 				}
 			}
+
 #if 0
 		cbc_trigs_round[r] = remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
 
@@ -141,7 +142,7 @@ int eveto::cbc_eveto_main(
 			r += 1;
 
 		}
-		while( max_sig > sig_threshold || r <= max_rounds );
-
+		//while( max_sig > sig_threshold || r <= max_rounds );
+	}
                 return 0;
 }
