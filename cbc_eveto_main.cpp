@@ -85,9 +85,9 @@ int eveto::cbc_eveto_main(
 	int num_safe_channels = safe_channels->GetEntries();
 	float max_sig = 0;
 	int i; //counts over safe channels
-	float sig[num_safe_channels]; //make sure num_safe_channels is defined
-	int max_sig_index; //=winning channel!
-	int r = 1; //round increment
+	float sig[num_safe_channels]; //array to store significance of each channel
+	int max_sig_index; // index of the winning channel!
+	int r = 1; //round counter
 
 
 	//define TTrees
@@ -99,6 +99,7 @@ int eveto::cbc_eveto_main(
  
 	//initialize arrays
 	cbc_trigs_round[0] = cbc_trigger_tree;
+        std::cerr << "address of cbc_trigs_round[0] = " << cbc_trigs_round[0] << std::endl;
 	//cbc_segs_round[0] = cbc_segs_tree;
 
 
@@ -106,8 +107,12 @@ int eveto::cbc_eveto_main(
 	for (i=0; i<num_safe_channels; ++i) {
                 if (verbose) std::cerr << "storing pointers for round 0, channel" << i << std::endl;
 		omicron_trigs_round[0][i] = clustered_veto_trigger_tree[i]; //check name
-		//omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
-                if (verbose) std::cerr << "stored pointer for round 0" << std::endl;
+                std::cerr << "address of omicron_trigs_round[0][" << i << "] = " << omicron_trigs_round[0][i] << std::endl;
+
+                std::cerr << "print out omicron triggers" << std::endl;
+		omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
+                std::cerr << "finished print out omicron triggers" << std::endl;
+
 		//currently seg faults on print() for omicron trigs here. 
 		while (max_sig > sig_threshold || r <= max_rounds ) {
                 //omicron_trigs_round[0][i]->Print(); //prints out omicron triggers.  
@@ -116,7 +121,7 @@ int eveto::cbc_eveto_main(
                        
 	                if (omicron_trigs_round[r-1][i] != NULL) {
 				//omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
-                                if ( verbose ) std::cerr << "calculating dumb significance for tree at " << omicron_trigs_round[r-1][i] << std::endl;
+                                if ( verbose ) std::cerr << "calculating dumb significance for veto tree at " << omicron_trigs_round[r-1][i] << " against cbc triggers at " << cbc_trigs_round[r-1] << std::endl;
 				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window,verbose);
                                 if ( verbose ) std::cerr << "signifcance was " << sig[i] << std::endl;
 
