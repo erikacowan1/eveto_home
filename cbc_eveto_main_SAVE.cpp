@@ -108,7 +108,9 @@ int eveto::cbc_eveto_main(
 		omicron_trigs_round[0][i] = clustered_veto_trigger_tree[i]; //check name
 		omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
                 if (verbose) std::cerr << "stored pointer for round 0" << std::endl;
-	}	 
+	}
+
+	 
 		//currently seg faults on print() for omicron trigs here. 
 		do {
                         if (verbose) std::cerr << "Processing round " << r << " of " << max_rounds << std::endl;

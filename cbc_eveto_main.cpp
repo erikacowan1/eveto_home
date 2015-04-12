@@ -138,6 +138,7 @@ int eveto::cbc_eveto_main(
 				omicron_trigs_round[r][i] = remove_triggers(omicron_trig_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], omicron_segs_round[r-1][i], omicron_segs_round[r-1][max_sig_index]); //should segments have their own remove triggers function?
 
 			}
+
 			else{
 				i = NULL;
 			}
@@ -147,7 +148,6 @@ int eveto::cbc_eveto_main(
 			r += 1;
 
 		}
-		//while( max_sig > sig_threshold || r <= max_rounds );
 	}
-                return 0;
+        return 0;
 }

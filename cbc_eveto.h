@@ -63,4 +63,8 @@ namespace eveto {
       Float_t dumb_veto_window, 
       bool verbose );
 
+  int veto_triggers(
+      TTree* omicron_trigs_round,
+      bool verbose );
+
 };
