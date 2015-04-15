@@ -13,5 +13,5 @@
     --output-directory . \
     --sig-threshold 5.0 \
     --dumb-veto-window 3.0 \
-    --max-rounds 1 \
+    --max-rounds 3 \
     --verbose
