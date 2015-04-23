@@ -81,10 +81,13 @@ int eveto::cbc_eveto_main(
 	//assume that all segments are science segments. Grab segments from segment tree
 	//and perform veto algorithm. 
 
+
 	int num_safe_channels = safe_channels->GetEntries();
+	float max_sig = 0;
 	int i; //counts over safe channels
 	float sig[num_safe_channels]; //array to store significance of each channel
 	int max_sig_index; // index of the winning channel!
+	int r = 1; //round counter
 
 
 	//define TTrees
@@ -99,59 +102,52 @@ int eveto::cbc_eveto_main(
         std::cerr << "address of cbc_trigs_round[0] = " << cbc_trigs_round[0] << std::endl;
 	//cbc_segs_round[0] = cbc_segs_tree;
 
-        // Fill the veto data array for round zero
+
+        std::cerr << "Number of safe channels = " << num_safe_channels << std::endl;
 	for (i=0; i<num_safe_channels; ++i) {
-		if (verbose) std::cout << "Initializing veto channels for round 0" << std::endl;
+                if (verbose) std::cerr << "storing pointers for round 0, channel" << i << std::endl;
 		omicron_trigs_round[0][i] = clustered_veto_trigger_tree[i]; //check name
-                }
+                std::cerr << "address of omicron_trigs_round[0][" << i << "] = " << omicron_trigs_round[0][i] << std::endl;
 
+                std::cerr << "print out omicron triggers" << std::endl;
+		omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
+                std::cerr << "finished print out omicron triggers" << std::endl;
 
-        // Begin the loop over rounds and break if all channels go below the max
-        // significance threshold or we exceed the maximum number of rounds
-        float max_sig = sig_threshold;
-	int r = 1; //round counter
-        while (max_sig >= sig_threshold && r <= max_rounds ) {
-          if (verbose) std::cerr << "==== Processing round " << r << " of " << max_rounds << " ====" << std::endl;
+		//currently seg faults on print() for omicron trigs here. 
+		while (max_sig > sig_threshold || r <= max_rounds ) {
+                //omicron_trigs_round[0][i]->Print(); //prints out omicron triggers.  
+		      if (verbose) std::cerr << "Processing round " << r << " of " << max_rounds << std::endl;
+			//omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
+                       
+	                if (omicron_trigs_round[r-1][i] != NULL) {
+				//omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
+                                if ( verbose ) std::cerr << "calculating dumb significance for veto tree at " << omicron_trigs_round[r-1][i] << " against cbc triggers at " << cbc_trigs_round[r-1] << std::endl;
+				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window,verbose);
+                                if ( verbose ) std::cerr << "signifcance was " << sig[i] << std::endl;
 
-          // loop over veto channels, caculate significance of channel,
-          // find the channel with the highest significance, and store index
-          for (i=0; i<num_safe_channels; ++i) {
-            if (omicron_trigs_round[r-1][i] != NULL) {
-              if ( verbose ) std::cerr << "calculating dumb significance for veto tree at " << omicron_trigs_round[r-1][i] << " against cbc triggers at " << cbc_trigs_round[r-1] << std::endl;
-              sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i], dumb_veto_window, verbose);
-            } else {
-              sig[i] = 0;
-            }
-            if ( verbose ) std::cerr << "Signifcance = " << sig[i] << std::endl;
-
-            if(sig[i] >= max_sig) {
-              max_sig = sig[i];
-              max_sig_index = i;
-            }
-          }
-          
-          cbc_trigs_round[r] = NULL;
-          for (i=0; i<num_safe_channels; ++i) {
-            omicron_trigs_round[r][i] = NULL;
-          }
+				if(sig[i]>max_sig) {
+					max_sig = sig[i];
+					max_sig_index = i;
+				}
+			}
 
 #if 0
-          cbc_trigs_round[r] = remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
+		cbc_trigs_round[r] = remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
 
-          if (i != max_sig_index) {	
-            omicron_trigs_round[r][i] = remove_triggers(omicron_trig_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], omicron_segs_round[r-1][i], omicron_segs_round[r-1][max_sig_index]); //should segments have their own remove triggers function?
+			if (i != max_sig_index) {	
+				omicron_trigs_round[r][i] = remove_triggers(omicron_trig_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], omicron_segs_round[r-1][i], omicron_segs_round[r-1][max_sig_index]); //should segments have their own remove triggers function?
 
-          }
-          else{
-            i = NULL;
-          }
+			}
+			else{
+				i = NULL;
+			}
 #endif
+			
+                        if (verbose) std::cerr << "Finished round " << r << std::endl;
+			r += 1;
 
-          if (verbose) std::cerr << "Finished round " << r << std::endl;
-          if (verbose) std::cerr << "Maximum significance was " << max_sig << std::endl;
-          r += 1;
-
-        }
-        //while( max_sig > sig_threshold || r <= max_rounds );
-        return 0;
+		}
+		//while( max_sig > sig_threshold || r <= max_rounds );
+	}
+                return 0;
 }
