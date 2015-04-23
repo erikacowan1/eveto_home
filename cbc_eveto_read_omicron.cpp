@@ -35,19 +35,17 @@ bool read_omicron_channel(
 }
 
 // Function that performs simple time clustering of omicron triggers
-bool simple_time_omicron_cluster( 
-    Long_t gps_start_time,
-    Long_t gps_end_time,
+bool simple_omicron_time_cluster( 
     TTree* clustered_tree, 
     TChain* unclustered_tree,
-    Double_t omicron_start_time,
-    Double_t omicron_end_time,
-    double Cdelta_t,
-    double cl_snr_thr,
+    Long64_t omicron_start_time,
+    Long64_t omicron_end_time,
+    double cluster_time_window,
+    double cluster_snr_threshold,
     bool verbose
     )
     {
-  if ( verbose ) std::cout << "simple_time_omicron_cluster: "<< unclustered_tree->GetEntries() << " unclustered triggers" << std::endl;
+  if ( verbose ) std::cout << "simple_omicron_time_cluster: "<< unclustered_tree->GetEntries() << " unclustered triggers" << std::endl;
 
   double Ttime, Ttstart, Ttend, Tfreq, Tfstart, Tfend, Tsnr, Tamp, Tq;
 
@@ -109,10 +107,12 @@ bool simple_time_omicron_cluster(
   // loop over time sorted triggers
   for(Long64_t t=0; t<unclustered_tree->GetEntries(); t++){
     unclustered_tree->GetEntry(t);
-   if(omicron_end_time < gps_start_time || omicron_start_time > gps_end_time) {
+    if(Ttend < omicron_start_time || Ttstart > omicron_end_time) {
+      continue;
+    }
 
     // this is the same cluster...
-    if(Ttstart-Ctend<Cdelta_t){
+    if(Ttstart-Ctend<cluster_time_window){
       Csize++; // one more tile
       if(Ttend   > Ctend)   Ctend=Ttend;    // update cluster end
       if(Ttstart < Ctstart) Ctstart=Ttstart;// update cluster tstart
@@ -128,7 +128,7 @@ bool simple_time_omicron_cluster(
     }
     //... or start a new cluster
     else{
-      if(t&&Csnr>=cl_snr_thr){
+      if(t&&Csnr>=cluster_snr_threshold){
         clustered_tree->Fill();  // fill tree with previous entry
       }
       Ctend       = Ttend;  // cluster t end
@@ -143,13 +143,13 @@ bool simple_time_omicron_cluster(
       Cfirstentry = t;      // cluster first entry
     }
   }
-}
+
   // save last cluster
-  if(unclustered_tree->GetEntries()&&Csnr>=cl_snr_thr){
+  if(unclustered_tree->GetEntries()&&Csnr>=cluster_snr_threshold){
     clustered_tree->Fill();
   }
 
-  if ( verbose ) std::cout << "simple_time_omicron_cluster: "<< clustered_tree->GetEntries() << " clusters were found" << std::endl;
+  if ( verbose ) std::cout << "simple_omicron_time_cluster: "<< clustered_tree->GetEntries() << " clusters were found" << std::endl;
 
   return true;
 }
@@ -162,6 +162,10 @@ int eveto::read_omicron_triggers(
       TString* omicron_trigger_path,
       Double_t omicron_snr_threshold,
       Double_t omicron_cluster_window,
+      Long64_t omicron_start_time,
+      Long64_t omicron_end_time,
+      Double_t cluster_time_window,
+      Double_t cluster_snr_threshold,
       bool verbose )
 {
   // We iterate over the safe channels, so create storage for the channel name
@@ -191,8 +195,9 @@ int eveto::read_omicron_triggers(
     // create a tree to store clustered triggers and store its address in the tree array
     snprintf( tree_name, 256, "VETOTRIGS:%s", channel_name );
     clustered_veto_trigger_tree[i] = new TTree( tree_name, channel_name );
-    simple_time_omicron_cluster( clustered_veto_trigger_tree[i], veto_trigger_chain, 
-        omicron_snr_threshold, omicron_cluster_window, verbose );
+    simple_omicron_time_cluster( clustered_veto_trigger_tree[i], veto_trigger_chain, 
+        omicron_start_time, omicron_end_time,
+        cluster_time_window, cluster_snr_threshold, verbose );
     delete veto_trigger_chain;
 
     // Create a new tree containing the veto segments with the correct name for eveto

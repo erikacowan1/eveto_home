@@ -6,8 +6,6 @@ int main( int argc, char *argv[] )
 
   Long_t gps_start_time = 0;
   Long_t gps_end_time = 0;
-  Long_t omicron_start_time = 0;
-  Long_t omicron_end_time = 0;
   TString* detector = new TString();
   TString* safe_channel_file = new TString();
   
@@ -43,8 +41,6 @@ int main( int argc, char *argv[] )
       {"omicron-trigger-path", required_argument, 0, 'I' },
       {"omicron-snr-threshold", required_argument, 0, 'T' },
       {"omicron-cluster-window", required_argument, 0, 'W' },
-      {"omicron-start-time", required_argument, 0, 'u' },
-      {"omicron-end-time", required_argument, 0, 'U' },
 
       // options that control significance and veto 
       {"sig-threshold", required_argument, 0, 'S' },
@@ -58,7 +54,7 @@ int main( int argc, char *argv[] )
     };
     int option_index = 0;
 
-    getopt_result = getopt_long( argc, argv, "s:e:d:c:i:t:I:T:W:u:U:o:S:D:m:v:", long_options, &option_index );
+    getopt_result = getopt_long( argc, argv, "s:e:d:c:i:t:I:T:W:o:S:D:m:v:", long_options, &option_index );
 
     if ( getopt_result == -1 ) break;
 
@@ -100,13 +96,6 @@ int main( int argc, char *argv[] )
         omicron_cluster_window = atof( optarg );
         break;
 
-      case 'u':
-        omicron_start_time = atol( optarg );
-        break;
-     
-      case 'U':
-        omicron_end_time = atol( optarg );
-        
       case 'o':
         output_directory->Append( optarg );
         break;
@@ -158,7 +147,7 @@ int main( int argc, char *argv[] )
       gps_start_time, gps_end_time, detector, safe_channel_file,
       cbc_trigger_database, cbc_snr_threshold,
       omicron_trigger_path, omicron_snr_threshold, omicron_cluster_window,
-      omicron_start_time, omicron_end_time,output_directory, 
+      output_directory, 
       sig_threshold, dumb_veto_window, max_rounds,  verbose
       );
 

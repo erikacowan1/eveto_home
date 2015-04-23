@@ -10,8 +10,6 @@ int eveto::cbc_eveto_main(
 		TString* omicron_trigger_path, 
 		Double_t omicron_snr_threshold, 
 		Double_t omicron_cluster_window,
-		Double_t omicron_start_time,
-		Double_t omicron_end_time,
 		TString* output_directory, 
 		Float_t sig_threshold,
 		Float_t dumb_veto_window,
@@ -50,8 +48,10 @@ int eveto::cbc_eveto_main(
 			omicron_trigger_path, // input
 			omicron_snr_threshold, // input
 			omicron_cluster_window, // input
-			omicron_start_time, 
-			omicron_end_time,
+			gps_start_time, 
+			gps_end_time,
+                        omicron_cluster_window,
+                        omicron_snr_threshold,
 			verbose );
 
 	if ( retcode ) {

@@ -32,8 +32,6 @@ namespace eveto {
       TString* omicron_trigger_path, 
       Double_t omicron_snr_threshold, 
       Double_t omicron_cluster_window,
-      Double_t omicron_start_time,
-      Double_t omicron_end_time,
       TString* output_directory, 
       Float_t sig_threshold,
       Float_t dumb_veto_window,      
@@ -48,8 +46,10 @@ namespace eveto {
       TString* omicron_trigger_path,
       Double_t omicron_snr_threshold,
       Double_t omicron_cluster_window,
-      Double_t omicron_start_time,
-      Double_t omicron_end_time,
+      Long64_t omicron_start_time,
+      Long64_t omicron_end_time,
+      Double_t cluster_time_window,
+      Double_t cluster_snr_threshold,
       bool verbose );
 
   int read_cbc_triggers(
