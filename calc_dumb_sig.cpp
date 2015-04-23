@@ -33,6 +33,23 @@ int eveto::calc_dumb_sig(
 
   int num_cbc_triggers = cbc_trigger_tree_ptr->GetEntries();	
 
+  double Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
+  Long64_t Cfirstentry, Csize;
+
+  omicron_trigger_tree_ptr->SetBranchAddress("time",       &Ctime,      "time/D");
+  omicron_trigger_tree_ptr->SetBranchAddress("tstart",     &Ctstart,    "tstart/D");
+  omicron_trigger_tree_ptr->SetBranchAddress("tend",       &Ctend,      "tend/D");
+  omicron_trigger_tree_ptr->SetBranchAddress("frequency",  &Cfreq,      "frequency/D");
+  omicron_trigger_tree_ptr->SetBranchAddress("fstart",     &Cfstart,    "fstart/D");
+  omicron_trigger_tree_ptr->SetBranchAddress("fend",       &Cfend,      "fend/D");
+  omicron_trigger_tree_ptr->SetBranchAddress("snr",        &Csnr,       "snr/D");
+  omicron_trigger_tree_ptr->SetBranchAddress("amplitude",  &Camp,       "amplitude/D");
+  omicron_trigger_tree_ptr->SetBranchAddress("q",          &Cq,         "q/D");
+  omicron_trigger_tree_ptr->SetBranchAddress("firstentry", &Cfirstentry,"firstentry/L");
+  omicron_trigger_tree_ptr->SetBranchAddress("size",       &Csize,      "size/L");
+
+
+
   for (Int_t c=0; c<num_cbc_triggers; ++c) {
     cbc_trigger_tree_ptr->GetEntry(c);
 
@@ -62,7 +79,7 @@ int eveto::calc_dumb_sig(
   //	TEventList *CoincOmegaList_ptr= (TEventList *)gROOT->FindObject("CoincOmegaList");
 
   //	num_coinc_triggers += CoincOmegaList_ptr->GetN();
-  int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
+ // int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
 
   return (float)num_coinc_triggers/(float)num_omicron_triggers;
 }
