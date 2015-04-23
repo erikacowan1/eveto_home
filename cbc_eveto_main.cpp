@@ -33,7 +33,7 @@ int eveto::cbc_eveto_main(
 
 	// Create a tree containing the list of safe veto channels to be processed
 	TTree* safe_channels = new TTree( "safe_channel_list", "List of safe channels to process" );
-	//Long64_t num_veto_channels = safe_channels->ReadFile( safe_channel_file->Data(), "channel/C" );
+	int num_safe_channels = safe_channels->GetEntries();
 	if ( verbose ) {
 		std::cout << "Read " << num_safe_channels << " safe channel names" << std::endl;
 		safe_channels->Print();
@@ -86,7 +86,6 @@ int eveto::cbc_eveto_main(
 	//and perform veto algorithm. 
 
 
-	int num_safe_channels = safe_channels->GetEntries();
 	float max_sig = sig_threshold;
 	int i; //counts over safe channels
 	float sig[num_safe_channels]; //array to store significance of each channel
