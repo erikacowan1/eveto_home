@@ -6,6 +6,8 @@ int main( int argc, char *argv[] )
 
   Long_t gps_start_time = 0;
   Long_t gps_end_time = 0;
+  Long_t omicron_start_time = 0;
+  Long_t omicron_end_time = 0;
   TString* detector = new TString();
   TString* safe_channel_file = new TString();
   
@@ -99,11 +101,11 @@ int main( int argc, char *argv[] )
         break;
 
       case 'u':
-        omicron_start_time = atof( optarg );
+        omicron_start_time = atol( optarg );
         break;
      
       case 'U':
-        omicron_end_time = atof( optarg );
+        omicron_end_time = atol( optarg );
         
       case 'o':
         output_directory->Append( optarg );
