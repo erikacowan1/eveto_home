@@ -7,7 +7,12 @@ int eveto::calc_dumb_sig(
     float dumb_time_seg,
     bool verbose )
 {
-  Long64_t n;
+  std::cerr << "calc_dumb_sig() got a cbc tree at " << cbc_trigger_tree_ptr << std::endl;
+  cbc_trigger_tree_ptr->Print();
+
+  std::cerr << "calc_dumb_sig() got a veto tree at " << omicron_trigger_tree_ptr << std::endl;
+  omicron_trigger_tree_ptr->Print();
+
   int num_coinc_triggers = 0;
   Double_t start_time, end_time;
   Float_t snr, chisq, chisqdof, newsnr, snr_sq, mass1, mass2, mtotal, mchirp, eta, ttotal;
@@ -31,23 +36,31 @@ int eveto::calc_dumb_sig(
   for (Int_t c=0; c<num_cbc_triggers; ++c) {
     cbc_trigger_tree_ptr->GetEntry(c);
 
+    //Float_t	t1 = Ctime-dumb_time_seg;
+    //Float_t t2 = Ctime+dumb_time_seg;
+    //	TCut tc1 = "end_time>(time-dumb_time_seg) ";
+    //	TCut tc2 = "end_time<(time+dumb_time_seg) ";
     char *time_window_string = new char[256];
     snprintf( time_window_string, 256, "(tend > %f) && (tend < %f)", 
         end_time - dumb_time_seg, end_time + dumb_time_seg );
 
-    if ( verbose ) std::cout << time_window_string << std::endl;
 
-    n = omicron_trigger_tree_ptr->Draw("tend", time_window_string, "goff" );
+    //std::cerr << "calc_dumb_sig() has a cbc tree at " << cbc_trigger_tree_ptr << std::endl;
+    std::cerr << "calc_dumb_sig() has a veto tree at " << omicron_trigger_tree_ptr << std::endl;
+    std::cerr << "before Print()" << std::endl;
+    omicron_trigger_tree_ptr->Print();
+    std::cerr << "after Print()" << std::endl;
 
-    if ( n == -1 ) {
-       std::cerr << "calc_dumb_sig: error drawing veto triggers" << std::endl;
-       abort();
-       } else {
-         if ( verbose ) std::cout << "   Found " << n << " veto triggers" << std::endl;
-         num_coinc_triggers += n;
-       }
+    std::cerr << time_window_string << std::endl;
+    std::cerr << "before Draw()" << std::endl;
+    omicron_trigger_tree_ptr->Draw(">>CoincOmegaList", time_window_string, "" );
+
+    std::cerr << "after Draw()" << std::endl;
+
   }
+  //	TEventList *CoincOmegaList_ptr= (TEventList *)gROOT->FindObject("CoincOmegaList");
 
+  //	num_coinc_triggers += CoincOmegaList_ptr->GetN();
   int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
 
   return (float)num_coinc_triggers/(float)num_omicron_triggers;
