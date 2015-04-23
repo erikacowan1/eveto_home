@@ -46,16 +46,8 @@ int eveto::calc_dumb_sig(
 
 
     //std::cerr << "calc_dumb_sig() has a cbc tree at " << cbc_trigger_tree_ptr << std::endl;
-    std::cerr << "calc_dumb_sig() has a veto tree at " << omicron_trigger_tree_ptr << std::endl;
-    std::cerr << "before Print()" << std::endl;
-    omicron_trigger_tree_ptr->Print();
-    std::cerr << "after Print()" << std::endl;
+   for(c
 
-    std::cerr << time_window_string << std::endl;
-    std::cerr << "before Draw()" << std::endl;
-    omicron_trigger_tree_ptr->Draw(">>CoincOmegaList", time_window_string, "" );
-
-    std::cerr << "after Draw()" << std::endl;
 
   }
   //	TEventList *CoincOmegaList_ptr= (TEventList *)gROOT->FindObject("CoincOmegaList");

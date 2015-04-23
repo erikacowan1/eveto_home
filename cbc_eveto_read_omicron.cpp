@@ -36,8 +36,12 @@ bool read_omicron_channel(
 
 // Function that performs simple time clustering of omicron triggers
 bool simple_time_omicron_cluster( 
+    Long_t gps_start_time,
+    Long_t gps_end_time,
     TTree* clustered_tree, 
     TChain* unclustered_tree,
+    Double_t omicron_start_time,
+    Double_t omicron_end_time,
     double Cdelta_t,
     double cl_snr_thr,
     bool verbose
@@ -105,6 +109,7 @@ bool simple_time_omicron_cluster(
   // loop over time sorted triggers
   for(Long64_t t=0; t<unclustered_tree->GetEntries(); t++){
     unclustered_tree->GetEntry(t);
+   if(omicron_end_time < gps_start_time || omicron_start_time > gps_end_time) {
 
     // this is the same cluster...
     if(Ttstart-Ctend<Cdelta_t){
@@ -138,7 +143,7 @@ bool simple_time_omicron_cluster(
       Cfirstentry = t;      // cluster first entry
     }
   }
-
+}
   // save last cluster
   if(unclustered_tree->GetEntries()&&Csnr>=cl_snr_thr){
     clustered_tree->Fill();
