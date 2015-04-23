@@ -10,8 +10,6 @@ int eveto::cbc_eveto_main(
 		TString* omicron_trigger_path, 
 		Double_t omicron_snr_threshold, 
 		Double_t omicron_cluster_window,
-		Double_t omicron_start_time,
-		Double_t omicron_end_time,
 		TString* output_directory, 
 		Float_t sig_threshold,
 		Float_t dumb_veto_window,
@@ -33,7 +31,7 @@ int eveto::cbc_eveto_main(
 
 	// Create a tree containing the list of safe veto channels to be processed
 	TTree* safe_channels = new TTree( "safe_channel_list", "List of safe channels to process" );
-	//Long64_t num_veto_channels = safe_channels->ReadFile( safe_channel_file->Data(), "channel/C" );
+	int num_safe_channels = safe_channels->GetEntries();
 	if ( verbose ) {
 		std::cout << "Read " << num_safe_channels << " safe channel names" << std::endl;
 		safe_channels->Print();
@@ -50,8 +48,10 @@ int eveto::cbc_eveto_main(
 			omicron_trigger_path, // input
 			omicron_snr_threshold, // input
 			omicron_cluster_window, // input
-			omicron_start_time, 
-			omicron_end_time,
+			gps_start_time, 
+			gps_end_time,
+                        omicron_cluster_window,
+                        omicron_snr_threshold,
 			verbose );
 
 	if ( retcode ) {
@@ -86,7 +86,6 @@ int eveto::cbc_eveto_main(
 	//and perform veto algorithm. 
 
 
-	int num_safe_channels = safe_channels->GetEntries();
 	float max_sig = sig_threshold;
 	int i; //counts over safe channels
 	float sig[num_safe_channels]; //array to store significance of each channel

@@ -36,17 +36,17 @@ int eveto::calc_dumb_sig(
   double Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
   Long64_t Cfirstentry, Csize;
 
-  omicron_trigger_tree_ptr->SetBranchAddress("time",       &Ctime,      "time/D");
-  omicron_trigger_tree_ptr->SetBranchAddress("tstart",     &Ctstart,    "tstart/D");
-  omicron_trigger_tree_ptr->SetBranchAddress("tend",       &Ctend,      "tend/D");
-  omicron_trigger_tree_ptr->SetBranchAddress("frequency",  &Cfreq,      "frequency/D");
-  omicron_trigger_tree_ptr->SetBranchAddress("fstart",     &Cfstart,    "fstart/D");
-  omicron_trigger_tree_ptr->SetBranchAddress("fend",       &Cfend,      "fend/D");
-  omicron_trigger_tree_ptr->SetBranchAddress("snr",        &Csnr,       "snr/D");
-  omicron_trigger_tree_ptr->SetBranchAddress("amplitude",  &Camp,       "amplitude/D");
-  omicron_trigger_tree_ptr->SetBranchAddress("q",          &Cq,         "q/D");
-  omicron_trigger_tree_ptr->SetBranchAddress("firstentry", &Cfirstentry,"firstentry/L");
-  omicron_trigger_tree_ptr->SetBranchAddress("size",       &Csize,      "size/L");
+  omicron_trigger_tree_ptr->SetBranchAddress("time",       &Ctime);
+  omicron_trigger_tree_ptr->SetBranchAddress("tstart",     &Ctstart);
+  omicron_trigger_tree_ptr->SetBranchAddress("tend",       &Ctend);
+  omicron_trigger_tree_ptr->SetBranchAddress("frequency",  &Cfreq);
+  omicron_trigger_tree_ptr->SetBranchAddress("fstart",     &Cfstart);
+  omicron_trigger_tree_ptr->SetBranchAddress("fend",       &Cfend);
+  omicron_trigger_tree_ptr->SetBranchAddress("snr",        &Csnr);
+  omicron_trigger_tree_ptr->SetBranchAddress("amplitude",  &Camp);
+  omicron_trigger_tree_ptr->SetBranchAddress("q",          &Cq);
+  omicron_trigger_tree_ptr->SetBranchAddress("firstentry", &Cfirstentry);
+  omicron_trigger_tree_ptr->SetBranchAddress("size",       &Csize);
 
 
 
