@@ -10,6 +10,8 @@ int eveto::cbc_eveto_main(
 		TString* omicron_trigger_path, 
 		Double_t omicron_snr_threshold, 
 		Double_t omicron_cluster_window,
+		Double_t omicron_start_time,
+		Double_t omicron_end_time,
 		TString* output_directory, 
 		Float_t sig_threshold,
 		Float_t dumb_veto_window,
@@ -31,14 +33,14 @@ int eveto::cbc_eveto_main(
 
 	// Create a tree containing the list of safe veto channels to be processed
 	TTree* safe_channels = new TTree( "safe_channel_list", "List of safe channels to process" );
-	Long64_t num_veto_channels = safe_channels->ReadFile( safe_channel_file->Data(), "channel/C" );
+	//Long64_t num_veto_channels = safe_channels->ReadFile( safe_channel_file->Data(), "channel/C" );
 	if ( verbose ) {
-		std::cout << "Read " << num_veto_channels << " safe channel names" << std::endl;
+		std::cout << "Read " << num_safe_channels << " safe channel names" << std::endl;
 		safe_channels->Print();
 	}
 
-	TTree* clustered_veto_trigger_tree[num_veto_channels];
-	TTree* veto_segment_tree[num_veto_channels];
+	TTree* clustered_veto_trigger_tree[num_safe_channels];
+	TTree* veto_segment_tree[num_safe_channels];
 
 	// Read in the omicron triggers for the interval that we want to process
 	retcode = eveto::read_omicron_triggers(
@@ -48,6 +50,8 @@ int eveto::cbc_eveto_main(
 			omicron_trigger_path, // input
 			omicron_snr_threshold, // input
 			omicron_cluster_window, // input
+			omicron_start_time, 
+			omicron_end_time,
 			verbose );
 
 	if ( retcode ) {
@@ -83,7 +87,7 @@ int eveto::cbc_eveto_main(
 
 
 	int num_safe_channels = safe_channels->GetEntries();
-	float max_sig = 0;
+	float max_sig = sig_threshold;
 	int i; //counts over safe channels
 	float sig[num_safe_channels]; //array to store significance of each channel
 	int max_sig_index; // index of the winning channel!
@@ -113,14 +117,10 @@ int eveto::cbc_eveto_main(
 		omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
                 std::cerr << "finished print out omicron triggers" << std::endl;
 
-		//currently seg faults on print() for omicron trigs here. 
-		while (max_sig > sig_threshold || r <= max_rounds ) {
-                //omicron_trigs_round[0][i]->Print(); //prints out omicron triggers.  
+		while (max_sig > sig_threshold && r <= max_rounds ) {
 		      if (verbose) std::cerr << "Processing round " << r << " of " << max_rounds << std::endl;
-			//omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
                        
 	                if (omicron_trigs_round[r-1][i] != NULL) {
-				//omicron_trigs_round[0][i]->Print(); //prints out omicron triggers. 
                                 if ( verbose ) std::cerr << "calculating dumb significance for veto tree at " << omicron_trigs_round[r-1][i] << " against cbc triggers at " << cbc_trigs_round[r-1] << std::endl;
 				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i],dumb_veto_window,verbose);
                                 if ( verbose ) std::cerr << "signifcance was " << sig[i] << std::endl;
@@ -138,6 +138,7 @@ int eveto::cbc_eveto_main(
 				omicron_trigs_round[r][i] = remove_triggers(omicron_trig_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], omicron_segs_round[r-1][i], omicron_segs_round[r-1][max_sig_index]); //should segments have their own remove triggers function?
 
 			}
+
 			else{
 				i = NULL;
 			}
@@ -147,7 +148,6 @@ int eveto::cbc_eveto_main(
 			r += 1;
 
 		}
-		//while( max_sig > sig_threshold || r <= max_rounds );
 	}
-                return 0;
+        return 0;
 }
