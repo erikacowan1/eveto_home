@@ -46,7 +46,16 @@ int eveto::calc_dumb_sig(
 
 
     //std::cerr << "calc_dumb_sig() has a cbc tree at " << cbc_trigger_tree_ptr << std::endl;
-   for(c
+   int = i,j;
+   for(i=0; i<c; i++){
+	if(Cstart > end_time || Cend < start_time){
+  int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
+        }
+        else{
+        n+=1;
+        }
+
+
 
 
   }
