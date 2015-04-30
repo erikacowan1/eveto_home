@@ -71,4 +71,13 @@ namespace eveto {
       TTree* omicron_trigs_round,
       bool verbose );
 
+  
+  int remove_triggers(
+      TTree* cbc_trigger_tree_ptr,
+      TTree* omicron_trigger_tree_ptr,     
+      TTree*   cbc_trigger_tree_minus_trigs, 
+      TTree* omicron_trigger_tree_minus_trigs, 
+//    TTree* cbc_segs_tree_ptr,
+//    TTree* omicron_segs_tree_ptr,
+      bool verbose );
 };
