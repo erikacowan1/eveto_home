@@ -13,6 +13,7 @@ int eveto::calc_dumb_sig(
   std::cerr << "calc_dumb_sig() got a veto tree at " << omicron_trigger_tree_ptr << std::endl;
   omicron_trigger_tree_ptr->Print();
 
+  Long64_t n=0;
   int num_coinc_triggers = 0;
   Double_t start_time, end_time;
   Float_t snr, chisq, chisqdof, newsnr, snr_sq, mass1, mass2, mtotal, mchirp, eta, ttotal;
@@ -48,39 +49,23 @@ int eveto::calc_dumb_sig(
   omicron_trigger_tree_ptr->SetBranchAddress("firstentry", &Cfirstentry);
   omicron_trigger_tree_ptr->SetBranchAddress("size",       &Csize);
 
-
+  int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
 
   for (Int_t c=0; c<num_cbc_triggers; ++c) {
     cbc_trigger_tree_ptr->GetEntry(c);
 
-    //Float_t	t1 = Ctime-dumb_time_seg;
-    //Float_t t2 = Ctime+dumb_time_seg;
-    //	TCut tc1 = "end_time>(time-dumb_time_seg) ";
-    //	TCut tc2 = "end_time<(time+dumb_time_seg) ";
-    char *time_window_string = new char[256];
-    snprintf( time_window_string, 256, "(tend > %f) && (tend < %f)", 
-        end_time - dumb_time_seg, end_time + dumb_time_seg );
-
-
-    //std::cerr << "calc_dumb_sig() has a cbc tree at " << cbc_trigger_tree_ptr << std::endl;
-   int = i,j;
-   for(i=0; i<c; i++){
-	if(Cstart > end_time || Cend < start_time){
-  int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
+      for(Int_t o=0; o<num_omicron_triggers; ++o) {
+       omicron_trigger_tree_ptr->GetEntry(o);
+   
+        if(Ctend > start_time && Ctstart < end_time) {
+          num_coinc_triggers += n;
         }
         else{
-        n+=1;
+        std::cerr << "problem in calc_dumb_sig with dumb_calc algorithm, not incrementing properly" << std::endl;
         }
-
-
-
+     }
 
   }
-  //	TEventList *CoincOmegaList_ptr= (TEventList *)gROOT->FindObject("CoincOmegaList");
-
-  //	num_coinc_triggers += CoincOmegaList_ptr->GetN();
- // int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
-
   return (float)num_coinc_triggers/(float)num_omicron_triggers;
+  
 }
-
