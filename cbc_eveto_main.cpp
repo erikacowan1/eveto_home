@@ -31,6 +31,7 @@ int eveto::cbc_eveto_main(
 
 	// Create a tree containing the list of safe veto channels to be processed
 	TTree* safe_channels = new TTree( "safe_channel_list", "List of safe channels to process" );
+	Long64_t num_safe_channels = safe_channels->ReadFile( safe_channel_file->Data(), "channel/C" );
 	if ( verbose ) {
 		std::cout << "Read " << num_safe_channels << " safe channel names" << std::endl;
 		safe_channels->Print();
@@ -83,7 +84,7 @@ int eveto::cbc_eveto_main(
 	//assume that all segments are science segments. Grab segments from segment tree
 	//and perform veto algorithm. 
 
-	int num_safe_channels = safe_channels->GetEntries();
+	//int num_safe_channels = safe_channels->GetEntries();
 	float max_sig = sig_threshold;
 	int i; //counts over safe channels
 	float sig[num_safe_channels]; //array to store significance of each channel
@@ -102,7 +103,7 @@ int eveto::cbc_eveto_main(
 	cbc_trigs_round[0] = cbc_trigger_tree;
         std::cerr << "address of cbc_trigs_round[0] = " << cbc_trigs_round[0] << std::endl;
 	//cbc_segs_round[0] = cbc_segs_tree;
-
+        omicron_trigs_round[0] = clustered_veto_trigger_tree;
 
         std::cerr << "Number of safe channels = " << num_safe_channels << std::endl;
 	for (i=0; i<num_safe_channels; ++i) {
@@ -113,8 +114,8 @@ int eveto::cbc_eveto_main(
 
         // Begin the loop over rounds and break if all channels go below the max
         // significance threshold or we exceed the maximum number of rounds
-        float max_sig = sig_threshold;
-	int r = 1; //round counter
+        //float max_sig = sig_threshold;
+	//int r = 1; //round counter
         while (max_sig >= sig_threshold && r <= max_rounds ) {
           if (verbose) std::cerr << "==== Processing round " << r << " of " << max_rounds << " ====" << std::endl;
 
@@ -132,7 +133,7 @@ int eveto::cbc_eveto_main(
               sig[i] = 0;
             }
 
-            if ( verbose ) std::cerr << "Signifcance = " << sig[i] << std::endl;
+            if ( verbose ) std::cerr << "Significance = " << sig[i] << std::endl;
  
              if(sig[i] >= max_sig) {
                max_sig = sig[i];
@@ -144,6 +145,17 @@ int eveto::cbc_eveto_main(
            for (i=0; i<num_safe_channels; ++i) {
             omicron_trigs_round[r][i] = NULL;
           }
+		
+	  cbc_trigs_round[r] = eveto::remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index]);
+ 
+	  if (i != max_sig_index) {       
+            omicron_trigs_round[r][i] = eveto::remove_triggers(omicron_trigs_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], &cbc_trigger_tree_minus_trigs,&omicron_trigger_tree_minus_trigs,);
+	  }
+
+	  else {
+	    i = NULL;
+	  }
+
 #if 0
 		cbc_trigs_round[r] = remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
 
@@ -156,10 +168,10 @@ int eveto::cbc_eveto_main(
 				i = NULL;
 			}
 #endif
-		
-	if (verbose) std::cerr << "Finished round " << r << std::endl;
-	if (verbose) std::cerr << "Maximum significance was " << max_sig << std::endl;
-	r += 1;
+
+	  if (verbose) std::cerr << "Finished round " << r << std::endl;
+	  if (verbose) std::cerr << "Maximum significance was " << max_sig << std::endl;
+	  r += 1;
 	}
         return 0;
 }
