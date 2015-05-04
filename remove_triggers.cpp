@@ -5,17 +5,15 @@
 //remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
 
 //function that does a simple significance calculation
-int eveto::remove_triggers(
+TTree* eveto::remove_triggers(
     TTree* cbc_trigger_tree_ptr,
     TTree* omicron_trigger_tree_ptr,
-    TTree*   cbc_trigger_tree_minus_trigs, 
-    TTree* omicron_trigger_tree_minus_trigs, 
 //    TTree* cbc_segs_tree_ptr,
 //    TTree* omicron_segs_tree_ptr,
     bool verbose )
     {
-Long64_t n=0;
-  int num_coinc_triggers = 0;
+
+  // Set up the variables to access the input cbc triggers
   Double_t start_time, end_time;
   Float_t snr, chisq, chisqdof, newsnr, snr_sq, mass1, mass2, mtotal, mchirp, eta, ttotal;
 
@@ -34,6 +32,8 @@ Long64_t n=0;
   cbc_trigger_tree_ptr->SetBranchAddress("ttotal",&ttotal);
 
   int num_cbc_triggers = cbc_trigger_tree_ptr->GetEntries();
+
+  // Set up the variables to access the input omicron triggers
   double Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
   Long64_t Cfirstentry, Csize;
 
@@ -50,41 +50,27 @@ Long64_t n=0;
   omicron_trigger_tree_ptr->SetBranchAddress("size",       &Csize);
 
   int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
-  double Cmtime, Ctmstart, Ctmend, Cmfreq, Cfmstart, Cfmend, Cmsnr, Cmamp, Cmq;
-  Long64_t Cmfirstentry, Cmsize;
-  cbc_trigger_tree_minus_trigs->Branch("time",       &Cmtime, "time/D");
-  cbc_trigger_tree_minus_trigs->Branch("tstart",     &Ctmstart,    "tstart/D");
-  cbc_trigger_tree_minus_trigs->Branch("tend",       &Ctmend,      "tend/D");
-  cbc_trigger_tree_minus_trigs->Branch("frequency",  &Cmfreq,      "frequency/D");
-  cbc_trigger_tree_minus_trigs->Branch("fstart",     &Cfmstart,    "fstart/D");
-  cbc_trigger_tree_minus_trigs->Branch("fend",       &Cfmend,      "fend/D");
-  cbc_trigger_tree_minus_trigs->Branch("snr",        &Cmsnr,       "snr/D");
-  cbc_trigger_tree_minus_trigs->Branch("amplitude",  &Cmamp,       "amplitude/D");
-  cbc_trigger_tree_minus_trigs->Branch("q",          &Cmq,         "q/D");
-  cbc_trigger_tree_minus_trigs->Branch("firstentry", &Cmfirstentry,"firstentry/L");
-  cbc_trigger_tree_minus_trigs->Branch("size",       &Cmsize,      "size/L");
 
-  Cmfirstentry=-1;
-  Cmtend=0.0;
+  // Create a new tree that will store the output data
+  TTree* cbc_trigger_tree_minus_trigs = new TTree("cbc-triggers","cbc-triggers");
 
-  double mtime, tmstart, tmend, mfreq, fmstart, fmend, msnr, mamp, mq;
-  Long64_t mfirstentry, msize;
-  omicron_trigger_tree_minus_trigs->Branch("time",       &mtime, "time/D");
-  omicron_trigger_tree_minus_trigs->Branch("tstart",     &tmstart,    "tstart/D");
-  omicron_trigger_tree_minus_trigs->Branch("tend",       &tmend,      "tend/D");
-  omicron_trigger_tree_minus_trigs->Branch("frequency",  &mfreq,      "frequency/D");
-  omicron_trigger_tree_minus_trigs->Branch("fstart",     &fmstart,    "fstart/D");
-  omicron_trigger_tree_minus_trigs->Branch("fend",       &fmend,      "fend/D");
-  omicron_trigger_tree_minus_trigs->Branch("snr",        &msnr,       "snr/D");
-  omicron_trigger_tree_minus_trigs->Branch("amplitude",  &mamp,       "amplitude/D");
-  omicron_trigger_tree_minus_trigs->Branch("q",          &mq,         "q/D");
-  omicron_trigger_tree_minus_trigs->Branch("firstentry", &mfirstentry,"firstentry/L");
-  omicron_trigger_tree_minus_trigs->Branch("size",       &msize,      "size/L");
+  // Create the branches for the tree
+  cbc_trigger_tree_minus_trigs->Branch( "start_time" , &start_time, "start_time/D" );
+  cbc_trigger_tree_minus_trigs->Branch( "end_time" , &end_time, "end_time/D" );
+  cbc_trigger_tree_minus_trigs->Branch( "snr" , &snr, "snr/F" );
+  cbc_trigger_tree_minus_trigs->Branch( "chisq" , &chisq, "chisq/F" );
+  cbc_trigger_tree_minus_trigs->Branch( "chisqdof" , &chisqdof, "chisqdof/F" );
+  cbc_trigger_tree_minus_trigs->Branch( "newsnr" , &newsnr, "newsnr/F" );
+  cbc_trigger_tree_minus_trigs->Branch( "snr_sq" , &snr_sq, "snr_sq/F" );
+  cbc_trigger_tree_minus_trigs->Branch( "mass1", &mass1, "mass1/F" );
+  cbc_trigger_tree_minus_trigs->Branch( "mass2", &mass2, "mass2/F" );
+  cbc_trigger_tree_minus_trigs->Branch( "mtotal", &mtotal, "mtotal/F" );
+  cbc_trigger_tree_minus_trigs->Branch( "mchirp", &mchirp, "mchirp/F" );
+  cbc_trigger_tree_minus_trigs->Branch( "eta", &eta, "eta/F" );
+  cbc_trigger_tree_minus_trigs->Branch( "ttotal", &ttotal, "ttotal/F" );
 
+  for (Int_t c=0; c<num_cbc_triggers; ++c) {
 
-
-  mfirstentry=-1;
-  mtend=0.0;
     cbc_trigger_tree_ptr->GetEntry(c);
 
       for(Int_t o=0; o<num_omicron_triggers; ++o) {
@@ -92,13 +78,9 @@ Long64_t n=0;
 
         if(Ctend > start_time && Ctstart < end_time) {
 	  cbc_trigger_tree_minus_trigs->Fill();
-          omicron_trigger_tree_minus_trigs->Fill();
-        }
-        else{
-        std::cerr << "Remove Trigs algorithm not doing its job" << std::endl;
         }
       }
-
   }
 
+  return cbc_trigger_tree_minus_trigs;
 }            
