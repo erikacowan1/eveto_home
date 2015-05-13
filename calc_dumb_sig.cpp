@@ -51,6 +51,8 @@ int eveto::calc_dumb_sig(
 
   int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
 
+  if ( num_omicron_triggers == 0 ) return 0;
+
   for (Int_t c=0; c<num_cbc_triggers; ++c) {
     cbc_trigger_tree_ptr->GetEntry(c);
 

@@ -88,7 +88,7 @@ int eveto::cbc_eveto_main(
 	float max_sig = sig_threshold;
 	int i; //counts over safe channels
 	float sig[num_safe_channels]; //array to store significance of each channel
-	int max_sig_index; // index of the winning channel!
+	int max_sig_index = -1; // index of the winning channel!
 	int r = 1; //round counter
 
 
@@ -103,7 +103,6 @@ int eveto::cbc_eveto_main(
 	cbc_trigs_round[0] = cbc_trigger_tree;
         std::cerr << "address of cbc_trigs_round[0] = " << cbc_trigs_round[0] << std::endl;
 	//cbc_segs_round[0] = cbc_segs_tree;
-        omicron_trigs_round[0] = clustered_veto_trigger_tree;
 
         std::cerr << "Number of safe channels = " << num_safe_channels << std::endl;
 	for (i=0; i<num_safe_channels; ++i) {
@@ -140,21 +139,26 @@ int eveto::cbc_eveto_main(
                max_sig_index = i;
              }
            }
-           
-           cbc_trigs_round[r] = NULL;
-           for (i=0; i<num_safe_channels; ++i) {
-            omicron_trigs_round[r][i] = NULL;
-          }
-		
-	  cbc_trigs_round[r] = eveto::remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index]);
- 
-	  if (i != max_sig_index) {       
-            omicron_trigs_round[r][i] = eveto::remove_triggers(omicron_trigs_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], &cbc_trigger_tree_minus_trigs,&omicron_trigger_tree_minus_trigs,);
-	  }
 
-	  else {
-	    i = NULL;
-	  }
+          if ( max_sig_index == -1 )
+          {
+             std::cerr << "There are no winners!" << std::endl;
+             break;
+          }
+
+
+          if ( verbose ) std::cerr << "Winning channel = " << max_sig_index << std::endl;
+           
+	  cbc_trigs_round[r] = eveto::remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index], verbose);
+ 
+          for (i=0; i<num_safe_channels; ++i) {
+            if (i != max_sig_index) {       
+              omicron_trigs_round[r][i] = eveto::remove_triggers(omicron_trigs_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], verbose);
+            }
+            else {
+              omicron_trigs_round[r][i] = NULL;
+            }
+          }
 
 #if 0
 		cbc_trigs_round[r] = remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
@@ -173,5 +177,7 @@ int eveto::cbc_eveto_main(
 	  if (verbose) std::cerr << "Maximum significance was " << max_sig << std::endl;
 	  r += 1;
 	}
+
+        std::cerr << "Eveto is finished" << std::endl;
         return 0;
 }
