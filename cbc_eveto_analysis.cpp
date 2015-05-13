@@ -8,56 +8,36 @@
 //				//
 //////////////////////////////////				
 
-#include <iostream>
-#include <string>
-#include <TApplication.h>
-#include <TCanvas.h>
-#include <TColor.h>
-#include <TH1.h>
-#include <TH2.h>
-#include <TLegend.h>
-#include <TTree.h>
-#include <TSQLServer.h>
-#include <TSQLStatement.h>
-#include <stdio.h>
-#include <string.h>
-#include <THStack.h>
+//NEEDS TO BE PUT IN LOOP SO AS TO PLOT/EXPORT ALL VERSIONS//
 
+void post_eveto(TTree* cbc_trigger_tree_ptr,
+      TTree* omicron_trigger_tree_ptr,
+bool verbose) {
 
-void post_eveto() {
+//Import cbc trigger tree, currently is -same- directory as eveto.C code- to be changed 
+  TFile *_file0=TFile::Open("cbc-trigger-original.root");
+  TTree* tree = (TTree*)_file0->Get("ntuple"); //or whatever the ntuple is *actually* called
 
-  
-// Read in the triggers from each database to TTree
+//Import aux trigger tree, currently in -same- directory as post-eveto.C, rename tree,tree1 to more appropriate names
+  TFile *_file1=TFile::Open("aux-trigger-original.root");
+  TTree* tree1 = (TTree*)_file1->Get("ntuple"); //or whatever the ntuple is *actually* called
 
-  TTree* ss_s5_cat4_bg = get_triggers_from_database( 1, "sqlite://single_stage_s5/H1H2L1-FULL_DATA_CAT_4_VETO__CLUSTERED_CBC_RESULTS-852393970-2419200.sqlite" );
-
-  TTree* ss_gaussian_cat4_bg = get_triggers_from_database( 1, "sqlite://single_stage_gaussian/H1H2L1-FULL_DATA_CAT_4_VETO__CLUSTERED_CBC_RESULTS-852393970-2419200.sqlite");
-
-
-  // Read in the triggers from each database to TTree
-
-  TTree* ss_s5_cat4_fg = get_triggers_from_database( 0, "sqlite://single_stage_s5/H1H2L1-FULL_DATA_CAT_4_VETO__CLUSTERED_CBC_RESULTS-852393970-2419200.sqlite" );
-
-  TTree* ss_gaussian_cat4_fg = get_triggers_from_database( 0, "sqlite://single_stage_gaussian/H1H2L1-FULL_DATA_CAT_4_VETO__CLUSTERED_CBC_RESULTS-852393970-2419200.sqlite");
-
-
-// Plot Background CBC Triggers
+// Plot CBC Triggers
   TCanvas* c1 = new TCanvas();
   c1->SetLogy();
   //Int_t n_bins = 70;
   //Double_t x_low = 5.5;
   //Double_t x_high = 9.0;
-  TH1F *h1 = new TH1F("h1","Background CBC Triggers",n_bins,x_low,x_high);
+  TH1F *h1 = new TH1F("h1","CBC Triggers",n_bins,x_low,x_high);
   TH1F *h2 = new TH1F("h2","Background CBC Triggers",n_bins,x_low,x_high);
 
-  h1->GetXaxis()->SetTitle("newSNR for Background CBC Triggers");
+  h1->GetXaxis()->SetTitle("newSNR for CBC Triggers");
   h1->GetYaxis()->SetTitle("# triggers per bin");
-  h2->GetXaxis()->SetTitle("newSNR for Background CBC Triggers");
+  h2->GetXaxis()->SetTitle("newSNR for Aux Triggers");
   h2->GetYaxis()->SetTitle("# triggers per bin");
 
-  ss_s5_cat4_bg->Draw("newsnr>>h1");
-  ss_gaussian_cat4_bg->Draw("newsnr>>h2");
-
+  tree->Draw("newsnr>>h1");
+  tree1->Draw("newsnr>>h2");
   h1->SetLineColor(1);
   h2->SetLineColor(2);
 
@@ -80,7 +60,7 @@ void post_eveto() {
 
 
 
-// Plot Foreground CBC Triggers
+// Pustered_cbc_trigs = get_triggers_from_database( 1, sql_db );ot Foreground CBC Triggers
   TCanvas* c2 = new TCanvas();
   TH1F *h3 = new TH1F("h3","Foreground CBC Triggers",n_bins,x_low,x_high);
   TH1F *h4 = new TH1F("h4","Foreground CBC Triggers",n_bins,x_low,x_high);
