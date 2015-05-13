@@ -7,13 +7,14 @@ int eveto::calc_dumb_sig(
     float dumb_time_seg,
     bool verbose )
 {
-  std::cerr << "calc_dumb_sig() got a cbc tree at " << cbc_trigger_tree_ptr << std::endl;
-  cbc_trigger_tree_ptr->Print();
+  if ( verbose ) {
+    std::cerr << "calc_dumb_sig() got a cbc tree at " << cbc_trigger_tree_ptr << std::endl;
+    // cbc_trigger_tree_ptr->Print();
 
-  std::cerr << "calc_dumb_sig() got a veto tree at " << omicron_trigger_tree_ptr << std::endl;
-  omicron_trigger_tree_ptr->Print();
+    std::cerr << "calc_dumb_sig() got a veto tree at " << omicron_trigger_tree_ptr << std::endl;
+    // omicron_trigger_tree_ptr->Print();
+  }
 
-  Long64_t n=0;
   int num_coinc_triggers = 0;
   Double_t start_time, end_time;
   Float_t snr, chisq, chisqdof, newsnr, snr_sq, mass1, mass2, mtotal, mchirp, eta, ttotal;
@@ -51,7 +52,10 @@ int eveto::calc_dumb_sig(
 
   int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
 
-  if ( num_omicron_triggers == 0 ) return 0;
+  if ( num_omicron_triggers == 0 ){
+    if (verbose) std::cout << "no omicron triggers, returning zero significance" << std::endl;
+    return 0;
+  }
 
   for (Int_t c=0; c<num_cbc_triggers; ++c) {
     cbc_trigger_tree_ptr->GetEntry(c);
@@ -60,14 +64,15 @@ int eveto::calc_dumb_sig(
        omicron_trigger_tree_ptr->GetEntry(o);
    
         if(Ctend > start_time && Ctstart < end_time) {
-          num_coinc_triggers += n;
-        }
-        else{
-        std::cerr << "problem in calc_dumb_sig with dumb_calc algorithm, not incrementing properly" << std::endl;
+          num_coinc_triggers++;
         }
      }
 
   }
-  return (float)num_coinc_triggers/(float)num_omicron_triggers;
-  
+
+  float dumb_significance_value = (float)num_coinc_triggers/(float)num_omicron_triggers;
+
+  if (verbose) std::cout << "dumb significance = " << num_coinc_triggers << "/" << num_omicron_triggers << " = " << dumb_significance_value << std::endl;
+
+  return dumb_significance_value;
 }

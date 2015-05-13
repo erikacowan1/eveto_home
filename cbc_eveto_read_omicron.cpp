@@ -194,7 +194,7 @@ int eveto::read_omicron_triggers(
 
     // create a tree to store clustered triggers and store its address in the tree array
     snprintf( tree_name, 256, "VETOTRIGS:%s", channel_name );
-    clustered_veto_trigger_tree[i] = new TTree( tree_name, channel_name );
+    clustered_veto_trigger_tree[i] = new TTree( tree_name, tree_name );
     simple_omicron_time_cluster( clustered_veto_trigger_tree[i], veto_trigger_chain, 
         omicron_start_time, omicron_end_time,
         cluster_time_window, cluster_snr_threshold, verbose );
@@ -203,7 +203,7 @@ int eveto::read_omicron_triggers(
     // Create a new tree containing the veto segments with the correct name for eveto
     snprintf( tree_name, 256, "SEGMENTS:%s", channel_name );
     veto_segment_tree[i] = veto_segment_chain->CloneTree();
-    veto_segment_tree[i]->SetObject( tree_name, channel_name );
+    veto_segment_tree[i]->SetObject( tree_name, tree_name );
 
   }
 
