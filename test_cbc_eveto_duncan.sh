@@ -8,7 +8,7 @@
     --cbc-trigger-database l1-s6-triggers.sqlite \
     --cbc-snr-threshold 5.0 \
     --omicron-trigger-path /Users/dbrown/Documents/Research/detchar/triggers/  \
-    --omicron-snr-threshold 8.0 \
+    --omicron-snr-threshold 10.0 \
     --omicron-cluster-window 1.0 \
     --output-directory . \
     --sig-threshold 5.0 \
