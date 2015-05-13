@@ -101,13 +101,13 @@ int eveto::cbc_eveto_main(
  
 	//initialize arrays
 	cbc_trigs_round[0] = cbc_trigger_tree;
-        std::cerr << "address of cbc_trigs_round[0] = " << cbc_trigs_round[0] << std::endl;
+        std::cerr << "Initialized CBC treel for round 0: " << cbc_trigs_round[0] << std::endl;
 	//cbc_segs_round[0] = cbc_segs_tree;
 
         std::cerr << "Number of safe channels = " << num_safe_channels << std::endl;
 	for (i=0; i<num_safe_channels; ++i) {
-		if (verbose) std::cout << "Initializing veto channels for round 0" << std::endl;
 		omicron_trigs_round[0][i] = clustered_veto_trigger_tree[i]; //check name
+		if (verbose) std::cout << "Initialized veto channel for round 0: " << omicron_trigs_round[0][i]->GetName() << std::endl;
 		}
 
 
@@ -124,16 +124,14 @@ int eveto::cbc_eveto_main(
 
             if (omicron_trigs_round[r-1][i] != NULL) {
 
-              if ( verbose ) std::cerr << "calculating dumb significance for veto tree at " << omicron_trigs_round[r-1][i] << " against cbc triggers at " << cbc_trigs_round[r-1] << std::endl;
+              if ( verbose ) std::cerr << "calculating dumb significance for veto tree " << omicron_trigs_round[r-1][i]->GetName() << "(" << omicron_trigs_round[r-1][i] << ") against cbc triggers (" << cbc_trigs_round[r-1] << ")" << std::endl;
 
               sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i], dumb_veto_window, verbose);
+              if ( verbose ) std::cerr << "Significance for " << omicron_trigs_round[r-1][i]->GetName() << " = " << sig[i] << std::endl;
             } else {
-
               sig[i] = 0;
             }
 
-            if ( verbose ) std::cerr << "Significance = " << sig[i] << std::endl;
- 
              if(sig[i] >= max_sig) {
                max_sig = sig[i];
                max_sig_index = i;
@@ -147,13 +145,13 @@ int eveto::cbc_eveto_main(
           }
 
 
-          if ( verbose ) std::cerr << "Winning channel = " << max_sig_index << std::endl;
+          if ( verbose ) std::cerr << "Winning channel was " << omicron_trigs_round[r-1][max_sig_index]->GetName() << std::endl;
            
-	  cbc_trigs_round[r] = eveto::remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index], verbose);
+	  cbc_trigs_round[r] = eveto::remove_cbc_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index], verbose);
  
           for (i=0; i<num_safe_channels; ++i) {
-            if (i != max_sig_index) {       
-              omicron_trigs_round[r][i] = eveto::remove_triggers(omicron_trigs_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], verbose);
+            if ( (i != max_sig_index) && (omicron_trigs_round[r-1][i] != NULL) ) {
+                omicron_trigs_round[r][i] = eveto::remove_omicron_triggers(omicron_trigs_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], verbose);
             }
             else {
               omicron_trigs_round[r][i] = NULL;

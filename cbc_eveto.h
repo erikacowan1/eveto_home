@@ -72,10 +72,18 @@ namespace eveto {
       bool verbose );
 
   
-  TTree* remove_triggers(
-      TTree* cbc_trigger_tree_ptr,
-      TTree* omicron_trigger_tree_ptr,     
+  TTree* remove_cbc_triggers(
+      TTree* cbc_trigger_tree_in_ptr,
+      TTree* omicron_trigger_tree_veto_ptr,     
+//    TTree* cbc_segs_tree_ptr,
+//    TTree* omicron_segs_tree_ptr,
+      bool verbose );
+
+  TTree* remove_omicron_triggers(
+      TTree* omicron_trigger_tree_in_ptr,
+      TTree* omicron_trigger_tree_veto_ptr,     
 //    TTree* cbc_segs_tree_ptr,
 //    TTree* omicron_segs_tree_ptr,
       bool verbose );
 };
+
