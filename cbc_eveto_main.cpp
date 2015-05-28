@@ -117,6 +117,7 @@ int eveto::cbc_eveto_main(
 	//int r = 1; //round counter
         while (max_sig >= sig_threshold && r <= max_rounds ) {
           if (verbose) std::cerr << "==== Processing round " << r << " of " << max_rounds << " ====" << std::endl;
+          max_sig_index = -1;
 
           // loop over veto channels, caculate significance of channel,
           // find the channel with the highest significance, and store index
@@ -143,7 +144,6 @@ int eveto::cbc_eveto_main(
              std::cerr << "There are no winners!" << std::endl;
              break;
           }
-
 
           if ( verbose ) std::cerr << "Winning channel was " << omicron_trigs_round[r-1][max_sig_index]->GetName() << std::endl;
            

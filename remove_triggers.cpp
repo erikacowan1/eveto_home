@@ -1,3 +1,5 @@
+#include <limits>
+#include <iomanip>
 #include "cbc_eveto.h"
 
 //code to remove veteod triggers from cbc trigs//
@@ -68,20 +70,29 @@ TTree* eveto::remove_cbc_triggers(
   cbc_trigger_tree_out_ptr->Branch( "eta", &eta, "eta/F" );
   cbc_trigger_tree_out_ptr->Branch( "ttotal", &ttotal, "ttotal/F" );
 
-  for (Int_t c=0; c<num_cbc_triggers; ++c) {
+  Int_t o;
 
+  for (Int_t c=0; c<num_cbc_triggers; ++c) {
     cbc_trigger_tree_in_ptr->GetEntry(c);
 
-      for(Int_t o=0; o<num_omicron_triggers; ++o) {
-       omicron_trigger_tree_veto_ptr->GetEntry(o);
-
-        if(Ctend > start_time && Ctstart < end_time) {
-	  cbc_trigger_tree_out_ptr->Fill();
+    for(o=0; o<=num_omicron_triggers; ++o) {
+      if ( o < num_omicron_triggers ) {
+        omicron_trigger_tree_veto_ptr->GetEntry(o);
+        if( Ctend > start_time && Ctstart < end_time) {
+          if (verbose) std::cout << std::setprecision(15) << "CBC [" << start_time << "," << end_time << ") overlaps veto [" << Ctstart << "," << Ctend << "). Vetoing" << std::endl;
+          break;
         }
       }
+    }
+
+    if ( o == num_omicron_triggers ) cbc_trigger_tree_out_ptr->Fill();
   }
 
-  if (verbose) std::cout << "Removed " << cbc_trigger_tree_in_ptr->GetEntries() - cbc_trigger_tree_out_ptr->GetEntries() << " triggers from " << cbc_trigger_tree_out_ptr->GetName() << std::endl;
+  if (verbose) {
+    std::cout << "On input " << cbc_trigger_tree_in_ptr->GetName() << " had " << cbc_trigger_tree_in_ptr->GetEntries() << " triggers" << std::endl;
+    std::cout << "Used " << omicron_trigger_tree_veto_ptr->GetName() << " veto triggers from " << omicron_trigger_tree_veto_ptr->GetEntries() << " triggers" << std::endl;
+    std::cout << "On output " << cbc_trigger_tree_out_ptr->GetName() << " had " << cbc_trigger_tree_out_ptr->GetEntries() << " triggers" << std::endl;
+  }
 
   return cbc_trigger_tree_out_ptr;
 }
@@ -147,21 +158,29 @@ TTree* eveto::remove_omicron_triggers(
   omicron_trigger_tree_out_ptr->Branch("firstentry", &Ifirstentry,  "firstentry/L");
   omicron_trigger_tree_out_ptr->Branch("size",       &Isize,        "size/L");
 
-  for (Int_t c=0; c<num_omicron_in_triggers; ++c) {
+  Int_t o;
 
+  for (Int_t c=0; c<num_omicron_in_triggers; ++c) {
     omicron_trigger_tree_in_ptr->GetEntry(c);
 
-      for(Int_t o=0; o<num_omicron_triggers; ++o) {
-       omicron_trigger_tree_veto_ptr->GetEntry(o);
-
-        if(Ctend > Itstart && Ctstart < Itend) {
-	  omicron_trigger_tree_out_ptr->Fill();
-        }
+    for(o=0; o<=num_omicron_triggers; ++o) {
+      if ( o < num_omicron_triggers ) {
+        omicron_trigger_tree_veto_ptr->GetEntry(o);
+        if( Ctend > Itstart && Ctstart < Itend ) {
+          if (verbose) std::cout << std::setprecision(15) << "omicron [" << Itstart << "," << Itend << ") overlaps veto [" << Ctstart << "," << Ctend << "). Vetoing" << std::endl;
+          break;
+          }
       }
+    }
+
+    if ( o == num_omicron_triggers ) omicron_trigger_tree_out_ptr->Fill();
   }
 
-  if (verbose) std::cout << "Removed " << omicron_trigger_tree_in_ptr->GetEntries() - omicron_trigger_tree_out_ptr->GetEntries() << " triggers from " << omicron_trigger_tree_out_ptr->GetName() << std::endl;
+  if (verbose) {
+    std::cout << "On input " << omicron_trigger_tree_in_ptr->GetName() << " had " << omicron_trigger_tree_in_ptr->GetEntries() << " triggers" << std::endl;
+    std::cout << "Used " << omicron_trigger_tree_veto_ptr->GetName() << " veto triggers from " << omicron_trigger_tree_veto_ptr->GetEntries() << " triggers" << std::endl;
+    std::cout << "On output " << omicron_trigger_tree_out_ptr->GetName() << " had " << omicron_trigger_tree_out_ptr->GetEntries() << " triggers" << std::endl;
+  }
 
   return omicron_trigger_tree_out_ptr;
 }
-
