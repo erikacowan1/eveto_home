@@ -174,10 +174,14 @@ int eveto::cbc_eveto_main(
 		if (verbose) std::cerr << "Finished round " << r << std::endl;
 		if (verbose) std::cerr << "Maximum significance was " << max_sig << std::endl;
 		r += 1;
-	}
+	
 	
 	for (i=0; i<num_safe_channels; ++i) {
-		retcode = eveto::cbc_eveto_analysis( cbc_trigs_round[r],  omicron_trigs_round[r][i] ); //want the newly vetoed trigger trees for cbc and omicron
+		safe_channels->GetEntry(i);
+		char *name_safe_channel_tree = new char[256];
+		snprintf(name_safe_channel_tree, 256, "VETOTRIGS:%s", safe_channels);
+
+		retcode = eveto::cbc_eveto_analysis( cbc_trigs_round[r], omicron_trigs_round[r][i], verbose); //want the newly vetoed trigger trees for cbc and omicron
 
 		if ( retcode ) {
 			std::cerr << "error plotting new cbc triggers, in cbc_eveto_analysis" << std::endl;
@@ -185,6 +189,8 @@ int eveto::cbc_eveto_main(
 		}
 	}
 
+
+	}
         std::cerr << "Eveto is finished" << std::endl;
         return 0;
 }
