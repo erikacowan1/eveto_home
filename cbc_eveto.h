@@ -85,5 +85,11 @@ namespace eveto {
 //    TTree* cbc_segs_tree_ptr,
 //    TTree* omicron_segs_tree_ptr,
       bool verbose );
+
+  int cbc_eveto_analysis(
+      TTree* cbc_trigger_tree_ptr,
+      TTree* omicron_trigger_tree_ptr,
+      bool verbose );
+
 };
 
