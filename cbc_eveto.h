@@ -72,7 +72,7 @@ namespace eveto {
       Long64_t cwb_end_time,
       Double_t cluster_time_window,
       Double_t cluster_snr_threshold,
-      bool verbose )
+      bool verbose );
 
   int calc_dumb_sig(
       TTree* cbc_trigs_round, 
