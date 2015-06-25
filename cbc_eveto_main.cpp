@@ -59,6 +59,29 @@ int eveto::cbc_eveto_main(
 		return 1;
 	}
 
+
+	// Read in the CWB triggers for the interval that we want to process
+	retcode = int eveto::read_cwb_triggers(
+			TTree* clustered_veto_trigger_tree[],
+      			TTree* veto_segment_tree[],
+      			TTree* safe_channels,
+     			TString* cwb_trigger_path,
+      			Double_t cwb_snr_threshold,
+      			Double_t cwb_cluster_window,
+      			Long64_t cwb_start_time,
+      			Long64_t cwb_end_time,
+     			Double_t cluster_time_window,
+     			Double_t cluster_snr_threshold,
+      			bool verbose ) ;
+
+	if ( retcode ) {
+		std::cerr << "error reading CWB triggers" << std::endl;
+		return 1;
+	}
+
+
+
+
 	//
 	// Read in cbc triggers from database.
 	//
@@ -175,7 +198,7 @@ int eveto::cbc_eveto_main(
 		if (verbose) std::cerr << "Maximum significance was " << max_sig << std::endl;
 		r += 1;
 	
-	
+	/*
 	for (i=0; i<num_safe_channels; ++i) {
 		safe_channels->GetEntry(i);
 		char *name_safe_channel_tree = new char[256];
@@ -188,7 +211,7 @@ int eveto::cbc_eveto_main(
 			return 1;
 		}
 	}
-
+*/
 
 	}
         std::cerr << "Eveto is finished" << std::endl;
