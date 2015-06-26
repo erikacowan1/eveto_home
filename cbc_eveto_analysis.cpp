@@ -51,17 +51,17 @@ int eveto::cbc_eveto_analysis(
 	h2->GetYaxis()->SetTitle("# triggers per bin");
 
 	tree->Draw("newsnr>>h1");
-	tree1->Draw("newsnr>>h2");
+	//tree1->Draw("newsnr>>h2");
 	h1->SetLineColor(1);
-	h2->SetLineColor(2);
+	//h2->SetLineColor(2);
 
 	h1->Draw();
-	h2->Draw("same");
+	//h2->Draw("same");
 
 	TLegend* leg_hist_1 = new TLegend(0.5,0.5,0.79,0.70);
 	leg_hist_1->SetHeader("New SNR Triggers");
 	leg_hist_1->AddEntry(h1,"Single Stage S5","l");
-	leg_hist_1->AddEntry(h2,"Single Stage Gaussian","l");
+	//leg_hist_1->AddEntry(h2,"Single Stage Gaussian","l");
 	leg_hist_1->Draw();
 
 	gSystem->ProcessEvents();
@@ -73,7 +73,7 @@ int eveto::cbc_eveto_analysis(
 	delete img;
 
 
-
+	/*
 	// Pustered_cbc_trigs = get_triggers_from_database( 1, sql_db );ot Foreground CBC Triggers
 	TCanvas* c2 = new TCanvas();
 	TH1F *h3 = new TH1F("h3","Foreground CBC Triggers",n_bins,x_low,x_high);
@@ -150,10 +150,12 @@ int eveto::cbc_eveto_analysis(
 	img->WriteImage("chisq_v_snrsq.png");
 
 	delete img;
-
+*/
 	return;
-}
 
+	}
+}
+/*
 int main( int argc, char *argv[] )
 {
   TApplication* rootapp = new TApplication("post_eveto",&argc, argv);
@@ -161,4 +163,7 @@ int main( int argc, char *argv[] )
   rootapp->Run();
   return 0;
 }
+*/
+
+
 
