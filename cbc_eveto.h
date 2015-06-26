@@ -61,7 +61,7 @@ namespace eveto {
       Float_t cbc_snr_threshold,
       bool verbose );
 
-  int eveto::read_cwb_triggers(
+ /* int read_cwb_triggers(
       TTree* clustered_veto_trigger_tree[],
       TTree* veto_segment_tree[],
       TTree* safe_channels,
@@ -73,7 +73,7 @@ namespace eveto {
       Double_t cluster_time_window,
       Double_t cluster_snr_threshold,
       bool verbose );
-
+*/
   int calc_dumb_sig(
       TTree* cbc_trigs_round, 
       TTree* omicron_trigs_round, 
