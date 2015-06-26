@@ -198,7 +198,7 @@ int eveto::cbc_eveto_main(
 		if (verbose) std::cerr << "Maximum significance was " << max_sig << std::endl;
 		r += 1;
 	
-	/*
+	
 	for (i=0; i<num_safe_channels; ++i) {
 		safe_channels->GetEntry(i);
 		char *name_safe_channel_tree = new char[256];
@@ -211,7 +211,7 @@ int eveto::cbc_eveto_main(
 			return 1;
 		}
 	}
-*/
+
 
 	}
         std::cerr << "Eveto is finished" << std::endl;
