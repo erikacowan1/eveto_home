@@ -47,59 +47,140 @@ bool simple_cwb_time_cluster(
     {
   if ( verbose ) std::cout << "simple_cwb_time_cluster: "<< unclustered_tree->GetEntries() << " unclustered triggers" << std::endl;
 
-  double Ttime, Ttstart, Ttend, Tfreq, Tfstart, Tfend, Tsnr, Tamp, Tq;
+  double Ttime, Tfrequency, Tduration, Tstart, Tstop, Tsnr, Trho, Tnetcc, Tneted, Tlikelihood, Tecor, TECOR, Tifo, Trate, Tphi, Ttheta, Tpsi,Tnull, Thrss, Tnoise, Tlow, Thigh, Tbandwidth, Tstrain, Trun, Tsize;
 
   if(unclustered_tree->SetBranchAddress("time",&Ttime)<0){
     std::cerr <<"ReadTriggers::GetInputTree: missing time branch"<<std::endl ;
     return false;
   }
-  if(unclustered_tree->SetBranchAddress("frequency",&Tfreq)<0){
+  if(unclustered_tree->SetBranchAddress("frequency",&Tfrequency)<0){
     std::cerr <<"ReadTriggers::GetInputTree: missing frequency branch"<<std::endl ;
     return false;
   }
-  if(unclustered_tree->SetBranchAddress("q",&Tq)<0){
+  if(unclustered_tree->SetBranchAddress("duration",&Tduration)<0){
     std::cerr <<"ReadTriggers::GetInputTree: missing q branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("start",&Tstart)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing tstart branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("stop",&Tstop)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing tend branch"<<std::endl ;
     return false;
   }
   if(unclustered_tree->SetBranchAddress("snr",&Tsnr)<0){
     std::cerr <<"ReadTriggers::GetInputTree: missing snr branch"<<std::endl ;
     return false;
   }
-  if(unclustered_tree->SetBranchAddress("tstart",&Ttstart)<0){
-    std::cerr <<"ReadTriggers::GetInputTree: missing tstart branch"<<std::endl ;
-    return false;
-  }
-  if(unclustered_tree->SetBranchAddress("tend",&Ttend)<0){
-    std::cerr <<"ReadTriggers::GetInputTree: missing tend branch"<<std::endl ;
-    return false;
-  }
-  if(unclustered_tree->SetBranchAddress("fstart",&Tfstart)<0){
+  if(unclustered_tree->SetBranchAddress("rho",&Trho)<0){
     std::cerr <<"ReadTriggers::GetInputTree: missing fstart branch"<<std::endl ;
     return false;
   }
-  if(unclustered_tree->SetBranchAddress("fend",&Tfend)<0){
+  if(unclustered_tree->SetBranchAddress("netcc",&Tnetcc)<0){
     std::cerr <<"ReadTriggers::GetInputTree: missing fend branch"<<std::endl ;
     return false;
   }
-  if(unclustered_tree->SetBranchAddress("amplitude", &Tamp)<0){
+  if(unclustered_tree->SetBranchAddress("neted", &Tneted)<0){
     std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
     return false;
   }
-
-  double Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
-  Long64_t Cfirstentry, Csize;
+  if(unclustered_tree->SetBranchAddress("likelihood", &Tlikelihood)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("ecor", &Tecor)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("ECOR", &TECOR)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("ifo", &Tifo)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("rate", &Trate)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("phi", &Tphi)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("theta", &Ttheta)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("psi", &Tpsi)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("null", &Tnull)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("hrss", &Thrss)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("noise", &Tnoise)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("low", &Tlow)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("high", &Thigh)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("bandwidth", &Tbandwidth)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("strain", &Tstrain)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("run", &Trun)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  if(unclustered_tree->SetBranchAddress("size", &Tsize)<0){
+    std::cerr <<"ReadTriggers::GetInputTree: missing amplitude branch"<<std::endl ;
+    return false;
+  }
+  double Ctime, Cfrequency, Cduration, Cstart, Cstop, Csnr, Crho, Cnetcc, Cneted, Clikelihood, Cecor, CECOR, Cifo, Crate, Cphi, Ctheta, Cpsi, Cnull, Chrss, Cnoise, Clow, Chigh, Cbandwidth, Cstrain, Crun, Csize;
 
   clustered_tree->Branch("time",       &Ctime,      "time/D");
-  clustered_tree->Branch("tstart",     &Ctstart,    "tstart/D");
-  clustered_tree->Branch("tend",       &Ctend,      "tend/D");
-  clustered_tree->Branch("frequency",  &Cfreq,      "frequency/D");
-  clustered_tree->Branch("fstart",     &Cfstart,    "fstart/D");
-  clustered_tree->Branch("fend",       &Cfend,      "fend/D");
+  clustered_tree->Branch("frequency",  &Cfrequency, "frequency/D");
+  clustered_tree->Branch("duration",   &Cduration,  "duration/D");
+  clustered_tree->Branch("start",      &Cstart,     "start/D");
+  clustered_tree->Branch("stop",       &Cstop,      "stop/D");
   clustered_tree->Branch("snr",        &Csnr,       "snr/D");
-  clustered_tree->Branch("amplitude",  &Camp,       "amplitude/D");
-  clustered_tree->Branch("q",          &Cq,         "q/D");
-  clustered_tree->Branch("firstentry", &Cfirstentry,"firstentry/L");
-  clustered_tree->Branch("size",       &Csize,      "size/L");
+  clustered_tree->Branch("rho",        &Crho,       "rho/D");
+  clustered_tree->Branch("netcc",      &Cnetcc,     "netcc/D");
+  clustered_tree->Branch("neted",      &Cneted,     "neted/D");
+  clustered_tree->Branch("likelihood", &Clikelihood,"likelihood/D");
+  clustered_tree->Branch("ecor",       &Cecor,      "ecor/D");
+  clustered_tree->Branch("ECOR",       &CECOR,      "ECOR/D");
+  clustered_tree->Branch("ifo",        &Cifo,       "ifo/D");
+  clustered_tree->Branch("rate",       &Crate,      "rate/D");
+  clustered_tree->Branch("phi",        &Cphi,       "phi/D");
+  clustered_tree->Branch("theta",      &Ctheta,     "theta/D");
+  clustered_tree->Branch("psi",        &Cpsi,       "psi/D");
+  clustered_tree->Branch("null",       &Cnull,      "null/D");
+  clustered_tree->Branch("hrss",       &Chrss,      "hrss/D");
+  clustered_tree->Branch("noise",      &Cnoise,     "noise/D");
+  clustered_tree->Branch("low",        &Clow,       "low/D");
+  clustered_tree->Branch("high",       &Chigh,      "high/D");
+  clustered_tree->Branch("bandwidth",  &Cbandwidth, "bandwidth/D");
+  clustered_tree->Branch("strain",     &Cstrain,    "strain/D");
+  clustered_tree->Branch("run",        &Crun,       "run/D");
+  clustered_tree->Branch("size",       &Csize,      "size/D");
 
   Cfirstentry=-1;
   Ctend=0.0;
@@ -112,18 +193,16 @@ bool simple_cwb_time_cluster(
     }
 
     // this is the same cluster...
-    if(Ttstart-Ctend<cluster_time_window){
+    if(Tstart-Cstop<cluster_time_window){
       Csize++; // one more tile
-      if(Ttend   > Ctend)   Ctend=Ttend;    // update cluster end
-      if(Ttstart < Ctstart) Ctstart=Ttstart;// update cluster tstart
-      if(Tfend   > Cfend)   Cfend=Tfend;    // update cluster end
-      if(Tfstart < Cfstart) Cfstart=Tfstart;// update cluster tstart
+      if(Tstop   > Cstop)   Cstop=Tstop;    // update cluster end
+      if(Tstart < Cstart) Cstart=Tstart;// update cluster tstart
+//      if(Tfend   > Cfend)   Cfend=Tfend;    // update cluster end
+//      if(Tfstart < Cfstart) Cfstart=Tfstart;// update cluster tstart
       if(Tsnr>Csnr){  // this tile is louder
         Csnr  = Tsnr; // update cluster SNR
-        Camp  = Tamp; // update cluster amplitude - FIXME: could be better!
         Ctime = Ttime;// update cluster time
-        Cfreq = Tfreq;// update cluster frequency
-        Cq    = Tq;   // update cluster Q
+        Cfrequency = Tfrequency;// update cluster frequency
       }
     }
     //... or start a new cluster
@@ -131,16 +210,14 @@ bool simple_cwb_time_cluster(
       if(t&&Csnr>=cluster_snr_threshold){
         clustered_tree->Fill();  // fill tree with previous entry
       }
-      Ctend       = Ttend;  // cluster t end
-      Ctstart     = Ttstart;// cluster t start
-      Cfend       = Tfend;  // cluster f end
-      Cfstart     = Tfstart;// cluster f start
+      Cstop       = Tstop;  // cluster t end
+      Cstart     = Tstart;// cluster t start
+      //Cfend       = Tfend;  // cluster f end
+      //Cfstart     = Tfstart;// cluster f start
       Csize       = 1;      // cluster size
       Csnr        = Tsnr;   // cluster SNR
-      Camp        = Tamp;   // cluster amplitude
       Ctime       = Ttime;  // cluster time
       Cfreq       = Tfreq;  // cluster frequency
-      Cfirstentry = t;      // cluster first entry
     }
   }
 
