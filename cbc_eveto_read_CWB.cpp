@@ -5,15 +5,14 @@ bool read_cwb_channel(
     TChain* veto_trigger_chain, 
     TChain* veto_segment_chain, 
     TString* cwb_trigger_path, 
-    const char* channel_name,
     bool verbose ) 
 {
   Int_t retcode;
 
-  if ( verbose ) std::cout << "reading triggers and segments for " << channel_name << std::endl;
+  if ( verbose ) std::cout << "reading triggers and segments for " << cwb_trigger_path << std::endl;
 
   char *veto_file_pattern = new char[512];
-  snprintf( veto_file_pattern, 512, "%s/%s/*.root", cwb_trigger_path->Data(), channel_name );
+  snprintf( veto_file_pattern, 512, "%s/wave_111*.root", cwb_trigger_path->Data());
 
   if ( verbose ) std::cout << "Adding root files from " << veto_file_pattern << std::endl;
 
@@ -246,31 +245,24 @@ int eveto::read_cwb_triggers(
       bool verbose )
 {
   // We iterate over the safe channels, so create storage for the channel name
-  char *channel_name = new char[256];
   char *tree_name = new char[256];
-  safe_channels->SetBranchAddress("channel", channel_name);
 
-  for( Long64_t i = 0; i < safe_channels->GetEntries(); i++ )
-  {
+  
     // fill the channel name with the current veto channel
-    safe_channels->GetEntry(i);
-    if ( verbose ) std::cout << "Reading channel " << channel_name <<  std::endl;
 
     // Create a chain to store the unclustered triggers and read from file
     // The names of these chains must match the trees that cwb creates
-    TChain* veto_trigger_chain = new TChain( "triggers", channel_name );
-    TChain* veto_segment_chain = new TChain( "segments", channel_name );
+    TChain* veto_trigger_chain = new TChain( "waveburst", "cwb_unclustered_tree" );
 
     // read in the triggers and segments for this channel
-    bool read_retcode = read_cwb_channel( veto_trigger_chain, veto_segment_chain, 
-        cwb_trigger_path, channel_name, verbose );
+    bool read_retcode = read_cwb_channel( veto_trigger_chain, cwb_trigger_path, verbose );
     if ( ! read_retcode ){
       std::cerr << "error reading cwb triggers" << std::endl;
       return 1;
     }
 
     // create a tree to store clustered triggers and store its address in the tree array
-    snprintf( tree_name, 256, "VETOTRIGS:%s", channel_name );
+    snprintf( tree_name, 256, "CWB_Trigger_Tree" );
     clustered_veto_trigger_tree[i] = new TTree( tree_name, tree_name );
     simple_cwb_time_cluster( clustered_veto_trigger_tree[i], veto_trigger_chain, 
         cwb_start_time, cwb_end_time,
@@ -278,13 +270,12 @@ int eveto::read_cwb_triggers(
     delete veto_trigger_chain;
 
     // Create a new tree containing the veto segments with the correct name for eveto
-    snprintf( tree_name, 256, "SEGMENTS:%s", channel_name );
-    veto_segment_tree[i] = veto_segment_chain->CloneTree();
-    veto_segment_tree[i]->SetObject( tree_name, tree_name );
+    //snprintf( tree_name, 256, "SEGMENTS:%s", channel_name );
+    //veto_segment_tree[i] = veto_segment_chain->CloneTree();
+    //veto_segment_tree[i]->SetObject( tree_name, tree_name );
 
-  }
+  
 
-  delete channel_name;
   delete tree_name;
 
   return 0;
