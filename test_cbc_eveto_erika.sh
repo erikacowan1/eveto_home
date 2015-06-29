@@ -10,7 +10,7 @@
     --omicron-trigger-path /Users/erikacowan1/Documents/eveto_home_COPY/L1/omicron/triggers/ \
     --omicron-snr-threshold 8.0 \
     --omicron-cluster-window 1.0 \
-    --cwb-trigger-path /path/to/cwb/triggers/ \
+    --cwb-trigger-path /home/erika.cowan/data/triggers/ER7/CWB/ \
     --output-directory . \
     --sig-threshold 5.0 \
     --dumb-veto-window 3.0 \
