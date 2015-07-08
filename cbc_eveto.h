@@ -19,13 +19,14 @@
 #include <TCut.h>
 #include <TEventList.h>
 #include <TROOT.h>
-
+#include <string.h>
 
 namespace eveto {
   int cbc_eveto_main( 
       Long_t gps_start_time, 
       Long_t gps_end_time, 
       TString* detector, 
+      TString* main_channel,
       TString* safe_channel_file,
       TString* cbc_trigger_database, 
       Float_t cbc_snr_threshold,
@@ -62,7 +63,7 @@ namespace eveto {
       Float_t cbc_snr_threshold,
       bool verbose );
 
- /* int read_cwb_triggers(
+  int read_cwb_triggers(
       TTree* clustered_veto_trigger_tree[],
       TTree* veto_segment_tree[],
       TTree* safe_channels,
@@ -74,7 +75,7 @@ namespace eveto {
       Double_t cluster_time_window,
       Double_t cluster_snr_threshold,
       bool verbose );
-*/
+
   int calc_dumb_sig(
       TTree* cbc_trigs_round, 
       TTree* omicron_trigs_round, 
