@@ -4,6 +4,7 @@ int eveto::cbc_eveto_main(
 		Long_t gps_start_time, 
 		Long_t gps_end_time, 
 		TString* detector, 
+		TString* main_channel,
 		TString* safe_channel_file,
 		TString* cbc_trigger_database, 
 		Float_t cbc_snr_threshold,
@@ -59,12 +60,16 @@ int eveto::cbc_eveto_main(
 		std::cerr << "error reading omicron triggers" << std::endl;
 		return 1;
 	}
-
-
+	
+	TString cwb = "cwb";
+	if (detector == &cwb)
+	{
+	//
 	// Read in the CWB triggers for the interval that we want to process
-	/*retcode = eveto::read_cwb_triggers(
-			TTree* clustered_veto_trigger_tree[],
-      			TTree* veto_segment_tree[],
+	//
+	retcode = eveto::read_cwb_triggers(
+			TTree* clustered_veto_trigger_tree,
+      			TTree* veto_segment_tree,
       			TTree* safe_channels,
      			TString* cwb_trigger_path,
       			Double_t cwb_snr_threshold,
@@ -80,29 +85,30 @@ int eveto::cbc_eveto_main(
 		return 1;
 	}
 
-	*/
-
-
-	//
-	// Read in cbc triggers from database.
-	//
-
-	TTree* cbc_trigger_tree;
-
-	retcode = eveto::read_cbc_triggers(
-			&cbc_trigger_tree, // output
-			cbc_trigger_database, // input
-			gps_start_time, // input
-			gps_end_time, // input
-			detector, // input
-			cbc_snr_threshold, // input
-			verbose );
-
-	if ( retcode ) {
-		std::cerr << "error reading cbc triggers" << std::endl;
-		return 1;
 	}
+	TString cbc = "cbc";
+	else if (detector == &cbc)
+	{
+		//
+		// Read in cbc triggers from database.
+		//
 
+		TTree* cbc_trigger_tree;
+
+		retcode = eveto::read_cbc_triggers(
+				&cbc_trigger_tree, // output
+				cbc_trigger_database, // input
+				gps_start_time, // input
+				gps_end_time, // input
+				detector, // input
+				cbc_snr_threshold, // input
+				verbose );
+
+		if ( retcode ) {
+			std::cerr << "error reading cbc triggers" << std::endl;
+			return 1;
+		}
+	}
 	//Veto Algorithm
 	//currently the segments are stored in omicron_triggers.root/segments. For now
 	//assume that all segments are science segments. Grab segments from segment tree
@@ -199,7 +205,7 @@ int eveto::cbc_eveto_main(
 		if (verbose) std::cerr << "Maximum significance was " << max_sig << std::endl;
 		r += 1;
 	
-	
+	/*
 	for (i=0; i<num_safe_channels; ++i) {
 		safe_channels->GetEntry(i);
 		char *name_safe_channel_tree = new char[256];
@@ -213,7 +219,7 @@ int eveto::cbc_eveto_main(
 		}
 	}
 
-
+*/
 	}
         std::cerr << "Eveto is finished" << std::endl;
         return 0;
