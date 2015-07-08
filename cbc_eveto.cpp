@@ -7,6 +7,7 @@ int main( int argc, char *argv[] )
   Long_t gps_start_time = 0;
   Long_t gps_end_time = 0;
   TString* detector = new TString();
+  TString* main_channel = new TString();
   TString* safe_channel_file = new TString();
   
   TString* cbc_trigger_database = new TString();
@@ -33,6 +34,7 @@ int main( int argc, char *argv[] )
       {"gps-start-time", required_argument, 0, 's' },
       {"gps-end-time", required_argument, 0, 'e' },
       {"detector", required_argument, 0, 'd' },      
+      {"main-channel",required_argument , 0 , 'M'},
       {"safe-channel-file", required_argument, 0, 'c' },      
 
       // options that control the input cbc triggers
@@ -59,7 +61,7 @@ int main( int argc, char *argv[] )
     };
     int option_index = 0;
 
-    getopt_result = getopt_long( argc, argv, "s:e:d:c:i:t:I:T:W:b:o:S:D:m:v:", long_options, &option_index );
+    getopt_result = getopt_long( argc, argv, "s:e:d:M:c:i:t:I:T:W:b:o:S:D:m:v:", long_options, &option_index );
 
     if ( getopt_result == -1 ) break;
 
@@ -76,6 +78,10 @@ int main( int argc, char *argv[] )
       case 'd':
         detector->Append( optarg );
         break;
+
+      case 'M':
+	main_channel->Append( optarg);
+	break;
 
       case 'c':
         safe_channel_file->Append( optarg );
@@ -137,6 +143,7 @@ int main( int argc, char *argv[] )
   if ( verbose ) {
     std::cout << "Starting cbc_eveto for " << detector->Data() << " data" << std::endl;
     std::cout << "Processing time interval [" << gps_start_time << "," << gps_end_time << ")" << std::endl;
+    std::cout << "Choosing Main Channel Type:" << main_channel << "triggers chosen" << std::endl;
     std::cout << "Reading safe channel list from " << safe_channel_file->Data() << std::endl;
     std::cout << "Reading cbc triggers from " << cbc_trigger_database->Data() << std::endl;
     std::cout << "Applying cbc snr threshold " << cbc_snr_threshold << std::endl;
@@ -154,7 +161,7 @@ int main( int argc, char *argv[] )
 
   // call the main function that actually does the work
   int retcode = eveto::cbc_eveto_main( 
-      gps_start_time, gps_end_time, detector, safe_channel_file,
+      gps_start_time, gps_end_time, detector, main_channel, safe_channel_file,
       cbc_trigger_database, cbc_snr_threshold,
       omicron_trigger_path, omicron_snr_threshold, omicron_cluster_window,  
       cwb_trigger_path, output_directory, 
