@@ -18,6 +18,7 @@ int main( int argc, char *argv[] )
   Double_t omicron_cluster_window = 0;
 
   TString* cwb_trigger_path = new TString();
+  Double_t cwb_snr_threshold = 0;
 
   Float_t sig_threshold = 0;
   Float_t dumb_veto_window = 0;
@@ -48,6 +49,7 @@ int main( int argc, char *argv[] )
 
       // options that control the input veto triggers from cwb
       {"cwb-trigger-path", required_argument, 0, 'b' },
+      {"cwb-snr-threshold", required_argument, 0, 'B' },
 
       // options that control significance and veto 
       {"sig-threshold", required_argument, 0, 'S' },
@@ -61,7 +63,7 @@ int main( int argc, char *argv[] )
     };
     int option_index = 0;
 
-    getopt_result = getopt_long( argc, argv, "s:e:d:M:c:i:t:I:T:W:b:o:S:D:m:v:", long_options, &option_index );
+    getopt_result = getopt_long( argc, argv, "s:e:d:M:c:i:t:I:T:W:b:B:o:S:D:m:v:", long_options, &option_index );
 
     if ( getopt_result == -1 ) break;
 
@@ -111,6 +113,10 @@ int main( int argc, char *argv[] )
         cwb_trigger_path->Append( optarg );
         break;
 
+      case 'B':
+	cwb_snr_threshold = atof(optarg );
+	break;
+
       case 'o':
         output_directory->Append( optarg );
         break;
@@ -151,6 +157,7 @@ int main( int argc, char *argv[] )
     std::cout << "Applying omicron snr threshold " << omicron_snr_threshold << std::endl;
     std::cout << "Applying omicron cluster window " << omicron_cluster_window << std::endl;
     std::cout << "Reading cwb triggers from directory" <<  cwb_trigger_path->Data() << std::endl;
+    std::cout << "Reading cwb thresholf from command line" << cwb_snr_threshold << std::endl;
     std::cout << "Writing output to " << output_directory->Data() << std::endl;
   }
 
@@ -164,7 +171,7 @@ int main( int argc, char *argv[] )
       gps_start_time, gps_end_time, detector, main_channel, safe_channel_file,
       cbc_trigger_database, cbc_snr_threshold,
       omicron_trigger_path, omicron_snr_threshold, omicron_cluster_window,  
-      cwb_trigger_path, output_directory, 
+      cwb_trigger_path, cwb_snr_threshold, output_directory, 
       sig_threshold, dumb_veto_window, max_rounds,  verbose
       );
 

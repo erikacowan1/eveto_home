@@ -52,6 +52,9 @@ int eveto::calc_dumb_sig(
 
   int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
 
+
+  //add CWB section with an if statement to choose between CWB and omicron here
+ 
   if ( num_omicron_triggers == 0 ){
     if (verbose) std::cout << "no omicron triggers, returning zero significance" << std::endl;
     return 0;
