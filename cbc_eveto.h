@@ -34,6 +34,7 @@ namespace eveto {
       Double_t omicron_snr_threshold, 
       Double_t omicron_cluster_window,
       TString* cwb_trigger_path, 
+      Double_t cwb_snr_threshold,
       TString* output_directory, 
       Float_t sig_threshold,
       Float_t dumb_veto_window,      
