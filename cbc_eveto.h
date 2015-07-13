@@ -69,12 +69,12 @@ namespace eveto {
       TTree* safe_channels,
       TString* cwb_trigger_path,
       Double_t cwb_snr_threshold,
-      Double_t cwb_cluster_window,
-      Long64_t cwb_start_time,
-      Long64_t cwb_end_time,
+      Double_t cbc_cluster_window,
+      Long64_t cbc_start_time,
+      Long64_t cbc_end_time,
       Double_t cluster_time_window,
       Double_t cluster_snr_threshold,
-      bool verbose );
+      bool verbose ) ;
 
   int calc_dumb_sig(
       TTree* cbc_trigs_round, 
