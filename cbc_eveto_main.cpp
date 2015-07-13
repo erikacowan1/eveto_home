@@ -1,24 +1,28 @@
 #include "cbc_eveto.h"
 
 int eveto::cbc_eveto_main( 
-		Long_t gps_start_time, 
-		Long_t gps_end_time, 
-		TString* detector, 
-		TString* main_channel,
-		TString* safe_channel_file,
-		TString* cbc_trigger_database, 
-		Float_t cbc_snr_threshold,
-		TString* omicron_trigger_path, 
-		Double_t omicron_snr_threshold, 
-		Double_t omicron_cluster_window,
-		TString* cwb_trigger_path, 
-		Double_t cwb_snr_threshold,
-		TString* output_directory, 
-		Float_t sig_threshold,
-		Float_t dumb_veto_window,
-		Int_t max_rounds,
-		bool verbose
-		)
+      Long_t gps_start_time, 
+      Long_t gps_end_time, 
+      TString* detector, 
+      TString* main_channel,
+      TString* safe_channel_file,
+      TString* cbc_trigger_database, 
+      Float_t cbc_snr_threshold,
+      TString* omicron_trigger_path, 
+      Double_t omicron_snr_threshold, 
+      Double_t omicron_cluster_window,
+      TString* cwb_trigger_path,
+      Double_t cwb_snr_threshold,
+      Double_t cluster_time_window,
+      Double_t cluster_snr_threshold, 
+      Float_t sig_threshold,
+      Float_t dumb_veto_window,      
+      Int_t max_rounds,
+      TString* output_directory, 
+      bool verbose
+      );
+		
+		
 {
 	int retcode = 0;
 
@@ -75,8 +79,8 @@ int eveto::cbc_eveto_main(
      			cwb_trigger_path,
       			cwb_snr_threshold,
       			cbc_cluster_window,
-      			cbc_start_time,
-      			cbc_end_time,
+      			gps_start_time,
+      			gps_end_time,
      			cluster_time_window,
      			cluster_snr_threshold,
       			bool verbose ) ;
