@@ -68,16 +68,16 @@ int eveto::cbc_eveto_main(
 	// Read in the CWB triggers for the interval that we want to process
 	//
 	retcode = eveto::read_cwb_triggers(
-			TTree* clustered_veto_trigger_tree,
-      			TTree* veto_segment_tree,
-      			TTree* safe_channels,
-     			TString* cwb_trigger_path,
-      			Double_t cwb_snr_threshold,
-      			Double_t cwb_cluster_window,
-      			Long64_t cwb_start_time,
-      			Long64_t cwb_end_time,
-     			Double_t cluster_time_window,
-     			Double_t cluster_snr_threshold,
+			clustered_veto_trigger_tree,
+      			veto_segment_tree,
+      			safe_channels,
+     			cwb_trigger_path,
+      			cwb_snr_threshold,
+      			cbc_cluster_window,
+      			cbc_start_time,
+      			cbc_end_time,
+     			cluster_time_window,
+     			cluster_snr_threshold,
       			bool verbose ) ;
 
 	if ( retcode ) {
