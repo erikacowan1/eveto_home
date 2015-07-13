@@ -109,4 +109,5 @@ namespace eveto {
       TTree* omicron_trigger_tree_ptr,
       bool verbose );
 
-};
+}
+

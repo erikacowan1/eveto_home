@@ -19,9 +19,7 @@ int eveto::cbc_eveto_main(
       Float_t dumb_veto_window,      
       Int_t max_rounds,
       TString* output_directory, 
-      bool verbose
-      );
-		
+      bool verbose )
 		
 {
 	int retcode = 0;
