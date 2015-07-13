@@ -39,8 +39,8 @@ bool simple_cwb_time_cluster(
     TChain* unclustered_tree,
     Long64_t cwb_start_time,
     Long64_t cwb_end_time,
-    double cluster_time_window,
-    double cluster_snr_threshold,
+    Double_t cluster_time_window,
+    Double_t cluster_snr_threshold,
     bool verbose
     )
     {
@@ -237,9 +237,9 @@ int eveto::read_cwb_triggers(
       TTree* safe_channels,
       TString* cwb_trigger_path,
       Double_t cwb_snr_threshold,
-      Double_t cwb_cluster_window,
-      Long64_t cwb_start_time,
-      Long64_t cwb_end_time,
+      Double_t cbc_cluster_window,
+      Long64_t gps_start_time,
+      Long64_t gps_end_time,
       Double_t cluster_time_window,
       Double_t cluster_snr_threshold,
       bool verbose );

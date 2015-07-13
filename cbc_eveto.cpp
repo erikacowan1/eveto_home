@@ -19,6 +19,8 @@ int main( int argc, char *argv[] )
 
   TString* cwb_trigger_path = new TString();
   Double_t cwb_snr_threshold = 0;
+  Double_t cluster_time_window = 0;
+  Double_t cluster_snr_threshold = 0;
 
   Float_t sig_threshold = 0;
   Float_t dumb_veto_window = 0;
@@ -50,6 +52,8 @@ int main( int argc, char *argv[] )
       // options that control the input veto triggers from cwb
       {"cwb-trigger-path", required_argument, 0, 'b' },
       {"cwb-snr-threshold", required_argument, 0, 'B' },
+      {"cluster-time-window", required_argument, 0, 'n' },
+      {"cluster-snr-threshold", required_argument, 0, 'N' },
 
       // options that control significance and veto 
       {"sig-threshold", required_argument, 0, 'S' },
@@ -63,7 +67,7 @@ int main( int argc, char *argv[] )
     };
     int option_index = 0;
 
-    getopt_result = getopt_long( argc, argv, "s:e:d:M:c:i:t:I:T:W:b:B:o:S:D:m:v:", long_options, &option_index );
+    getopt_result = getopt_long( argc, argv, "s:e:d:M:c:i:t:I:T:W:b:B:n:N:S:D:m:o:v:", long_options, &option_index );
 
     if ( getopt_result == -1 ) break;
 
@@ -117,9 +121,13 @@ int main( int argc, char *argv[] )
 	cwb_snr_threshold = atof(optarg );
 	break;
 
-      case 'o':
-        output_directory->Append( optarg );
-        break;
+      case 'n':
+	cluster_time_window = atof( optarg );
+	break;
+
+      case 'N':
+	cluster_snr_threshold = atof( optarg );
+	break;	
 
       case 'S':
         sig_threshold = atof( optarg );
@@ -131,6 +139,10 @@ int main( int argc, char *argv[] )
 
       case 'm':
         max_rounds = atof( optarg );
+        break;
+
+      case 'o':
+        output_directory->Append( optarg );
         break;
 
       case 'v':
@@ -168,12 +180,7 @@ int main( int argc, char *argv[] )
 
   // call the main function that actually does the work
   int retcode = eveto::cbc_eveto_main( 
-      gps_start_time, gps_end_time, detector, main_channel, safe_channel_file,
-      cbc_trigger_database, cbc_snr_threshold,
-      omicron_trigger_path, omicron_snr_threshold, omicron_cluster_window,  
-      cwb_trigger_path, cwb_snr_threshold, output_directory, 
-      sig_threshold, dumb_veto_window, max_rounds,  verbose
-      );
+      gps_start_time, gps_end_time, detector, main_channel, safe_channel_file, cbc_trigger_database, cbc_snr_threshold, omicron_trigger_path, omicron_snr_threshold, omicron_cluster_window, cwb_trigger_path, cwb_snr_threshold, cluster_time_window, cluster_snr_threshold, sig_threshold, dumb_veto_window, max_rounds, output_directory, verbose );
 
   // check the return code from eveto main function
   if ( retcode ) {
