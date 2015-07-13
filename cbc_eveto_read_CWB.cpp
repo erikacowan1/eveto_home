@@ -181,13 +181,12 @@ bool simple_cwb_time_cluster(
   clustered_tree->Branch("run",        &Crun,       "run/D");
   clustered_tree->Branch("size",       &Csize,      "size/D");
 
-  Cfirstentry=-1;
-  Ctend=0.0;
+  Cstop=0.0;
 
   // loop over time sorted triggers
   for(Long64_t t=0; t<unclustered_tree->GetEntries(); t++){
     unclustered_tree->GetEntry(t);
-    if(Ttend < cwb_start_time || Ttstart > cwb_end_time) {
+    if(Tstop < cwb_start_time || Tstart > cwb_end_time) {
       continue;
     }
 
@@ -216,7 +215,7 @@ bool simple_cwb_time_cluster(
       Csize       = 1;      // cluster size
       Csnr        = Tsnr;   // cluster SNR
       Ctime       = Ttime;  // cluster time
-      Cfreq       = Tfreq;  // cluster frequency
+      Cfrequency       = Tfrequency;  // cluster frequency
     }
   }
 
@@ -231,7 +230,7 @@ bool simple_cwb_time_cluster(
 }
 
 // Function that reads cwb files and returns clustered triggers and segments
-int eveto::read_cwb_triggers(
+ int  eveto::read_cwb_triggers(
       TTree* clustered_veto_trigger_tree[],
       TTree* veto_segment_tree[],
       TTree* safe_channels,
@@ -242,8 +241,7 @@ int eveto::read_cwb_triggers(
       Long64_t gps_end_time,
       Double_t cluster_time_window,
       Double_t cluster_snr_threshold,
-      bool verbose );
-
+      bool verbose )
 {
   // We iterate over the safe channels, so create storage for the channel name
   char *tree_name = new char[256];

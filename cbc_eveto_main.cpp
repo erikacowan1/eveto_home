@@ -67,28 +67,34 @@ int eveto::cbc_eveto_main(
 	TString cwb = "cwb";
 	if (detector == &cwb)
 	{
+
+	//TTree* clustered_veto_trigger_tree[num_safe_channels];
+        //TTree* veto_segment_tree[num_safe_channels];
+
+
 	//
 	// Read in the CWB triggers for the interval that we want to process
 	//
-	retcode = eveto::read_cwb_triggers(
-			clustered_veto_trigger_tree,
-      			veto_segment_tree,
-      			safe_channels,
-     			cwb_trigger_path,
-      			cwb_snr_threshold,
-      			cluster_time_window,
-      			gps_start_time,
-      			gps_end_time,
-     			cluster_time_window,
-     			cluster_snr_threshold,
-      			verbose ) ;
+	int retcode = eveto::read_cwb_triggers(
+ 		       clustered_veto_trigger_tree,
+		       veto_segment_tree,
+                       safe_channels,
+      		       cwb_trigger_path,
+       	               cwb_snr_threshold,
+      		       gps_start_time,
+     		       gps_end_time,
+      		       cluster_time_window,
+      		       cluster_snr_threshold,
+      		       verbose ) ;		
 
 	if ( retcode ) {
 		std::cerr << "error reading CWB triggers" << std::endl;
 		return 1;
 	}
-
+	
 	}
+
+	TTree* cbc_trigger_tree;
 	TString cbc = "cbc";
 	if (detector == &cbc)
 	{
@@ -96,7 +102,7 @@ int eveto::cbc_eveto_main(
 		// Read in cbc triggers from database.
 		//
 
-		TTree* cbc_trigger_tree;
+		//TTree* cbc_trigger_tree;
 
 		retcode = eveto::read_cbc_triggers(
 				&cbc_trigger_tree, // output
@@ -112,6 +118,12 @@ int eveto::cbc_eveto_main(
 			return 1;
 		}
 	}
+	
+	if( !(detector == &cbc) && !(detector == &cwb)) {
+		std::cerr << "channel other than cbc/cwb has been called. " << std::endl;
+		return 0;
+	}
+
 	//Veto Algorithm
 	//currently the segments are stored in omicron_triggers.root/segments. For now
 	//assume that all segments are science segments. Grab segments from segment tree

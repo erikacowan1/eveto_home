@@ -72,9 +72,8 @@ namespace eveto {
       TTree* safe_channels,
       TString* cwb_trigger_path,
       Double_t cwb_snr_threshold,
-      Double_t cbc_cluster_window,
-      Long64_t cbc_start_time,
-      Long64_t cbc_end_time,
+      Long64_t gps_start_time,
+      Long64_t gps_end_time,
       Double_t cluster_time_window,
       Double_t cluster_snr_threshold,
       bool verbose ) ;
@@ -109,5 +108,5 @@ namespace eveto {
       TTree* omicron_trigger_tree_ptr,
       bool verbose );
 
-}
+};
 
