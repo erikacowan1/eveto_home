@@ -76,12 +76,12 @@ int eveto::cbc_eveto_main(
       			safe_channels,
      			cwb_trigger_path,
       			cwb_snr_threshold,
-      			cbc_cluster_window,
+      			cluster_time_window,
       			gps_start_time,
       			gps_end_time,
      			cluster_time_window,
      			cluster_snr_threshold,
-      			bool verbose ) ;
+      			verbose ) ;
 
 	if ( retcode ) {
 		std::cerr << "error reading CWB triggers" << std::endl;
@@ -90,7 +90,7 @@ int eveto::cbc_eveto_main(
 
 	}
 	TString cbc = "cbc";
-	else if (detector == &cbc)
+	if (detector == &cbc)
 	{
 		//
 		// Read in cbc triggers from database.
