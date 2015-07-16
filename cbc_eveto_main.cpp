@@ -68,16 +68,16 @@ int eveto::cbc_eveto_main(
 	if (detector == &cwb)
 	{
 
-	//TTree* clustered_veto_trigger_tree[num_safe_channels];
-        //TTree* veto_segment_tree[num_safe_channels];
+	TTree* cwb_clustered_veto_trigger_tree[num_safe_channels];
+        TTree* cwb_veto_segment_tree[num_safe_channels];
 
 
 	//
 	// Read in the CWB triggers for the interval that we want to process
 	//
 	int retcode = eveto::read_cwb_triggers(
- 		       clustered_veto_trigger_tree,
-		       veto_segment_tree,
+ 		       cwb_clustered_veto_trigger_tree,
+		       cwb_veto_segment_tree,
                        safe_channels,
       		       cwb_trigger_path,
        	               cwb_snr_threshold,
