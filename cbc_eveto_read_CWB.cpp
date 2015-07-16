@@ -254,7 +254,7 @@ bool simple_cwb_time_cluster(
     TChain* veto_trigger_chain = new TChain( "waveburst", "cwb_unclustered_tree" );
 
     // read in the triggers and segments for this channel
-    bool read_retcode = read_cwb_channel( veto_trigger_chain, cwb_trigger_path, verbose );
+    bool read_retcode = read_cwb_channel( veto_trigger_chain, veto_segment_chain, cwb_trigger_path, verbose );
     if ( ! read_retcode ){
       std::cerr << "error reading cwb triggers" << std::endl;
       return 1;
