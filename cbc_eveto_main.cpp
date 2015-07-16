@@ -75,7 +75,7 @@ int eveto::cbc_eveto_main(
 	//
 	// Read in the CWB triggers for the interval that we want to process
 	//
-	int retcode = eveto::read_cwb_triggers(
+	retcode = eveto::read_cwb_triggers(
  		       cwb_clustered_veto_trigger_tree,
 		       cwb_veto_segment_tree,
                        safe_channels,
