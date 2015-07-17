@@ -67,8 +67,8 @@ namespace eveto {
       bool verbose );
 
   int read_cwb_triggers(
-      TTree* clustered_veto_trigger_tree[],
-      TTree* veto_segment_tree[],
+      TTree* cwb_clustered_veto_trigger_tree[],
+      TTree* cwb_veto_segment_tree[],
       TTree* safe_channels,
       TString* cwb_trigger_path,
       Double_t cwb_snr_threshold,

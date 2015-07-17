@@ -231,8 +231,8 @@ bool simple_cwb_time_cluster(
 
 // Function that reads cwb files and returns clustered triggers and segments
  int  eveto::read_cwb_triggers(
-      TTree* clustered_veto_trigger_tree[],
-      TTree* veto_segment_tree[],
+      TTree* cwb_clustered_veto_trigger_tree[],
+      TTree* cwb_veto_segment_tree[],
       TTree* safe_channels,
       TString* cwb_trigger_path,
       Double_t cwb_snr_threshold,
@@ -269,9 +269,9 @@ bool simple_cwb_time_cluster(
     delete veto_trigger_chain;
 
     // Create a new tree containing the veto segments with the correct name for eveto
-    //snprintf( tree_name, 256, "SEGMENTS:%s", channel_name );
-    //veto_segment_tree[i] = veto_segment_chain->CloneTree();
-    //veto_segment_tree[i]->SetObject( tree_name, tree_name );
+    snprintf( tree_name, 256, "SEGMENTS:%s", channel_name );
+    veto_segment_tree[i] = veto_segment_chain->CloneTree();
+    veto_segment_tree[i]->SetObject( tree_name, tree_name );
 
   
 
