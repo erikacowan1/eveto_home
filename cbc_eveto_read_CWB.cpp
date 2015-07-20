@@ -245,13 +245,21 @@ bool simple_cwb_time_cluster(
 {
   // We iterate over the safe channels, so create storage for the channel name
   char *tree_name = new char[256];
+  char *tree_name = new char[256];
+  safe_channels->SetBranchAddress("channel", channel_name);
+
+  for( Long64_t i = 0; i < safe_channels->GetEntries(); i++ )
+  {
+    // fill the channel name with the current veto channel
+    safe_channels->GetEntry(i);
+    if ( verbose ) std::cout << "Reading channel " << channel_name <<  std::endl;
 
   
-    // fill the channel name with the current veto channel
-
     // Create a chain to store the unclustered triggers and read from file
     // The names of these chains must match the trees that cwb creates
     TChain* veto_trigger_chain = new TChain( "waveburst", "cwb_unclustered_tree" );
+
+    TChain* veto_segment_chain = new TChain( "segments", channel_name );
 
     // read in the triggers and segments for this channel
     bool read_retcode = read_cwb_channel( veto_trigger_chain, veto_segment_chain, cwb_trigger_path, verbose );
@@ -262,19 +270,21 @@ bool simple_cwb_time_cluster(
 
     // create a tree to store clustered triggers and store its address in the tree array
     snprintf( tree_name, 256, "CWB_Trigger_Tree" );
-    clustered_veto_trigger_tree[i] = new TTree( tree_name, tree_name );
-    simple_cwb_time_cluster( clustered_veto_trigger_tree[i], veto_trigger_chain, 
+    cwb_clustered_veto_trigger_tree[i] = new TTree( tree_name, tree_name );
+    simple_cwb_time_cluster( cwb_clustered_veto_trigger_tree[i], veto_trigger_chain, 
         cwb_start_time, cwb_end_time,
         cluster_time_window, cluster_snr_threshold, verbose );
     delete veto_trigger_chain;
 
     // Create a new tree containing the veto segments with the correct name for eveto
     snprintf( tree_name, 256, "SEGMENTS:%s", channel_name );
-    veto_segment_tree[i] = veto_segment_chain->CloneTree();
-    veto_segment_tree[i]->SetObject( tree_name, tree_name );
+    cwb_veto_segment_tree[i] = veto_segment_chain->CloneTree();
+    cwb_veto_segment_tree[i]->SetObject( tree_name, tree_name );
 
-  
+}
 
+
+  delete channel_name;
   delete tree_name;
 
   return 0;
