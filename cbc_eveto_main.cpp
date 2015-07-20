@@ -68,24 +68,18 @@ int eveto::cbc_eveto_main(
 	if (detector == &cwb)
 	{
 
-	TTree* cwb_clustered_veto_trigger_tree[num_safe_channels];
-        TTree* cwb_veto_segment_tree[num_safe_channels];
+	//TTree* cwb_clustered_veto_trigger_tree[num_safe_channels];
+        //TTree* cwb_veto_segment_tree[num_safe_channels];
 
+	TChain* cwb_tchain_tree( new TChain("cwb_tchain_tree"));
 
 	//
 	// Read in the CWB triggers for the interval that we want to process
 	//
 	retcode = eveto::read_cwb_triggers(
- 		       cwb_clustered_veto_trigger_tree,
-		       cwb_veto_segment_tree,
-                       safe_channels,
-      		       cwb_trigger_path,
-       	               cwb_snr_threshold,
-      		       gps_start_time,
-     		       gps_end_time,
-      		       cluster_time_window,
-      		       cluster_snr_threshold,
-      		       verbose ) ;		
+		cwb_tchain_tree,
+		cwb_trigger_path,
+		verbose ) ;
 
 	if ( retcode ) {
 		std::cerr << "error reading CWB triggers" << std::endl;
