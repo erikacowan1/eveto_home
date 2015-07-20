@@ -67,16 +67,9 @@ namespace eveto {
       bool verbose );
 
   int read_cwb_triggers(
-      TTree* cwb_clustered_veto_trigger_tree[],
-      TTree* cwb_veto_segment_tree[],
-      TTree* safe_channels,
-      TString* cwb_trigger_path,
-      Double_t cwb_snr_threshold,
-      Long64_t gps_start_time,
-      Long64_t gps_end_time,
-      Double_t cluster_time_window,
-      Double_t cluster_snr_threshold,
-      bool verbose ) ;
+	TChain* cwb_tchain_tree,
+	TString* cwb_trigger_path,
+	bool verbose );
 
   int calc_dumb_sig(
       TTree* cbc_trigs_round, 
