@@ -71,7 +71,7 @@ int eveto::cbc_eveto_main(
 	//TTree* cwb_clustered_veto_trigger_tree[num_safe_channels];
         //TTree* cwb_veto_segment_tree[num_safe_channels];
 
-	TChain* cwb_tchain_tree( new TChain("cwb_tchain_tree"));
+	TChain* cwb_tchain_tree; //( new TChain("cwb_tchain_tree"));
 
 	//
 	// Read in the CWB triggers for the interval that we want to process
@@ -137,7 +137,7 @@ int eveto::cbc_eveto_main(
 
 
 	//define TTrees
-	TTree* cwb_trigs_round[max_rounds + 1];
+	TChain* cwb_trigs_round[max_rounds + 1];
 	TTree* omicron_trigs_round[max_rounds + 1][num_safe_channels];
 	//TTree* cbc_segs_round[max_rounds + 1][num_safe_channels]; //doesn't currently exist
 	//TTree* omicron_segs_round[max_rounds + 1][num_safe_channels];
