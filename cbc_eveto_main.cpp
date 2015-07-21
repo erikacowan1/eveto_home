@@ -63,7 +63,7 @@ int eveto::cbc_eveto_main(
 		std::cerr << "error reading omicron triggers" << std::endl;
 		return 1;
 	}
-	
+	TTree* cwb_trigger_tree;
 	TString cwb = "cwb";
 	if (detector == &cwb)
 	{
@@ -74,7 +74,6 @@ int eveto::cbc_eveto_main(
 	//TChain* cwb_tchain_tree; //( new TChain("cwb_tchain_tree"));
 
     	//TChain* veto_trigger_chain = new TChain( "waveburst", "cwb_unclustered_tree" );
-	TTree* cwb_trigger_tree;
 	//
 	// Read in the CWB triggers for the interval that we want to process
 	//
@@ -141,14 +140,14 @@ int eveto::cbc_eveto_main(
 
 
 	//define TTrees
-	TChain* cwb_trigs_round[max_rounds + 1];
+	TTree* cwb_trigs_round[max_rounds + 1];
 	TTree* omicron_trigs_round[max_rounds + 1][num_safe_channels];
 	//TTree* cbc_segs_round[max_rounds + 1][num_safe_channels]; //doesn't currently exist
 	//TTree* omicron_segs_round[max_rounds + 1][num_safe_channels];
 
 
 	//initialize arrays
-	cwb_trigs_round[0] = cwb_tchain_tree;
+	cwb_trigs_round[0] = cwb_trigger_tree;
 	std::cerr << "Initialized CWB treel for round 0: " << cwb_trigs_round[0] << std::endl;
 	//cbc_segs_round[0] = cbc_segs_tree;
 
