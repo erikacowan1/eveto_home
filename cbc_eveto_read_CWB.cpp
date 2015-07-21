@@ -19,5 +19,7 @@ int eveto::read_cwb_triggers(
     	std::cerr << "could not read any triggers from " << veto_file_pattern << std::endl;
         return false;
 	}
+
+	TChain* cwb_tchain_tree = (TTree*)file->Get("waveburst");
 	return 0;
 }
