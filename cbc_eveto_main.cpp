@@ -330,7 +330,7 @@ int eveto::cbc_eveto_main(
 
 		if ( verbose ) std::cerr << "Winning channel was " << omicron_trigs_round[r-1][max_sig_index]->GetName() << std::endl;
 
-		cbc_trigs_round[r] = eveto::remove_cbc_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index], verbose);
+		cbc_trigs_round[r] = eveto::remove_main_channel_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index], verbose);
 
 		for (i=0; i<num_safe_channels; ++i) {
 			if ( (i != max_sig_index) && (omicron_trigs_round[r-1][i] != NULL) ) {

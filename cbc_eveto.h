@@ -85,7 +85,7 @@ namespace eveto {
       bool verbose );
 
   
-  TTree* remove_cbc_triggers(
+  TTree* remove_main_channel_triggers(
       TTree* cbc_trigger_tree_in_ptr,
       TTree* omicron_trigger_tree_veto_ptr,     
 //    TTree* cbc_segs_tree_ptr,

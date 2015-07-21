@@ -6,7 +6,7 @@
 //does this code also remove segments
 //remove_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cbc_segs_round[r-1], omicron_segs_round[r-1][max_sig_index]);
 
-TTree* eveto::remove_cbc_triggers(
+TTree* eveto::remove_main_channel_triggers(
 	TTree* cbc_trigger_tree_in_ptr,
 	TTree* omicron_trigger_tree_veto_ptr,
 	TString* detector, 
