@@ -71,14 +71,18 @@ int eveto::cbc_eveto_main(
 	//TTree* cwb_clustered_veto_trigger_tree[num_safe_channels];
         //TTree* cwb_veto_segment_tree[num_safe_channels];
 
-	TChain* cwb_tchain_tree; //( new TChain("cwb_tchain_tree"));
+	//TChain* cwb_tchain_tree; //( new TChain("cwb_tchain_tree"));
 
+    	//TChain* veto_trigger_chain = new TChain( "waveburst", "cwb_unclustered_tree" );
+	TTree* cwb_trigger_tree;
 	//
 	// Read in the CWB triggers for the interval that we want to process
 	//
 	retcode = eveto::read_cwb_triggers(
-		&cwb_tchain_tree,
+		&cwb_trigger_tree,
 		cwb_trigger_path,
+		gps_start_time,
+		gps_end_time,
 		verbose ) ;
 
 	if ( retcode ) {
