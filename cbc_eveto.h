@@ -67,7 +67,7 @@ namespace eveto {
       bool verbose );
 
   int read_cwb_triggers(
-	TChain* cwb_tchain_tree,
+	TChain** cwb_tchain_tree,
 	TString* cwb_trigger_path,
 	bool verbose );
 
