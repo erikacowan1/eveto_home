@@ -179,7 +179,7 @@ int eveto::cbc_eveto_main(
 
 				if ( verbose ) std::cerr << "calculating dumb significance for veto tree " << omicron_trigs_round[r-1][i]->GetName() << "(" << omicron_trigs_round[r-1][i] << ") against cbc triggers (" << cwb_trigs_round[r-1] << ")" << std::endl;
 
-				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i], cwb_trigs_round[r-1], dumb_veto_window, verbose);
+				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i], cwb_trigs_round[r-1], detector, dumb_veto_window, verbose);
 				if ( verbose ) std::cerr << "Significance for " << omicron_trigs_round[r-1][i]->GetName() << " = " << sig[i] << std::endl;
 			} else {
 				sig[i] = 0;

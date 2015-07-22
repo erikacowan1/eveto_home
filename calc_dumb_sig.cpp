@@ -61,23 +61,23 @@ int eveto::calc_dumb_sig(
 
   	int num_cbc_triggers = cbc_trigger_tree_ptr->GetEntries();	
 
-  if ( num_omicron_triggers == 0 ){
-    if (verbose) std::cout << "no omicron triggers, returning zero significance" << std::endl;
-    return 0;
-  }
+  	if ( num_omicron_triggers == 0 ){
+    		if (verbose) std::cout << "no omicron triggers, returning zero significance" << std::endl;
+    		return 0;
+  	}
 
-  for (Int_t c=0; c<num_cbc_triggers; ++c) {
-    cbc_trigger_tree_ptr->GetEntry(c);
+  	for (Int_t c=0; c<num_cbc_triggers; ++c) {
+    		cbc_trigger_tree_ptr->GetEntry(c);
 
-      for(Int_t o=0; o<num_omicron_triggers; ++o) {
-       omicron_trigger_tree_ptr->GetEntry(o);
+      		for(Int_t o=0; o<num_omicron_triggers; ++o) {
+       			omicron_trigger_tree_ptr->GetEntry(o);
    
-        if(Ctend > start_time && Ctstart < end_time) {
-          num_coinc_triggers++;
-        }
-     }
+        		if(Ctend > start_time && Ctstart < end_time) {
+          			num_coinc_triggers++;
+        		}
+     		}
 
-  }
+  	}
   }
 
   TString cwb = "cwb";
