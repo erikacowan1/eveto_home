@@ -75,9 +75,11 @@ namespace eveto {
       bool verbose);
 
   int calc_dumb_sig(
-      TTree* cbc_trigs_round, 
-      TTree* omicron_trigs_round, 
-      Float_t dumb_veto_window, 
+      TTree* cbc_trigger_tree_ptr,
+      TTree* cwb_trigger_tree_ptr,
+      TTree* omicron_trigger_tree_ptr,
+      TString* detector, 
+      float dumb_time_seg,
       bool verbose );
 
   int veto_triggers(
