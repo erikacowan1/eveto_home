@@ -9,6 +9,7 @@
 TTree* eveto::remove_main_channel_triggers(
 	TTree* cbc_trigger_tree_in_ptr,
 	TTree* omicron_trigger_tree_veto_ptr,
+	TTree* cwb_trigger_tree_in_ptr,
 	TString* detector, 
 	//TTree* cbc_segs_tree_ptr,
 	//TTree* omicron_segs_tree_ptr,
@@ -172,6 +173,7 @@ TTree* eveto::remove_main_channel_triggers(
   		cwb_trigger_tree_out_ptr->Branch("size",       &size,      "size/D");
 
   		stop=0.0;
+		Int_t o; 
 
   		for (Int_t c=0; c<num_cwb_triggers; ++c) {
     			cwb_trigger_tree_in_ptr->GetEntry(c);
@@ -203,7 +205,7 @@ TTree* eveto::remove_main_channel_triggers(
 
   	}
 
-	
+	return 0;
 }
 
 TTree* eveto::remove_omicron_triggers(

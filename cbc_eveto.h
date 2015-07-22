@@ -67,12 +67,12 @@ namespace eveto {
       bool verbose );
 
   int read_cwb_triggers(
-        TTree** cwb_unclustered_tree,
-        //TChain* input_cwb_chain,
-        TString* cwb_trigger_path,
-        Long64_t cwb_start_time,
-        Long64_t cwb_end_time,
-        bool verbose);
+      TTree* cwb_unclustered_tree,
+      TChain* input_cwb_chain,
+      TString* cwb_trigger_path,
+      Long64_t cwb_start_time,
+      Long64_t cwb_end_time,
+      bool verbose);
 
   int calc_dumb_sig(
       TTree* cbc_trigs_round, 
@@ -86,11 +86,13 @@ namespace eveto {
 
   
   TTree* remove_main_channel_triggers(
-      TTree* cbc_trigger_tree_in_ptr,
-      TTree* omicron_trigger_tree_veto_ptr,     
-//    TTree* cbc_segs_tree_ptr,
-//    TTree* omicron_segs_tree_ptr,
-      bool verbose );
+        TTree* cbc_trigger_tree_in_ptr,
+        TTree* omicron_trigger_tree_veto_ptr,
+        TTree* cwb_trigger_tree_in_ptr,
+        TString* detector, 
+        //TTree* cbc_segs_tree_ptr,
+        //TTree* omicron_segs_tree_ptr,
+        bool verbose);
 
   TTree* remove_omicron_triggers(
       TTree* omicron_trigger_tree_in_ptr,

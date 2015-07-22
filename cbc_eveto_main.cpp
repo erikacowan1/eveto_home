@@ -63,7 +63,10 @@ int eveto::cbc_eveto_main(
 		std::cerr << "error reading omicron triggers" << std::endl;
 		return 1;
 	}
-	TTree* cwb_trigger_tree;
+
+	TTree* cwb_trigger_tree = new TTree("waveburst","waveburst");
+	TChain* input_cwb_chain = new TChain( "waveburst", "input_cwb_chain");
+	//TChain* veto_trigger_chain = new TChain( "waveburst", "cwb_unclustered_tree" );
 	TString cwb = "cwb";
 	if (detector == &cwb)
 	{
@@ -78,7 +81,8 @@ int eveto::cbc_eveto_main(
 	// Read in the CWB triggers for the interval that we want to process
 	//
 	retcode = eveto::read_cwb_triggers(
-		&cwb_trigger_tree,
+		cwb_trigger_tree,
+		input_cwb_chain,
 		cwb_trigger_path,
 		gps_start_time,
 		gps_end_time,
@@ -145,8 +149,9 @@ int eveto::cbc_eveto_main(
 	//TTree* cbc_segs_round[max_rounds + 1][num_safe_channels]; //doesn't currently exist
 	//TTree* omicron_segs_round[max_rounds + 1][num_safe_channels];
 
-
+    TTree* cbc_trigs_round[max_rounds + 1]; //TO BE DELETED LATER- WRONG
 	//initialize arrays
+	cbc_trigs_round[0] = cwb_trigger_tree; //to be deleted later- wrong!!!! 
 	cwb_trigs_round[0] = cwb_trigger_tree;
 	std::cerr << "Initialized CWB treel for round 0: " << cwb_trigs_round[0] << std::endl;
 	//cbc_segs_round[0] = cbc_segs_tree;
@@ -194,8 +199,7 @@ int eveto::cbc_eveto_main(
 
 		if ( verbose ) std::cerr << "Winning channel was " << omicron_trigs_round[r-1][max_sig_index]->GetName() << std::endl;
 
-		cwb_trigs_round[r] = eveto::remove_cwb_triggers(cwb_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index], verbose);
-
+		cwb_trigs_round[r] = eveto::remove_main_channel_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cwb_trigs_round[r-1],detector, verbose);
 		for (i=0; i<num_safe_channels; ++i) {
 			if ( (i != max_sig_index) && (omicron_trigs_round[r-1][i] != NULL) ) {
 				omicron_trigs_round[r][i] = eveto::remove_omicron_triggers(omicron_trigs_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], verbose);

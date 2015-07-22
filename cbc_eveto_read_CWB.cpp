@@ -15,7 +15,7 @@ bool read_cwb_channel(
 	retcode = veto_trigger_chain->Add(veto_file_pattern);
 
 	if( retcode <= 0 ) {
-		std::cerr>>"could not read any trigers from"<<veto_file_pattern<<std::endl;
+		std::cerr<<"could not read any trigers from"<<veto_file_pattern<<std::endl;
 		return false;
 	}
 
@@ -24,7 +24,7 @@ bool read_cwb_channel(
 
 int eveto::read_cwb_triggers(
 	TTree* cwb_unclustered_tree,
-	//TChain* input_cwb_chain,
+	TChain* input_cwb_chain,
 	TString* cwb_trigger_path,
 	Long64_t cwb_start_time,
 	Long64_t cwb_end_time,
@@ -35,7 +35,7 @@ int eveto::read_cwb_triggers(
 		
 		if ( ! read_retcode ){
 			std::cerr<<"error reading cwb triggers"<<std::endl;
-			return 1
+			return 1;
 		}
 		
 
@@ -191,5 +191,5 @@ int eveto::read_cwb_triggers(
 		if( verbose ) std::cout<<"cwb_tree_maker filled" << cwb_unclustered_tree->GetEntries()<<"triggers in cwb_unclustered tree"<<std::endl;
 		return true;
 	}
-
+	return 0;
 }
