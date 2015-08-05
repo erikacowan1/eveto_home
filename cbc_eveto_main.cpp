@@ -67,6 +67,7 @@ int eveto::cbc_eveto_main(
 	TTree* cwb_trigger_tree = new TTree("waveburst","waveburst");
 	TChain* input_cwb_chain = new TChain( "waveburst", "input_cwb_chain");
 	//TChain* veto_trigger_chain = new TChain( "waveburst", "cwb_unclustered_tree" );
+	
 	TString cwb = "cwb";
 	if (detector == &cwb)
 	{
