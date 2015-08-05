@@ -83,7 +83,9 @@ int eveto::calc_dumb_sig(
   TString cwb = "cwb";
   if (detector == &cwb);
   {
-		double time, frequency, duration, start, stop, snr, rho, netcc, neted, likelihood, ecor, ECOR, ifo, rate, phi, theta, psi,null, hrss, noise, low, high, bandwidth, strain, run, size;
+		double time, frequency, duration, start, stop, snr, rho, netcc, neted, likelihood, ecor, ECOR, ifo, rate, phi, theta, psi,null, hrss, noise, low, high, bandwidth, strain, run;
+		
+		Long64_t size;
 
 		cwb_trigger_tree_ptr->SetBranchAddress("time",&time);
 		cwb_trigger_tree_ptr->SetBranchAddress("frequency",&frequency);
