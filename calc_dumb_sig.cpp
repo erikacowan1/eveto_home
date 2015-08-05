@@ -83,36 +83,39 @@ int eveto::calc_dumb_sig(
   TString cwb = "cwb";
   if (detector == &cwb);
   {
-		double time, frequency, duration, start, stop, snr, rho, netcc, neted, likelihood, ecor, ECOR, ifo, rate, phi, theta, psi,null, hrss, noise, low, high, bandwidth, strain, run;
+		//double time, frequency, duration, start, stop, snr, rho, netcc, neted, likelihood, ecor, ECOR, ifo, rate, phi, theta, psi,null, hrss, noise, low, high, bandwidth, strain, run;
 		
-		Long64_t size;
+		Long64_t Csize;
 
-		cwb_trigger_tree_ptr->SetBranchAddress("time",&time);
-		cwb_trigger_tree_ptr->SetBranchAddress("frequency",&frequency);
-  		cwb_trigger_tree_ptr->SetBranchAddress("duration",&duration);
- 		cwb_trigger_tree_ptr->SetBranchAddress("start",&start);
- 		cwb_trigger_tree_ptr->SetBranchAddress("stop",&stop);
-		cwb_trigger_tree_ptr->SetBranchAddress("snr",&snr);
-		cwb_trigger_tree_ptr->SetBranchAddress("rho",&rho);
-  		cwb_trigger_tree_ptr->SetBranchAddress("netcc",&netcc);
-  		cwb_trigger_tree_ptr->SetBranchAddress("neted", &neted);
-  		cwb_trigger_tree_ptr->SetBranchAddress("likelihood", &likelihood);
-  		cwb_trigger_tree_ptr->SetBranchAddress("ecor", &ecor);
-  		cwb_trigger_tree_ptr->SetBranchAddress("ECOR", &ECOR);
-  		cwb_trigger_tree_ptr->SetBranchAddress("ifo", &ifo);
-  		cwb_trigger_tree_ptr->SetBranchAddress("rate", &rate);
-  		cwb_trigger_tree_ptr->SetBranchAddress("phi", &phi);
-  		cwb_trigger_tree_ptr->SetBranchAddress("theta", &theta);
-  		cwb_trigger_tree_ptr->SetBranchAddress("psi", &psi);
-  		cwb_trigger_tree_ptr->SetBranchAddress("null", &null);
-  		cwb_trigger_tree_ptr->SetBranchAddress("hrss", &hrss);
-  		cwb_trigger_tree_ptr->SetBranchAddress("noise", &noise);
-  		cwb_trigger_tree_ptr->SetBranchAddress("low", &low);
-  		cwb_trigger_tree_ptr->SetBranchAddress("high", &high);
-  		cwb_trigger_tree_ptr->SetBranchAddress("bandwidth", &bandwidth);
-  		cwb_trigger_tree_ptr->SetBranchAddress("strain", &strain);
-  		cwb_trigger_tree_ptr->SetBranchAddress("run", &run);
-  		cwb_trigger_tree_ptr->SetBranchAddress("size", &size);
+
+	    	Double_t Ctime, Cfrequency, Cduration, Cstart, Cstop, Csnr, Crho, Cnetcc, Cneted, Clikelihood, Cecor, CECOR, Cifo, Crate, Cphi, Ctheta, Cpsi, Cnull, Chrss, Cnoise, Clow, Chigh, Cbandwidth, Cstrain, Crun;
+
+		cwb_trigger_tree_ptr->SetBranchAddress("time",&Ctime);
+		cwb_trigger_tree_ptr->SetBranchAddress("frequency",&Cfrequency);
+  		cwb_trigger_tree_ptr->SetBranchAddress("duration",&Cduration);
+ 		cwb_trigger_tree_ptr->SetBranchAddress("start",&Cstart);
+ 		cwb_trigger_tree_ptr->SetBranchAddress("stop",&Cstop);
+		cwb_trigger_tree_ptr->SetBranchAddress("snr",&Csnr);
+		cwb_trigger_tree_ptr->SetBranchAddress("rho",&Crho);
+  		cwb_trigger_tree_ptr->SetBranchAddress("netcc",&Cnetcc);
+  		cwb_trigger_tree_ptr->SetBranchAddress("neted", &Cneted);
+  		cwb_trigger_tree_ptr->SetBranchAddress("likelihood", &Clikelihood);
+  		cwb_trigger_tree_ptr->SetBranchAddress("ecor", &Cecor);
+  		cwb_trigger_tree_ptr->SetBranchAddress("ECOR", &CECOR);
+  		cwb_trigger_tree_ptr->SetBranchAddress("ifo", &Cifo);
+  		cwb_trigger_tree_ptr->SetBranchAddress("rate", &Crate);
+  		cwb_trigger_tree_ptr->SetBranchAddress("phi", &Cphi);
+  		cwb_trigger_tree_ptr->SetBranchAddress("theta", &Ctheta);
+  		cwb_trigger_tree_ptr->SetBranchAddress("psi", &Cpsi);
+  		cwb_trigger_tree_ptr->SetBranchAddress("null", &Cnull);
+  		cwb_trigger_tree_ptr->SetBranchAddress("hrss", &Chrss);
+  		cwb_trigger_tree_ptr->SetBranchAddress("noise", &Cnoise);
+  		cwb_trigger_tree_ptr->SetBranchAddress("low", &Clow);
+  		cwb_trigger_tree_ptr->SetBranchAddress("high", &Chigh);
+  		cwb_trigger_tree_ptr->SetBranchAddress("bandwidth", &Cbandwidth);
+  		cwb_trigger_tree_ptr->SetBranchAddress("strain", &Cstrain);
+  		cwb_trigger_tree_ptr->SetBranchAddress("run", &Crun);
+  		cwb_trigger_tree_ptr->SetBranchAddress("size", &Csize);
 
 		int num_cwb_triggers = cwb_trigger_tree_ptr->GetEntries();
  
@@ -127,7 +130,7 @@ int eveto::calc_dumb_sig(
       			for(Int_t o=0; o<num_omicron_triggers; ++o) {
        			omicron_trigger_tree_ptr->GetEntry(o);
    
-        			if(Ctend > start && Ctstart < stop) {
+        			if(Ctend > Cstart && Ctstart < Cstop) {
           				num_coinc_triggers++;
         			}
      			}
