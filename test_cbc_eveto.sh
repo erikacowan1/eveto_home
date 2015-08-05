@@ -1,14 +1,14 @@
 #!/bin/bash -v
 
 ./cbc_eveto \
-    --gps-start-time 1096275690 \
-    --gps-end-time 1096290950 \
+    --gps-start-time 1117378816 \
+    --gps-end-time 1118415616 \
     --detector L1 \
-    --main-channel cbc \
+    --main-channel cwb \
     --safe-channel-file safe_channels.txt \
     --cbc-trigger-database /home/erika.cowan/data/triggers/ER7/CBC/L1-16SEC_CLUSTERED_CBC_ER7_FULL_DATA.sqlite \
     --cbc-snr-threshold 5.0 \
-    --omicron-trigger-path /home/dbrown/public_html/detchar/omicron/L1/triggers/  \
+    --omicron-trigger-path /home/dbrown/projects/students/erika_cowan/omicron/er7/  \
     --omicron-snr-threshold 8.0 \
     --omicron-cluster-window 1.0 \
     --cwb-trigger-path /home/erika.cowan/data/triggers/ER7/CWB/ \
