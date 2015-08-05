@@ -19,7 +19,7 @@ int eveto::calc_dumb_sig(
     // omicron_trigger_tree_ptr->Print();
   }
 
-  Double_t Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
+  double Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
   Long64_t Cfirstentry, Csize;
 
   omicron_trigger_tree_ptr->SetBranchAddress("time",       &Ctime);
@@ -83,7 +83,7 @@ int eveto::calc_dumb_sig(
   TString cwb = "cwb";
   if (detector == &cwb);
   {
-		Double_t time, frequency, duration, start, stop, snr, rho, netcc, neted, likelihood, ecor, ECOR, ifo, rate, phi, theta, psi,null, hrss, noise, low, high, bandwidth, strain, run, size;
+		double time, frequency, duration, start, stop, snr, rho, netcc, neted, likelihood, ecor, ECOR, ifo, rate, phi, theta, psi,null, hrss, noise, low, high, bandwidth, strain, run, size;
 
 		cwb_trigger_tree_ptr->SetBranchAddress("time",&time);
 		cwb_trigger_tree_ptr->SetBranchAddress("frequency",&frequency);
@@ -119,8 +119,8 @@ int eveto::calc_dumb_sig(
     			return 0;
  		}
 
-  		for (Int_t c=0; c<num_cwc_triggers; ++c) {
-    			cwc_trigger_tree_ptr->GetEntry(c);
+  		for (Int_t c=0; c<num_cwb_triggers; ++c) {
+    			cwb_trigger_tree_ptr->GetEntry(c);
 
       			for(Int_t o=0; o<num_omicron_triggers; ++o) {
        			omicron_trigger_tree_ptr->GetEntry(o);
