@@ -14,9 +14,10 @@ int eveto::calc_dumb_sig(
     // cbc_trigger_tree_ptr->Print();
 
     std::cerr << "calc_dumb_sig() got a cwb tree at " << cwb_trigger_tree_ptr << std::endl;
+    cwb_trigger_tree_ptr->Print();
 
     std::cerr << "calc_dumb_sig() got a veto tree at " << omicron_trigger_tree_ptr << std::endl;
-    // omicron_trigger_tree_ptr->Print();
+    omicron_trigger_tree_ptr->Print();
   }
 
   double Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
