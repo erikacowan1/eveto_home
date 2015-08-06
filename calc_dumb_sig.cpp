@@ -5,7 +5,7 @@ int eveto::calc_dumb_sig(
     TTree* cbc_trigger_tree_ptr,
     TTree* cwb_trigger_tree_ptr,
     TTree* omicron_trigger_tree_ptr,
-    TString* detector, 
+    TString* main_channel, 
     float dumb_time_seg,
     bool verbose )
 {
@@ -41,7 +41,7 @@ int eveto::calc_dumb_sig(
   int num_coinc_triggers = 0;
 
   TString cbc = "cbc";
-  if (detector == &cbc)
+  if (main_channel == &cbc)
   {
   	Double_t start_time, end_time;
   	Float_t snr, chisq, chisqdof, newsnr, snr_sq, mass1, mass2, mtotal, mchirp, eta, ttotal;
@@ -82,7 +82,7 @@ int eveto::calc_dumb_sig(
   }
 
   TString cwb = "cwb";
-  if (detector == &cwb);
+  if (main_channel == &cwb);
   {
 		//double time, frequency, duration, start, stop, snr, rho, netcc, neted, likelihood, ecor, ECOR, ifo, rate, phi, theta, psi,null, hrss, noise, low, high, bandwidth, strain, run;
 		

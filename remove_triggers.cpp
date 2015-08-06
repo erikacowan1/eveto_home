@@ -10,7 +10,7 @@ TTree* eveto::remove_main_channel_triggers(
 	TTree* cbc_trigger_tree_in_ptr,
 	TTree* omicron_trigger_tree_veto_ptr,
 	TTree* cwb_trigger_tree_in_ptr,
-	TString* detector, 
+	TString* main_channel, 
 	//TTree* cbc_segs_tree_ptr,
 	//TTree* omicron_segs_tree_ptr,
 	bool verbose)
@@ -36,7 +36,7 @@ TTree* eveto::remove_main_channel_triggers(
 
 
 	TString cbc = "cbc";
-	if (detector == &cbc)
+	if (main_channel == &cbc)
 	{
   		// Set up the variables to access the input cbc triggers
   		Double_t start_time, end_time;
@@ -109,7 +109,7 @@ TTree* eveto::remove_main_channel_triggers(
 	}
 
 	TString cwb = "cwb";
-	if (detector == &cwb)
+	if (main_channel == &cwb)
 	{
 	 	Double_t time, frequency, duration, start, stop, snr, rho, netcc, neted, likelihood, ecor, ECOR, ifo, rate, phi, theta, psi,null, hrss, noise, low, high, bandwidth, strain, run, size;
 

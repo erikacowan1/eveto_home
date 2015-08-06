@@ -69,7 +69,7 @@ int eveto::cbc_eveto_main(
 	//TChain* veto_trigger_chain = new TChain( "waveburst", "cwb_unclustered_tree" );
 	
 	TString cwb = "cwb";
-	if (detector == &cwb)
+	if (main_channel == &cwb)
 	{
 
 	//TTree* cwb_clustered_veto_trigger_tree[num_safe_channels];
@@ -98,7 +98,7 @@ int eveto::cbc_eveto_main(
 
 	TTree* cbc_trigger_tree;
 	TString cbc = "cbc";
-	if (detector == &cbc)
+	if (main_channel == &cbc)
 	{
 		//
 		// Read in cbc triggers from database.
@@ -180,7 +180,7 @@ int eveto::cbc_eveto_main(
 
 				if ( verbose ) std::cerr << "calculating dumb significance for veto tree " << omicron_trigs_round[r-1][i]->GetName() << "(" << omicron_trigs_round[r-1][i] << ") against cbc triggers (" << cwb_trigs_round[r-1] << ")" << std::endl;
 
-				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i], cwb_trigs_round[r-1], detector, dumb_veto_window, verbose);
+				sig[i] = eveto::calc_dumb_sig(cbc_trigs_round[r-1], omicron_trigs_round[r-1][i], cwb_trigs_round[r-1], main_channel, dumb_veto_window, verbose);
 				if ( verbose ) std::cerr << "Significance for " << omicron_trigs_round[r-1][i]->GetName() << " = " << sig[i] << std::endl;
 			} else {
 				sig[i] = 0;
@@ -200,7 +200,7 @@ int eveto::cbc_eveto_main(
 
 		if ( verbose ) std::cerr << "Winning channel was " << omicron_trigs_round[r-1][max_sig_index]->GetName() << std::endl;
 
-		cwb_trigs_round[r] = eveto::remove_main_channel_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cwb_trigs_round[r-1],detector, verbose);
+		cwb_trigs_round[r] = eveto::remove_main_channel_triggers(cbc_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index],cwb_trigs_round[r-1],main_channel, verbose);
 		for (i=0; i<num_safe_channels; ++i) {
 			if ( (i != max_sig_index) && (omicron_trigs_round[r-1][i] != NULL) ) {
 				omicron_trigs_round[r][i] = eveto::remove_omicron_triggers(omicron_trigs_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], verbose);
