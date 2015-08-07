@@ -75,10 +75,9 @@ namespace eveto {
       bool verbose);
 
   int calc_dumb_sig(
-      TTree* cbc_trigger_tree_ptr,
-      TTree* cwb_trigger_tree_ptr,
+      TTree* main_channel_trigger_tree_ptr,
       TTree* omicron_trigger_tree_ptr,
-      TString* detector, 
+      TString* main_channel, 
       float dumb_time_seg,
       bool verbose );
 
@@ -91,7 +90,7 @@ namespace eveto {
         TTree* cbc_trigger_tree_in_ptr,
         TTree* omicron_trigger_tree_veto_ptr,
         TTree* cwb_trigger_tree_in_ptr,
-        TString* detector, 
+        TString* main_channel, 
         //TTree* cbc_segs_tree_ptr,
         //TTree* omicron_segs_tree_ptr,
         bool verbose);
