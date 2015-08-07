@@ -98,8 +98,6 @@ namespace eveto {
   TTree* remove_omicron_triggers(
       TTree* omicron_trigger_tree_in_ptr,
       TTree* omicron_trigger_tree_veto_ptr,     
-//    TTree* cbc_segs_tree_ptr,
-//    TTree* omicron_segs_tree_ptr,
       bool verbose );
 
   int cbc_eveto_analysis(
