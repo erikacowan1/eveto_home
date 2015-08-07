@@ -1,4 +1,4 @@
-#include cbc_eveto.h
+#include "cbc_eveto.h"
 
 int eveto:: calc_dumb_sig(
 	TTree* main_channel_trigger_tree_ptr,
@@ -134,7 +134,7 @@ int eveto:: calc_dumb_sig(
 
 	if( verbose ) std::cout << "dumb significance =" << num_coinc_triggers << "/" << num_omicron_triggers << "=" << dumb_significance_value << std::endl;
 
-	return dumb_significance;
+	return dumb_significance_value;
 }
 
 

@@ -20,7 +20,7 @@
 #include <TEventList.h>
 #include <TROOT.h>
 #include <string.h>
-
+#include <iomanip>
 namespace eveto {
   int cbc_eveto_main( 
       Long_t gps_start_time, 
@@ -87,9 +87,8 @@ namespace eveto {
 
   
   TTree* remove_main_channel_triggers(
-        TTree* cbc_trigger_tree_in_ptr,
+        TTree* main_channel_trigger_tree_in_ptr,
         TTree* omicron_trigger_tree_veto_ptr,
-        TTree* cwb_trigger_tree_in_ptr,
         TString* main_channel, 
         //TTree* cbc_segs_tree_ptr,
         //TTree* omicron_segs_tree_ptr,

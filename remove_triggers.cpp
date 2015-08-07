@@ -1,4 +1,4 @@
-#include cbc_eveto.h
+#include "cbc_eveto.h"
 
 
 //
@@ -8,7 +8,7 @@
 //
 TTree* eveto::remove_main_channel_triggers(
 	TTree* main_channel_trigger_tree_in_ptr,
-	TTree* omicron_trigger_tree_ptr,
+	TTree* omicron_trigger_tree_veto_ptr,
 	TString* main_channel,
 	//TTree* cbc_segs_tree_ptr, 
 	//TTree* omicron_segs_tree_ptr,
@@ -19,7 +19,7 @@ TTree* eveto::remove_main_channel_triggers(
 		std::cerr << "calc_dumb_sig() got main channel" << main_channel << "tree at" << main_channel_trigger_tree_in_ptr << std::endl;
 		//main_channel_trigger_tree_in_ptr->Print();
 
-		std::cerr << "calc_dumb_sig() got omicron tree at" << omicron_trigger_tree_ptr << std::endl;
+		std::cerr << "calc_dumb_sig() got omicron tree at" << omicron_trigger_tree_veto_ptr << std::endl;
 		//omicron_trigger_tree_ptr->Print();
 	}
 
@@ -39,6 +39,8 @@ TTree* eveto::remove_main_channel_triggers(
   	omicron_trigger_tree_veto_ptr->SetBranchAddress("size",       &Csize);
 
   	int num_omicron_triggers = omicron_trigger_tree_veto_ptr->GetEntries();
+	TTree* main_channel_trigger_tree_out_ptr = new TTree("main-channel-triggers","main-channel-triggers");
+
 
 	//
 	//
@@ -69,7 +71,7 @@ TTree* eveto::remove_main_channel_triggers(
 		int num_main_channel_triggers = main_channel_trigger_tree_in_ptr->GetEntries();
 
 		//Create a new tree that will store the output data
-		TTree* main_channel_trigger_tree_out_ptr = new TTree("cbc-triggers","cbc-triggers");
+		//TTree* main_channel_trigger_tree_out_ptr = new TTree("cbc-triggers","cbc-triggers");
 
   		// Create the branches for the tree
   		main_channel_trigger_tree_out_ptr->Branch( "start_time" , &start_time, "start_time/D" );
@@ -87,8 +89,7 @@ TTree* eveto::remove_main_channel_triggers(
   		main_channel_trigger_tree_out_ptr->Branch( "ttotal", &ttotal, "ttotal/F" );
 
 		
-  		Int_t o;
-
+Int_t o;
   		for (Int_t c=0; c<num_main_channel_triggers; ++c) {
     			main_channel_trigger_tree_in_ptr->GetEntry(c);
 
@@ -98,7 +99,7 @@ TTree* eveto::remove_main_channel_triggers(
         				
 					if( Ctend > start_time && Ctstart < end_time) {
           				
-						if (verbose) std::cout << std::setprecision(15) << "CBC [" << start_time << "," << end_time << ") overlaps veto [" << Ctstart << "," << Ctend << "). Vetoing" << std::endl;
+						if (verbose) std::cout << "CBC [" << std::setprecision(15) << start_time << "," << end_time << ") overlaps veto [" << Ctstart << "," << Ctend << "). Vetoing" << std::endl;
           break;
         				}
       				}
@@ -149,7 +150,7 @@ TTree* eveto::remove_main_channel_triggers(
 		int num_cwb_triggers = main_channel_trigger_tree_in_ptr->GetEntries();
 
 		// Create a new tree that will store the output data
-  		TTree* main_channel_trigger_tree_out_ptr = new TTree("cwb-triggers","cwb-triggers");
+  		//TTree* main_channel_trigger_tree_out_ptr = new TTree("cwb-triggers","cwb-triggers");
 
   		main_channel_trigger_tree_out_ptr->Branch("time",       &time,      "time/D");
   		main_channel_trigger_tree_out_ptr->Branch("frequency",  &frequency, "frequency/D");
@@ -202,7 +203,7 @@ TTree* eveto::remove_main_channel_triggers(
   	}
 
 
-  		if (verbose) {
+  	if (verbose) {
     			std::cout << "On input " << main_channel_trigger_tree_in_ptr->GetName() << " had " << main_channel_trigger_tree_in_ptr->GetEntries() << " triggers" << std::endl;
     			
 			std::cout << "Used " << omicron_trigger_tree_veto_ptr->GetName() << " veto triggers from " << omicron_trigger_tree_veto_ptr->GetEntries() << " triggers" << std::endl;
@@ -273,8 +274,7 @@ TTree* eveto::remove_omicron_triggers(
   	omicron_trigger_tree_out_ptr->Branch("firstentry", &Ifirstentry,  "firstentry/L");
   	omicron_trigger_tree_out_ptr->Branch("size",       &Isize,        "size/L");
 
-  	Int_t o;
-
+Int_t o;
   	for (Int_t c=0; c<num_omicron_in_triggers; ++c) {
     		omicron_trigger_tree_in_ptr->GetEntry(c);
 

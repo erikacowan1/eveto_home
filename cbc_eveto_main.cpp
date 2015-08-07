@@ -45,9 +45,6 @@ int eveto::cbc_eveto_main(
 	TTree* veto_segment_tree[num_safe_channels];
 
 	
-	TTree* clustered_veto_trigger_tree[num_safe_channels];
-	TTree* veto_segment_tree[num_safe_channels];
-
 	// Read in the omicron triggers for the interval that we want to process
 	retcode = eveto::read_omicron_triggers(
 			clustered_veto_trigger_tree, // output
@@ -162,7 +159,7 @@ int eveto::cbc_eveto_main(
 		main_channel_trigs_round[0] = cwb_trigger_tree;
 	}
 
-	std::cerr << "Initialized Main Channel" << main_channel << "TTree for round 0:" << main_channel_trigs_round[0] << std:endl;
+	std::cerr << "Initialized Main Channel" << main_channel << "TTree for round 0:" << main_channel_trigs_round[0] << std::endl;
 
 	std::cerr << "Number of safe channels = " << num_safe_channels << std::endl;
 
@@ -183,6 +180,8 @@ int eveto::cbc_eveto_main(
 
 			if( verbose ) std::cerr << "calculating dumb significance for veto tree" << omicron_trigs_round[r-1][i]->GetName() << "(" << omicron_trigs_round[r-1][i] << ") against main channel" << main_channel << "triggers (" << main_channel_trigs_round[0] << std:: endl; 
 
+
+			
 			sig[i] = eveto::calc_dumb_sig(main_channel_trigs_round[r-1], omicron_trigs_round[r-1][i], main_channel, dumb_veto_window, verbose); 
 
 			if( verbose ) std::cerr << "Significance for" << omicron_trigs_round[r-1][i]->GetName() << "=" << sig[i] << std::endl;
@@ -218,4 +217,6 @@ int eveto::cbc_eveto_main(
 	if( verbose ) std::cerr << "Maximum significance was" << max_sig << std::endl;
 	return 0; 
 
+	}
+	return 0;
 }
