@@ -115,37 +115,37 @@ Int_t o;
 	//
 	//
 
-		TString cwb = "cwb";
+	TString cwb = "cwb";
 	if (main_channel == &cwb)
 	{
-	 	Double_t time, frequency, duration, start, stop, snr, rho, netcc, neted, likelihood, ecor, ECOR, ifo, rate, phi, theta, psi,null, hrss, noise, low, high, bandwidth, strain, run, size;
+	 	Double_t Ctime, Cfrequency, Cduration, Cstart, Cstop, Csnr, Crho, Cnetcc, Cneted, Clikelihood, Cecor, CECOR, Cifo, Crate, Cphi, Ctheta, Cpsi, Cnull, Chrss, Cnoise, Clow, Chigh, Cbandwidth, Cstrain, Crun, Csize;
 
-		main_channel_trigger_tree_in_ptr->SetBranchAddress("time",&time);
-		main_channel_trigger_tree_in_ptr->SetBranchAddress("frequency",&frequency);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("duration",&duration);
- 		main_channel_trigger_tree_in_ptr->SetBranchAddress("start",&start);
- 		main_channel_trigger_tree_in_ptr->SetBranchAddress("stop",&stop);
-		main_channel_trigger_tree_in_ptr->SetBranchAddress("snr",&snr);
-		main_channel_trigger_tree_in_ptr->SetBranchAddress("rho",&rho);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("netcc",&netcc);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("neted", &neted);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("likelihood", &likelihood);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("ecor", &ecor);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("ECOR", &ECOR);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("ifo", &ifo);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("rate", &rate);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("phi", &phi);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("theta", &theta);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("psi", &psi);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("null", &null);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("hrss", &hrss);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("noise", &noise);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("low", &low);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("high", &high);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("bandwidth", &bandwidth);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("strain", &strain);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("run", &run);
-  		main_channel_trigger_tree_in_ptr->SetBranchAddress("size", &size);
+		main_channel_trigger_tree_in_ptr->SetBranchAddress("time",&Ctime);
+		main_channel_trigger_tree_in_ptr->SetBranchAddress("frequency",&Cfrequency);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("duration",&Cduration);
+ 		main_channel_trigger_tree_in_ptr->SetBranchAddress("start",&Cstart);
+ 		main_channel_trigger_tree_in_ptr->SetBranchAddress("stop",&Cstop);
+		main_channel_trigger_tree_in_ptr->SetBranchAddress("snr",&Csnr);
+		main_channel_trigger_tree_in_ptr->SetBranchAddress("rho",&Crho);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("netcc",&Cnetcc);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("neted", &Cneted);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("likelihood", &Clikelihood);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("ecor", &Cecor);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("ECOR", &CECOR);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("ifo", &Cifo);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("rate", &Crate);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("phi", &Cphi);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("theta", &Ctheta);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("psi", &Cpsi);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("null", &Cnull);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("hrss", &Chrss);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("noise", &Cnoise);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("low", &Clow);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("high", &Chigh);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("bandwidth", &Cbandwidth);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("strain", &Cstrain);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("run", &Crun);
+  		main_channel_trigger_tree_in_ptr->SetBranchAddress("size", &Csize);
 
 		int num_cwb_triggers = main_channel_trigger_tree_in_ptr->GetEntries();
 
