@@ -203,11 +203,20 @@ int eveto::cbc_eveto_main(
 
 	if( verbose ) std::cerr << "Winning channel was" << omicron_trigs_round[r-1][max_sig_index]->GetName() << std::endl;
 
-	main_channel_trigs_round[r] = eveto::remove_main_channel_triggers(main_channel_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index], main_channel, verbose);
+	TTree* omicron_trigger_tree_veto;
+	retcode = eveto::remove_main_channel_triggers(
+			main_channel_trigs_round[r-1], 
+			omicron_trigger_tree_veto,
+			omicron_trigs_round[r-1][max_sig_index],
+			main_channel,
+			verbose);
+
+	main_channel_trigs_round[r] = main_channel_trigger_tree_out_ptr;
+	//main_channel_trigs_round[r] = eveto::remove_main_channel_triggers(main_channel_trigs_round[r-1], omicron_trigs_round[r-1][max_sig_index], main_channel, verbose);
 
 	for( i=0; i<num_safe_channels; ++i) {
 		if( (i !=max_sig_index) && (omicron_trigs_round[r-1][i] !=NULL) ) {
-			omicron_trigs_round[r][i] = remove_omicron_triggers(omicron_trigs_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], verbose);
+			omicron_trigs_round[r][i] = remove_omicron_triggers(omicron_trigs_round[r-1][i], omicron_trigger_tree_veto, omicron_trigs_round[r-1][max_sig_index], verbose);
 		}
 		else {
 			omicron_trigs_round[r][i] = NULL;

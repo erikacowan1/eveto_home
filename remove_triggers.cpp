@@ -7,8 +7,9 @@
 //
 //
 TTree* eveto::remove_main_channel_triggers(
-		TTree* main_channel_trigger_tree_in_ptr,
-		TTree* omicron_trigger_tree_veto_ptr,
+		TTree* main_channel_trigger_tree_in_ptr, //input
+		TTree* omicron_trigger_tree_veto_ptr, //output
+		TTree* main_channel_trigger_tree_out_ptr, //output
 		TString* main_channel,
 		//TTree* cbc_segs_tree_ptr, 
 		//TTree* omicron_segs_tree_ptr,
@@ -211,13 +212,15 @@ TTree* eveto::remove_main_channel_triggers(
 			std::cout << "On output " << main_channel_trigger_tree_out_ptr->GetName() << " had " << main_channel_trigger_tree_out_ptr->GetEntries() << " triggers" << std::endl;
   
 		}
-		return main_channel_trigger_tree_out_ptr;
+		return 0;
+		//return main_channel_trigger_tree_out_ptr;
 	
 }
 
 TTree* eveto::remove_omicron_triggers(
-	TTree* omicron_trigger_tree_in_ptr,
-	TTree* omicron_trigger_tree_out_ptr,
+	TTree* omicron_trigger_tree_in_ptr, //input
+	TTree* omicron_trigger_tree_veto_ptr, //input
+	TTree* omicron_trigger_tree_out_ptr, //output
 	bool verbose )
 {
 
@@ -296,7 +299,7 @@ Int_t o;
     		std::cout << "Used " << omicron_trigger_tree_veto_ptr->GetName() << " veto triggers from " << omicron_trigger_tree_veto_ptr->GetEntries() << " triggers" << std::endl;
     		std::cout << "On output " << omicron_trigger_tree_out_ptr->GetName() << " had " << omicron_trigger_tree_out_ptr->GetEntries() << " triggers" << std::endl;
   	}
-
+	//return 0;
   	return omicron_trigger_tree_out_ptr;
 }
 
