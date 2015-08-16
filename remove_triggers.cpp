@@ -8,7 +8,7 @@
 //
 TTree* eveto::remove_main_channel_triggers(
 		TTree* main_channel_trigger_tree_in_ptr, //input
-		TTree* omicron_trigger_tree_veto_ptr, //output
+		//TTree* omicron_trigger_tree_veto_ptr, //output
 		TTree* main_channel_trigger_tree_out_ptr, //output
 		TString* main_channel,
 		//TTree* cbc_segs_tree_ptr, 
@@ -23,7 +23,7 @@ TTree* eveto::remove_main_channel_triggers(
 		std::cerr << "calc_dumb_sig() got omicron tree at" << omicron_trigger_tree_veto_ptr << std::endl;
 		//omicron_trigger_tree_ptr->Print();
 	}
-
+/*
 	Double_t Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
 	Long64_t Cfirstentry, Csize;
 
@@ -41,7 +41,7 @@ TTree* eveto::remove_main_channel_triggers(
 
 	int num_omicron_triggers = omicron_trigger_tree_veto_ptr->GetEntries();
 	TTree* main_channel_trigger_tree_out_ptr = new TTree("main-channel-triggers","main-channel-triggers");
-
+*/
 
 	//
 	//
@@ -88,6 +88,25 @@ TTree* eveto::remove_main_channel_triggers(
 		main_channel_trigger_tree_out_ptr->Branch( "mchirp", &mchirp, "mchirp/F" );
 		main_channel_trigger_tree_out_ptr->Branch( "eta", &eta, "eta/F" );
 		main_channel_trigger_tree_out_ptr->Branch( "ttotal", &ttotal, "ttotal/F" );
+
+			Double_t Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
+	Long64_t Cfirstentry, Csize;
+
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("time",       &Ctime);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("tstart",     &Ctstart);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("tend",       &Ctend);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("frequency",  &Cfreq);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("fstart",     &Cfstart);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("fend",       &Cfend);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("snr",        &Csnr);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("amplitude",  &Camp);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("q",          &Cq);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("firstentry", &Cfirstentry);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("size",       &Csize);
+
+	int num_omicron_triggers = omicron_trigger_tree_veto_ptr->GetEntries();
+	TTree* main_channel_trigger_tree_out_ptr = new TTree("main-channel-triggers","main-channel-triggers");
+
 
 
 		Int_t o;
@@ -180,6 +199,26 @@ TTree* eveto::remove_main_channel_triggers(
 		main_channel_trigger_tree_out_ptr->Branch("run",        &Crun,       "run/D");
 		main_channel_trigger_tree_out_ptr->Branch("size",       &Csize,      "size/D");
 
+			Double_t Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
+	Long64_t Cfirstentry, Csize;
+
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("time",       &Ctime);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("tstart",     &Ctstart);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("tend",       &Ctend);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("frequency",  &Cfreq);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("fstart",     &Cfstart);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("fend",       &Cfend);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("snr",        &Csnr);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("amplitude",  &Camp);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("q",          &Cq);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("firstentry", &Cfirstentry);
+	omicron_trigger_tree_veto_ptr->SetBranchAddress("size",       &Csize);
+
+	int num_omicron_triggers = omicron_trigger_tree_veto_ptr->GetEntries();
+	TTree* main_channel_trigger_tree_out_ptr = new TTree("main-channel-triggers","main-channel-triggers");
+
+
+
 		Cstop=0.0;
 		Int_t o; 
 
@@ -220,7 +259,6 @@ TTree* eveto::remove_main_channel_triggers(
 TTree* eveto::remove_omicron_triggers(
 	TTree* omicron_trigger_tree_in_ptr, //input
 	TTree* omicron_trigger_tree_veto_ptr, //input
-	TTree* omicron_trigger_tree_out_ptr, //output
 	bool verbose )
 {
 
