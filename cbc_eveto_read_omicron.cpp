@@ -86,23 +86,23 @@ bool simple_omicron_time_cluster(
     return false;
   }
 
-  double Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
-  Long64_t Cfirstentry, Csize;
+  double Ltime, Ltstart, Ltend, Lfreq, Lfstart, Lfend, Lsnr, Lamp, Lq;
+  Long64_t Lfirstentry, Lsize;
 
-  clustered_tree->Branch("time",       &Ctime,      "time/D");
-  clustered_tree->Branch("tstart",     &Ctstart,    "tstart/D");
-  clustered_tree->Branch("tend",       &Ctend,      "tend/D");
-  clustered_tree->Branch("frequency",  &Cfreq,      "frequency/D");
-  clustered_tree->Branch("fstart",     &Cfstart,    "fstart/D");
-  clustered_tree->Branch("fend",       &Cfend,      "fend/D");
-  clustered_tree->Branch("snr",        &Csnr,       "snr/D");
-  clustered_tree->Branch("amplitude",  &Camp,       "amplitude/D");
-  clustered_tree->Branch("q",          &Cq,         "q/D");
-  clustered_tree->Branch("firstentry", &Cfirstentry,"firstentry/L");
-  clustered_tree->Branch("size",       &Csize,      "size/L");
+  clustered_tree->Branch("time",       &Ltime,      "time/D");
+  clustered_tree->Branch("tstart",     &Ltstart,    "tstart/D");
+  clustered_tree->Branch("tend",       &Ltend,      "tend/D");
+  clustered_tree->Branch("frequency",  &Lfreq,      "frequency/D");
+  clustered_tree->Branch("fstart",     &Lfstart,    "fstart/D");
+  clustered_tree->Branch("fend",       &Lfend,      "fend/D");
+  clustered_tree->Branch("snr",        &Lsnr,       "snr/D");
+  clustered_tree->Branch("amplitude",  &Lamp,       "amplitude/D");
+  clustered_tree->Branch("q",          &Lq,         "q/D");
+  clustered_tree->Branch("firstentry", &Lfirstentry,"firstentry/L");
+  clustered_tree->Branch("size",       &Lsize,      "size/L");
 
-  Cfirstentry=-1;
-  Ctend=0.0;
+  Lfirstentry=-1;
+  Ltend=0.0;
 
   // loop over time sorted triggers
   for(Long64_t t=0; t<unclustered_tree->GetEntries(); t++){
@@ -112,40 +112,40 @@ bool simple_omicron_time_cluster(
     }
 
     // this is the same cluster...
-    if(Ttstart-Ctend<cluster_time_window){
-      Csize++; // one more tile
-      if(Ttend   > Ctend)   Ctend=Ttend;    // update cluster end
-      if(Ttstart < Ctstart) Ctstart=Ttstart;// update cluster tstart
-      if(Tfend   > Cfend)   Cfend=Tfend;    // update cluster end
-      if(Tfstart < Cfstart) Cfstart=Tfstart;// update cluster tstart
-      if(Tsnr>Csnr){  // this tile is louder
-        Csnr  = Tsnr; // update cluster SNR
-        Camp  = Tamp; // update cluster amplitude - FIXME: could be better!
-        Ctime = Ttime;// update cluster time
-        Cfreq = Tfreq;// update cluster frequency
-        Cq    = Tq;   // update cluster Q
+    if(Ttstart-Ltend<cluster_time_window){
+      Lsize++; // one more tile
+      if(Ttend   > Ltend)   Ltend=Ttend;    // update cluster end
+      if(Ttstart < Ltstart) Ltstart=Ttstart;// update cluster tstart
+      if(Tfend   > Lfend)   Lfend=Tfend;    // update cluster end
+      if(Tfstart < Lfstart) Lfstart=Tfstart;// update cluster tstart
+      if(Tsnr>Lsnr){  // this tile is louder
+        Lsnr  = Tsnr; // update cluster SNR
+        Lamp  = Tamp; // update cluster amplitude - FIXME: could be better!
+        Ltime = Ttime;// update cluster time
+        Lfreq = Tfreq;// update cluster frequency
+        Lq    = Tq;   // update cluster Q
       }
     }
     //... or start a new cluster
     else{
-      if(t&&Csnr>=cluster_snr_threshold){
+      if(t&&Lsnr>=cluster_snr_threshold){
         clustered_tree->Fill();  // fill tree with previous entry
       }
-      Ctend       = Ttend;  // cluster t end
-      Ctstart     = Ttstart;// cluster t start
-      Cfend       = Tfend;  // cluster f end
-      Cfstart     = Tfstart;// cluster f start
-      Csize       = 1;      // cluster size
-      Csnr        = Tsnr;   // cluster SNR
-      Camp        = Tamp;   // cluster amplitude
-      Ctime       = Ttime;  // cluster time
-      Cfreq       = Tfreq;  // cluster frequency
-      Cfirstentry = t;      // cluster first entry
+      Ltend       = Ttend;  // cluster t end
+      Ltstart     = Ttstart;// cluster t start
+      Lfend       = Tfend;  // cluster f end
+      Lfstart     = Tfstart;// cluster f start
+      Lsize       = 1;      // cluster size
+      Lsnr        = Tsnr;   // cluster SNR
+      Lamp        = Tamp;   // cluster amplitude
+      Ltime       = Ttime;  // cluster time
+      Lfreq       = Tfreq;  // cluster frequency
+      Lfirstentry = t;      // cluster first entry
     }
   }
 
   // save last cluster
-  if(unclustered_tree->GetEntries()&&Csnr>=cluster_snr_threshold){
+  if(unclustered_tree->GetEntries()&&Lsnr>=cluster_snr_threshold){
     clustered_tree->Fill();
   }
 

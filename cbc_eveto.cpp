@@ -7,6 +7,7 @@ int main( int argc, char *argv[] )
   Long_t gps_start_time = 0;
   Long_t gps_end_time = 0;
   TString* detector = new TString();
+  //string* main_channel; 
   TString* main_channel = new TString();
   TString* safe_channel_file = new TString();
   
@@ -86,7 +87,7 @@ int main( int argc, char *argv[] )
         break;
 
       case 'M':
-	main_channel->Append( optarg);
+	main_channel->Append( optarg );
 	break;
 
       case 'c':
@@ -161,7 +162,7 @@ int main( int argc, char *argv[] )
   if ( verbose ) {
     std::cout << "Starting cbc_eveto for " << detector->Data() << " data" << std::endl;
     std::cout << "Processing time interval [" << gps_start_time << "," << gps_end_time << ")" << std::endl;
-    std::cout << "Choosing Main Channel Type:" << main_channel << "triggers chosen" << std::endl;
+    std::cout << "Choosing Main Channel Type:" << main_channel->Data() << "triggers chosen" << std::endl;
     std::cout << "Reading safe channel list from " << safe_channel_file->Data() << std::endl;
     std::cout << "Reading cbc triggers from " << cbc_trigger_database->Data() << std::endl;
     std::cout << "Applying cbc snr threshold " << cbc_snr_threshold << std::endl;

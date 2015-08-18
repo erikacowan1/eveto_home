@@ -7,8 +7,10 @@ int eveto:: calc_dumb_sig(
 	float dumb_time_seg,
 	bool verbose )
 {
+
+	std::cerr << "main_channel" << main_channel->Data() << std::endl;
 	if( verbose ) {
-		std::cerr << "calc_dumb_sig() got main channel" << main_channel << "tree at" << main_channel_trigger_tree_ptr << std::endl;
+		std::cerr << "calc_dumb_sig() got main channel " << main_channel << "tree at " << main_channel_trigger_tree_ptr << std::endl;
 		//main_channel_trigger_tree_ptr->Print();
 
 		std::cerr << "calc_dumb_sig() got omicron tree at" << omicron_trigger_tree_ptr << std::endl;
@@ -17,20 +19,20 @@ int eveto:: calc_dumb_sig(
 	}
 
 	
-	double Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
-	Long64_t Cfirstentry, Csize;
+	double Ltime, Ltstart, Ltend, Lfreq, Lfstart, Lfend, Lsnr, Lamp, Lq;
+	Long64_t Lfirstentry, Lsize;
 
-	omicron_trigger_tree_ptr->SetBranchAddress("time",       &Ctime);
-	omicron_trigger_tree_ptr->SetBranchAddress("tstart",     &Ctstart);
-	omicron_trigger_tree_ptr->SetBranchAddress("tend",       &Ctend);
-	omicron_trigger_tree_ptr->SetBranchAddress("frequency",  &Cfreq);
-	omicron_trigger_tree_ptr->SetBranchAddress("fstart",     &Cfstart);
-	omicron_trigger_tree_ptr->SetBranchAddress("fend",       &Cfend);
-	omicron_trigger_tree_ptr->SetBranchAddress("snr",        &Csnr);
-	omicron_trigger_tree_ptr->SetBranchAddress("amplitude",  &Camp);
-	omicron_trigger_tree_ptr->SetBranchAddress("q",          &Cq);
-	omicron_trigger_tree_ptr->SetBranchAddress("firstentry", &Cfirstentry);
-	omicron_trigger_tree_ptr->SetBranchAddress("size",       &Csize);
+	omicron_trigger_tree_ptr->SetBranchAddress("time",       &Ltime);
+	omicron_trigger_tree_ptr->SetBranchAddress("tstart",     &Ltstart);
+	omicron_trigger_tree_ptr->SetBranchAddress("tend",       &Ltend);
+	omicron_trigger_tree_ptr->SetBranchAddress("frequency",  &Lfreq);
+	omicron_trigger_tree_ptr->SetBranchAddress("fstart",     &Lfstart);
+	omicron_trigger_tree_ptr->SetBranchAddress("fend",       &Lfend);
+	omicron_trigger_tree_ptr->SetBranchAddress("snr",        &Lsnr);
+	omicron_trigger_tree_ptr->SetBranchAddress("amplitude",  &Lamp);
+	omicron_trigger_tree_ptr->SetBranchAddress("q",          &Lq);
+	omicron_trigger_tree_ptr->SetBranchAddress("firstentry", &Lfirstentry);
+	omicron_trigger_tree_ptr->SetBranchAddress("size",       &Lsize);
 
 	int num_omicron_triggers = omicron_trigger_tree_ptr->GetEntries();
 
@@ -70,7 +72,7 @@ int eveto:: calc_dumb_sig(
 			for(Int_t o=0; o<num_omicron_triggers; ++o) {
 				omicron_trigger_tree_ptr->GetEntry(o);
 
-				if( Ctend > start_time && Ctstart < end_time ) {
+				if( Ltend > start_time && Ltstart < end_time ) {
 					num_coinc_triggers++;
 				}
 			}
@@ -123,7 +125,7 @@ int eveto:: calc_dumb_sig(
 			for(Int_t o=0; o<num_omicron_triggers; ++o) {
 				omicron_trigger_tree_ptr->GetEntry(o);
 
-				if( Ctend > Cstart && Ctstart < Cstop ) {
+				if( Ltend > Cstart && Ltstart < Cstop ) {
 					num_coinc_triggers++;
 				}
 			}

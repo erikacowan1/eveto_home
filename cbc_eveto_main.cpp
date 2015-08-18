@@ -1,4 +1,6 @@
 #include "cbc_eveto.h"
+#include "TString.h"
+#include <string>
 
 int eveto::cbc_eveto_main(
 	Long_t gps_start_time,
@@ -23,6 +25,7 @@ int eveto::cbc_eveto_main(
 {
 	int retcode = 0;
 
+
 	//
 	// Read in the veto channel data.
 	//
@@ -32,6 +35,7 @@ int eveto::cbc_eveto_main(
 	// channel.
 	//
 
+	std::cout << "IMPORTED main_channel " << main_channel << std::endl;
 
 	// Create a tree containing the list of safe veto channels to be processed
 	TTree* safe_channels = new TTree( "safe_channel_list", "List of safe channels to process" );
@@ -75,8 +79,12 @@ int eveto::cbc_eveto_main(
 	//
 	//
 	
-	TString cwb = "cwb";
-	if (main_channel == &cwb)
+	TString cwb;
+	cwb = "cwb";
+	//if (main_channel == "cwb")
+	//const char* main_channel_char = main_channel.c_str();
+	const char *main_channel_char = (const char*)main_channel;
+	if( strcmp(main_channel_char, "cwb") == 0)
 	{
 
 	retcode = eveto::read_cwb_triggers(
@@ -102,8 +110,9 @@ int eveto::cbc_eveto_main(
 	//
 
 	TTree* cbc_trigger_tree;
-	TString cbc = "cbc";
-	if (main_channel == &cbc)
+	//TString cbc = "cbc";
+	//if (main_channel == *cbc)
+        if( strcmp(main_channel_char, "cbc") == 0)
 	{
 
 
@@ -148,14 +157,14 @@ int eveto::cbc_eveto_main(
 
 	// For CBC option, intializing array
 	
-	if ( detector == &cbc ) {
+	if ( strcmp(main_channel_char, "cbc") == 0 ) {
 		main_channel_trigs_round[0] = cbc_trigger_tree;
 	}
 
 
 	// For CWB option, initializing array
 	
-	if ( detector == &cwb ) {
+	if ( strcmp(main_channel_char, "cwb") == 0 ) {
 		main_channel_trigs_round[0] = cwb_trigger_tree;
 	}
 
@@ -216,8 +225,8 @@ int eveto::cbc_eveto_main(
 
 	for( i=0; i<num_safe_channels; ++i) {
 		if( (i !=max_sig_index) && (omicron_trigs_round[r-1][i] !=NULL) ) {
-			//omicron_trigs_round[r][i] = remove_omicron_triggers(omicron_trigs_round[r-1][i], omicron_trigger_tree_veto, omicron_trigs_round[r-1][max_sig_index], verbose);
-			omicron_trigs_round[r][i] = remove_omicron_triggers(omicron_trigs_round[r-1][i], omicron_trigger_tree_veto, verbose);
+			omicron_trigs_round[r][i] = eveto::remove_omicron_triggers(omicron_trigs_round[r-1][i], omicron_trigs_round[r-1][max_sig_index], verbose);
+			//omicron_trigs_round[r][i] = eveto::remove_omicron_triggers(omicron_trigs_round[r-1][i], omicron_trigger_tree_veto, verbose);
 
 		}
 		else {

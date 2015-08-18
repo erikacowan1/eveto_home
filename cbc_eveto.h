@@ -21,6 +21,7 @@
 #include <TROOT.h>
 #include <string.h>
 #include <iomanip>
+#include <string>
 namespace eveto {
   int cbc_eveto_main( 
       Long_t gps_start_time, 

@@ -8,21 +8,15 @@
 //
 TTree* eveto::remove_main_channel_triggers(
 		TTree* main_channel_trigger_tree_in_ptr, //input
-		//TTree* omicron_trigger_tree_veto_ptr, //output
-		TTree* main_channel_trigger_tree_out_ptr, //output
+		TTree* omicron_trigger_tree_veto_ptr, //output
+		//TTree* main_channel_trigger_tree_out_ptr, //output
 		TString* main_channel,
 		//TTree* cbc_segs_tree_ptr, 
 		//TTree* omicron_segs_tree_ptr,
 		bool verbose)
 {
 
-	if( verbose ) {
-		std::cerr << "calc_dumb_sig() got main channel" << main_channel << "tree at" << main_channel_trigger_tree_in_ptr << std::endl;
-		//main_channel_trigger_tree_in_ptr->Print();
-
-		std::cerr << "calc_dumb_sig() got omicron tree at" << omicron_trigger_tree_veto_ptr << std::endl;
-		//omicron_trigger_tree_ptr->Print();
-	}
+TTree* main_channel_trigger_tree_out_ptr = new TTree("main_channel-triggers","main_channel-triggers");
 /*
 	Double_t Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
 	Long64_t Cfirstentry, Csize;
@@ -40,7 +34,7 @@ TTree* eveto::remove_main_channel_triggers(
 	omicron_trigger_tree_veto_ptr->SetBranchAddress("size",       &Csize);
 
 	int num_omicron_triggers = omicron_trigger_tree_veto_ptr->GetEntries();
-	TTree* main_channel_trigger_tree_out_ptr = new TTree("main-channel-triggers","main-channel-triggers");
+	TTree* main_channel_trigger_tree_out_ptr = new TTree("main_channel-triggers","main_channel-triggers");
 */
 
 	//
@@ -72,7 +66,7 @@ TTree* eveto::remove_main_channel_triggers(
 		int num_main_channel_triggers = main_channel_trigger_tree_in_ptr->GetEntries();
 
 		//Create a new tree that will store the output data
-		//TTree* main_channel_trigger_tree_out_ptr = new TTree("cbc-triggers","cbc-triggers");
+		TTree* main_channel_trigger_tree_out_ptr = new TTree("cbc-triggers","cbc-triggers");
 
 		// Create the branches for the tree
 		main_channel_trigger_tree_out_ptr->Branch( "start_time" , &start_time, "start_time/D" );
@@ -105,7 +99,7 @@ TTree* eveto::remove_main_channel_triggers(
 	omicron_trigger_tree_veto_ptr->SetBranchAddress("size",       &Csize);
 
 	int num_omicron_triggers = omicron_trigger_tree_veto_ptr->GetEntries();
-	TTree* main_channel_trigger_tree_out_ptr = new TTree("main-channel-triggers","main-channel-triggers");
+	//TTree* main_channel_trigger_tree_out_ptr = new TTree("main_channel-triggers","main_channel-triggers");
 
 
 
@@ -138,7 +132,7 @@ TTree* eveto::remove_main_channel_triggers(
 	TString cwb = "cwb";
 	if (main_channel == &cwb)
 	{
-		Double_t Ctime, Cfrequency, Cduration, Cstart, Cstop, Csnr, Crho, Cnetcc, Cneted, Clikelihood, Cecor, CECOR, Cifo, Crate, Cphi, Ctheta, Cpsi, Cnull, Chrss, Cnoise, Clow, Chigh, Cbandwidth, Cstrain, Crun, Csize;
+		Double_t time, Ctime, Cfrequency, Cduration, Cstart, Cstop, Csnr, Crho, Cnetcc, Cneted, Clikelihood, Cecor, CECOR, Cifo, Crate, Cphi, Ctheta, Cpsi, Cnull, Chrss, Cnoise, Clow, Chigh, Cbandwidth, Cstrain, Crun, Csize;
 
 		main_channel_trigger_tree_in_ptr->SetBranchAddress("time",&Ctime);
 		main_channel_trigger_tree_in_ptr->SetBranchAddress("frequency",&Cfrequency);
@@ -199,23 +193,23 @@ TTree* eveto::remove_main_channel_triggers(
 		main_channel_trigger_tree_out_ptr->Branch("run",        &Crun,       "run/D");
 		main_channel_trigger_tree_out_ptr->Branch("size",       &Csize,      "size/D");
 
-			Double_t Ctime, Ctstart, Ctend, Cfreq, Cfstart, Cfend, Csnr, Camp, Cq;
-	Long64_t Cfirstentry, Csize;
+		Double_t Ltime, Ltstart, Ltend, Lfreq, Lfstart, Lfend, Lsnr, Lamp, Lq;
+		Long64_t Lfirstentry, Lsize;
 
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("time",       &Ctime);
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("tstart",     &Ctstart);
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("tend",       &Ctend);
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("frequency",  &Cfreq);
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("fstart",     &Cfstart);
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("fend",       &Cfend);
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("snr",        &Csnr);
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("amplitude",  &Camp);
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("q",          &Cq);
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("firstentry", &Cfirstentry);
-	omicron_trigger_tree_veto_ptr->SetBranchAddress("size",       &Csize);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("time",       &Ltime);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("tstart",     &Ltstart);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("tend",       &Ltend);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("frequency",  &Lfreq);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("fstart",     &Lfstart);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("fend",       &Lfend);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("snr",        &Lsnr);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("amplitude",  &Lamp);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("q",          &Lq);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("firstentry", &Lfirstentry);
+		omicron_trigger_tree_veto_ptr->SetBranchAddress("size",       &Lsize);
 
-	int num_omicron_triggers = omicron_trigger_tree_veto_ptr->GetEntries();
-	TTree* main_channel_trigger_tree_out_ptr = new TTree("main-channel-triggers","main-channel-triggers");
+		int num_omicron_triggers = omicron_trigger_tree_veto_ptr->GetEntries();
+		TTree* main_channel_trigger_tree_out_ptr = new TTree("main_channel-triggers","main_channel-triggers");
 
 
 
@@ -229,9 +223,9 @@ TTree* eveto::remove_main_channel_triggers(
       				if ( o < num_omicron_triggers ) {
         				omicron_trigger_tree_veto_ptr->GetEntry(o);
         				
-					if( Ctend > Cstart && Ctstart < Cstop) {
+					if( Ltend > Cstart && Ltstart < Cstop) {
           				
-						if (verbose) std::cout << std::setprecision(15) << "CWB [" << Cstart << "," << stop << ") overlaps veto [" << Ctstart << "," << Ctend << "). Vetoing" << std::endl;
+						if (verbose) std::cout << std::setprecision(15) << "CWB [" << Cstart << "," << Cstop << ") overlaps veto [" << Ltstart << "," << Ltend << "). Vetoing" << std::endl;
           break;
         				}
       				}
