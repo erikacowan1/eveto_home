@@ -10,7 +10,7 @@ int eveto:: calc_dumb_sig(
 
 	std::cerr << "main_channel" << main_channel->Data() << std::endl;
 	if( verbose ) {
-		std::cerr << "calc_dumb_sig() got main channel " << main_channel << "tree at " << main_channel_trigger_tree_ptr << std::endl;
+		std::cerr << "calc_dumb_sig() got main channel " << main_channel->Data() << "tree at " << main_channel_trigger_tree_ptr << std::endl;
 		//main_channel_trigger_tree_ptr->Print();
 
 		std::cerr << "calc_dumb_sig() got omicron tree at" << omicron_trigger_tree_ptr << std::endl;
@@ -38,8 +38,10 @@ int eveto:: calc_dumb_sig(
 
 	int num_coinc_triggers = 0;
 
-	TString cbc = "cbc";
-	if( main_channel == &cbc )
+//	TString cbc = "cbc";
+//	if( main_channel == &cbc )
+       const char *main_channel_char = (const char*)main_channel;
+        if( strcmp(main_channel_char, "cbc") == 0)
 	{
 		Double_t start_time, end_time;
 		Float_t snr, chisq, chisqdof, newsnr, snr_sq, mass1, mass2, mtotal, mchirp, eta, ttotal;
@@ -79,8 +81,9 @@ int eveto:: calc_dumb_sig(
 		}
 	}
 
-	TString cwb = "cwb";
-	if( main_channel == &cwb );
+//	TString cwb = "cwb";
+//	if( main_channel == &cwb );
+        if( strcmp(main_channel_char, "cwb") == 0)
 	{
 		Double_t Ctime, Cfrequency, Cduration, Cstart, Cstop, Csnr, Crho, Cnetcc, Cneted, Clikelihood, Cecor, CECOR, Cifo, Crate, Cphi, Ctheta, Cpsi, Cnull, Chrss, Cnoise, Clow, Chigh, Cbandwidth, Cstrain, Crun;
 		Long64_t Csize;
