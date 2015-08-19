@@ -189,9 +189,9 @@ int eveto::cbc_eveto_main(
 
 			if( verbose ) std::cerr << "calculating dumb significance for veto tree" << omicron_trigs_round[r-1][i]->GetName() << "(" << omicron_trigs_round[r-1][i] << ") against main channel" << main_channel << "triggers (" << main_channel_trigs_round[0] << std:: endl; 
 
-
-			
-			sig[i] = eveto::calc_dumb_sig(main_channel_trigs_round[r-1], omicron_trigs_round[r-1][i], main_channel, dumb_veto_window, verbose); 
+			float time_window = 0.02;
+			sig[i] = eveto::cbc_eveto_significance( 3, main_channel_trigs_round[r-1], omicron_trigs_round[r-1][i], main_channel, time_window, verbose);	
+			//sig[i] = eveto::calc_dumb_sig(main_channel_trigs_round[r-1], omicron_trigs_round[r-1][i], main_channel, dumb_veto_window, verbose); 
 
 			if( verbose ) std::cerr << "Significance for" << omicron_trigs_round[r-1][i]->GetName() << "=" << sig[i] << std::endl;
 		} else {
