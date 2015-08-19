@@ -79,7 +79,7 @@ int cbc_eveto_significance(
 
                         for(Int_t o=0; o<num_omicron_triggers; ++o) {
                                 omicron_trigger_tree_ptr->GetEntry(o);
-				
+					
 				if( o = 0 ) {
 					aux_start_time = Ltime;
 					break;
@@ -98,12 +98,28 @@ int cbc_eveto_significance(
 
 		//calculate significance
 		float mu;
+		Long64_t = sig, sigold; 
 
 		//calculating total time analyzed: to be changed later. 
         	Long65_t analyze_start, analyze_end, T_tot; //total time analyzed
 		
-		analyze_start = aux_start_time - time_window_2;
+		analyze_start = aux_start_time - time_window_2; //leftover code, not necessary
 		analyze_end = aux_end_time + time_window_2;
 
+		T_tot = num_omicron_triggers*time_window; //total time analyzed
+
+		mu = (time_window*num_main_channel_triggers*num_omicron_triggers)/T_tot;
 		
-			
+		if( num_coinc_triggers > 0 ) {
+			sig = gamma_p(mu, num_coinc_triggers);
+			sigold = -num_coinc_triggers*log10(mu) + mu*log10(exp(1)) + lgammal(num_coinc_triggers+1)/log(10);
+			return sig;
+			std::cerr << "sig = " << sig << ". If close enough to infinity, print out sigold instead, which yields " << sigold << ". \n" << std::endl;
+		}
+		
+		else { 
+			sig = 0;
+			std::cerr << "No coincident triggers, and therefore no significance. Something is wrong." << std::endl;
+		}
+
+}
