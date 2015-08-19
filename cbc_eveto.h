@@ -82,6 +82,14 @@ namespace eveto {
       float dumb_time_seg,
       bool verbose );
 
+int cbc_eveto_significance(
+        int sig_threshold,
+        TTree* main_channel_trigger_tree_ptr,
+        TTree* omicron_trigger_tree_ptr,
+        TString* main_channel,
+        float time_window, //declare, for now, in eveto_main.cpp
+        bool verbose )
+
   int veto_triggers(
       TTree* omicron_trigs_round,
       bool verbose );
