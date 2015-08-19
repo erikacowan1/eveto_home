@@ -26,7 +26,7 @@ calc_dumb_sig.o: calc_dumb_sig.cpp cbc_eveto.h
 	$(CC) -c $(CFLAGS) $<
 
 cbc_eveto_significance.o: cbc_eveto_significance.cpp cbc_eveto.h
-        $(CC) -c $(CFLAGS) $<
+	$(CC) -c $(CFLAGS) $<
 
 remove_triggers.o: remove_triggers.cpp cbc_eveto.h
 	$(CC) -c $(CFLAGS) $<
